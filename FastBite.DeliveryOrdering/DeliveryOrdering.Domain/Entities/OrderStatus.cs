@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace DeliveryOrdering.Domain.Entities
 {
-    internal class Pedido
+    public enum OrderStatus // Enum - Valores fixos
     {
+        Pendente,   // Estado inicial do pedido
+        APreparar,
+        ACaminho,
+        Entregue
     }
 }
