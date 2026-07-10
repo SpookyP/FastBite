@@ -1,1 +1,6 @@
-<Solution />
+<Solution>
+  <Project Path="MenuCatalog.Api/MenuCatalog.Api.csproj" />
+  <Project Path="MenuCatalog.Application/MenuCatalog.Application.csproj" />
+  <Project Path="MenuCatalog.Domain/MenuCatalog.Domain.csproj" />
+  <Project Path="MenuCatalog.Infrastructure/MenuCatalog.Infrastructure.csproj" />
+</Solution>
