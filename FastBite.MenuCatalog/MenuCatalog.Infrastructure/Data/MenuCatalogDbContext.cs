@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MenuCatalog.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace MenuCatalog.Infrastructure.Data
 {
