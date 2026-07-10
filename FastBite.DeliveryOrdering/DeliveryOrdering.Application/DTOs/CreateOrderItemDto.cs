@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace DeliveryOrdering.Application.DTOs
 {
-    internal class PedidoDto
+    public class CreateOrderItemDto
     {
+        // O ID do prato que vem do catálogo
+        public Guid ProductId { get; set; }
+        public int Quantity { get; set; }
     }
 }
