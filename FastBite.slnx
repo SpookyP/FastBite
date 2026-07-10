@@ -1,4 +1,8 @@
 <Solution>
+  <Project Path="DeliveryOrdering.Application/DeliveryOrdering.Application.csproj" Id="54dfec97-33f9-4ac7-9375-8553ec7b50e5" />
+  <Project Path="DeliveryOrdering.Domain/DeliveryOrdering.Domain.csproj" Id="68683a28-caaa-4269-a0fb-99b00d72751c" />
+  <Project Path="DeliveryOrdering.Infrastructure/DeliveryOrdering.Infrastructure.csproj" Id="4958eb18-7d6a-473a-bdcb-5a30289d6afc" />
+  <Project Path="DeliveryOrdering/DeliveryOrdering.csproj" Id="07014d7f-52fa-4edc-8908-792dfc061e90" />
   <Project Path="MenuCatalog.Api/MenuCatalog.Api.csproj" />
   <Project Path="MenuCatalog.Application/MenuCatalog.Application.csproj" />
   <Project Path="MenuCatalog.Domain/MenuCatalog.Domain.csproj" />
