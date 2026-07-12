@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="DeliveryOrdering.Application/DeliveryOrdering.Application.csproj" />
+  <Project Path="DeliveryOrdering.Domain/DeliveryOrdering.Domain.csproj" />
+  <Project Path="DeliveryOrdering.Infrastructure/DeliveryOrdering.Infrastructure.csproj" />
+  <Project Path="DeliveryOrdering/DeliveryOrdering.csproj" />
+</Solution>
