@@ -12,11 +12,11 @@ jobs:
     strategy:
       matrix:
         include:
-          - solution_path: src/FastBite.Identity
+          - solution_path: FastBite.Identity
             solution_file: FastBite.Identity.slnx
-          - solution_path: src/FastBite.MenuCatalog
+          - solution_path: FastBite.MenuCatalog
             solution_file: FastBite.MenuCatalog.sln
-          - solution_path: src/FastBite.DeliveryOrdering
+          - solution_path: FastBite.DeliveryOrdering
             solution_file: FastBite.DeliveryOrdering.slnx
 
     defaults:
