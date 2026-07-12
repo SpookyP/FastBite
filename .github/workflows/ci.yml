@@ -13,11 +13,11 @@ jobs:
       matrix:
         include:
           - solution_path: src/FastBite.Identity
-            solution_file: FastBite.Identity.sln
+            solution_file: FastBite.Identity.slnx
           - solution_path: src/FastBite.MenuCatalog
             solution_file: FastBite.MenuCatalog.sln
           - solution_path: src/FastBite.DeliveryOrdering
-            solution_file: FastBite.DeliveryOrdering.sln
+            solution_file: FastBite.DeliveryOrdering.slnx
 
     defaults:
       run:
