@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MenuCatalog.Application.DTOs;
+using MenuCatalog.Domain;
 using MenuCatalog.Domain.Entities;
 
 namespace MenuCatalog.Application.Services
@@ -16,7 +17,7 @@ namespace MenuCatalog.Application.Services
 
         public async Task<MenuResponseDto> ObterPorIdAsync(int id)
         {
-            var menuId = await _menuRepository.ObterPorIdAsync(id);
+            var menuId = await _menuRepository.GetByIdAsync(id);
             if (menuId == null)
             {
                 throw new Exception("Menu não encontrado");
@@ -35,26 +36,26 @@ namespace MenuCatalog.Application.Services
         {
             var menuInserido = _mapper.Map<Menu>(menu); // Mapear o objeto Menu para a entidade Menu
 
-            var menuGuardado = await _menuRepository.AdicionarMenuAsync(menuInserido); // Guardar o menu no repositório
+            var menuGuardado = await _menuRepository.AddMenuAsync(menuInserido); // Guardar o menu no repositório
 
-            return _mapper.Map<Menu>(menuGuardado); // Mapear a entidade Menu de volta para o objeto Menu e retornar
+            return _mapper.Map<MenuResponseDto>(menuGuardado); // Mapear a entidade Menu de volta para o objeto Menu e retornar
         }
 
-        public async Task AtualizarMenuAsync(int id, MenuCreateDto request)
+        public async Task AtualizarMenuAsync(int id, MenuCreateEditDto request)
         {
-            var menuExistente = await _menuRepository.ObterPorIdAsync(id);
+            var menuExistente = await _menuRepository.GetByIdAsync(id);
             if (menuExistente == null)
             {
                 throw new Exception("Menu não encontrado");
             }
             _mapper.Map(request, menuExistente); // Atualizar as propriedades do menu existente com os valores do request
 
-            await _menuRepository.AtualizarMenuAsync(menuExistente);
+            await _menuRepository.UpdateMenuAsync(menuExistente);
         }
 
         public async Task RemoverMenuAsync(int id)
         {
-            await _menuRepository.RemoverMenuAsync(id);
+            await _menuRepository.DeleteMenuAsync(id);
         }
     }
 }

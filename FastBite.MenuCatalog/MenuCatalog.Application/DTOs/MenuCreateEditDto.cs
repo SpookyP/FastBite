@@ -2,7 +2,7 @@
 
 namespace MenuCatalog.Application.DTOs
 {
-    public class MenuCreateDto
+    public class MenuCreateEditDto
     {
         [Required(ErrorMessage = "O nome do menu é obrigatório.")]
         public string Nome { get; set; }
