@@ -9,10 +9,10 @@ namespace MenuCatalog.Domain
 {
     public interface IMenuRepository
     {
-        Task<IEnumerable<Menu>> ObterTodosAsync();
-        Task<Menu> ObterPorIdAsync(int id);
-        Task<Menu> AdicionarMenuAsync(Menu menu);
-        Task<Menu> AtualizarMenuAsync(Menu menu);
-        Task<Menu> RemoverMenuAsync(int id);
+        Task<IEnumerable<Menu>> GetAllAsync();
+        Task<Menu> GetByIdAsync(int id);
+        Task<Menu> AddMenuAsync(Menu menu);
+        Task<Menu> UpdateMenuAsync(Menu menu);
+        Task<Menu> DeleteMenuAsync(int id);
     }
 }
