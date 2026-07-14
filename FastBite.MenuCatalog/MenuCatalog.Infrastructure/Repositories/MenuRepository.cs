@@ -21,33 +21,33 @@ namespace MenuCatalog.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Menu>> ObterTodosAsync()
+        public async Task<IEnumerable<Menu>> GetAllAsync()
         {
             return await _context.Menus.ToListAsync();
         }
 
-        public async Task<Menu> ObterPorIdAsync(int id)
+        public async Task<Menu> GetByIdAsync(int id)
         {
             return await _context.Menus.FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        public async Task<Menu> AdicionarMenuAsync(Menu menu)
+        public async Task<Menu> AddMenuAsync(Menu menu)
         {
             _context.Menus.Add(menu);
             await _context.SaveChangesAsync();
-            return await ObterPorIdAsync(menu.Id);
+            return await GetByIdAsync(menu.Id);
         }
 
-        public async Task<Menu> AtualizarMenuAsync(Menu menu)
+        public async Task<Menu> UpdateMenuAsync(Menu menu)
         {
             _context.Menus.Update(menu);
             await _context.SaveChangesAsync();
-            return await ObterPorIdAsync(menu.Id);
+            return await GetByIdAsync(menu.Id);
         }
 
-        public async Task<Menu> RemoverMenuAsync(int id)
+        public async Task<Menu> DeleteMenuAsync(int id)
         {
-            var menuParaApagar = await ObterPorIdAsync(id);
+            var menuParaApagar = await GetByIdAsync(id);
 
             if (menuParaApagar != null)
             {
