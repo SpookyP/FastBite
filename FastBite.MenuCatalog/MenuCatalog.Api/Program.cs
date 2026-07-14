@@ -1,4 +1,6 @@
 
+using MenuCatalog.Application.Profile;
+
 namespace MenuCatalog.Api;
 
 public class Program
@@ -12,6 +14,13 @@ public class Program
         builder.Services.AddControllers();
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
+
+        
+        builder.Services.AddAutoMapper(config =>
+        {
+            config.AddMaps(typeof(MenuProfile).Assembly);
+        });
+
 
         var app = builder.Build();
 
