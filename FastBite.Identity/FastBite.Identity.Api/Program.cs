@@ -15,7 +15,7 @@ namespace IdentityServer.Host
             
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+            
             builder.Services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
@@ -26,10 +26,12 @@ namespace IdentityServer.Host
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;
                 options.Events.RaiseSuccessEvents = true;
-                options.EmitStaticAudienceClaim = true;
+
+                options.EmitStaticAudienceClaim = false;
             })
                 .AddInMemoryIdentityResources(Config.IdentityResources)
                 .AddInMemoryApiScopes(Config.ApiScopes)
+                .AddInMemoryApiResources(Config.ApiResources)
                 .AddInMemoryClients(Config.Clients)
                 .AddAspNetIdentity<IdentityUser>()
                 .AddDeveloperSigningCredential();
@@ -54,7 +56,6 @@ namespace IdentityServer.Host
             app.UseRouting();
 
             app.UseIdentityServer();
-
             app.UseAuthorization();
 
 

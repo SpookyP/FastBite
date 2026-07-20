@@ -19,23 +19,36 @@ namespace FastBite.Identity.Api.Data
         public static IEnumerable<ApiScope> ApiScopes =>
             new ApiScope[]
             {
-                new ApiScope("api_menu", "FastBite Food Catalog"),
-                new ApiScope("api_order", "FastBite Food Ordering"),
+                new ApiScope("MenuCatalog.api.full", "FastBite Food Catalog"),
+                new ApiScope("DeliveryOrdering.api.full", "FastBite Food Ordering"),
+            };
+
+        public static IEnumerable<ApiResource> ApiResources =>
+            new ApiResource[]
+            {
+                new ApiResource("fastbite.menu", "FastBite Menu API")
+                {
+                    Scopes = { "MenuCatalog.api.full" },
+                },
+                new ApiResource("fastbite.order", "FastBite Order API")
+                {
+                    Scopes = { "DeliveryOrdering.api.full" },
+                },
             };
 
         public static IEnumerable<Client> Clients =>
             new Client[] { 
                 new Client{
-                    ClientId = "web_app",
+                    ClientId = "fastbite.frontend",
                     ClientName = "FastBite Online",
 
                     AllowedGrantTypes = GrantTypes.Code,
                     RequirePkce = true,
 
-                    ClientSecrets = { new Secret("segredo_super_secreto".Sha256())},
+                    ClientSecrets = { new Secret("FastBite@!CHavEsUpErsEcrEtA".Sha256())},
 
-                    RedirectUris = {"https://localhost:5002/signin-oidc"},
-                    PostLogoutRedirectUris = {"https://localhost:5002/signout-callback-oidc"},
+                    RedirectUris = {"https://localhost:7280/signin-oidc"},
+                    PostLogoutRedirectUris = {"https://localhost:7280/signout-callback-oidc"},
 
                     AllowedScopes =
                     {
@@ -43,8 +56,8 @@ namespace FastBite.Identity.Api.Data
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.Email,
                         "roles",
-                        "api_menu",
-                        "api_order"
+                        "MenuCatalog.api.full",
+                        "DeliveryOrdering.api.full"
                     },
 
                     AllowOfflineAccess = true,
