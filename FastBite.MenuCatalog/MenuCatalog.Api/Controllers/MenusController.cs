@@ -1,5 +1,4 @@
 ﻿using MenuCatalog.Application.IService;
-using MenuCatalog.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -64,6 +63,14 @@ namespace MenuCatalog.Api.Controllers
 
             return Ok(qntDisponivel);
         }
-        
+
+        [HttpGet("Disponiveis")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ObterPratosDisponiveis()
+        {
+            var menusDisponiveis = await _menuService.ObterPratosDisponiveisAsync();
+
+            return Ok(menusDisponiveis);
+        }
     }
 }
