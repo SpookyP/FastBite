@@ -1,5 +1,6 @@
 ﻿using DeliveryOrdering.Application.DTOs;
 using DeliveryOrdering.Application.Interfaces;
+using DeliveryOrdering.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -46,6 +47,34 @@ namespace DeliveryOrdering.Controllers
             }
 
             return StatusCode(StatusCodes.Status201Created, pedidoCriado);
+        }
+
+        [HttpGet("my-orders")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetMyOrders()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value   // Obtém o ID do usuário a partir do token JWT ou pelo claim "sub" (abreviação de subject)
+                         ?? User.FindFirst("sub")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("Utilizador não identificado.");
+            }
+
+            try
+            {
+                // Chama o serviço que preparaste
+                var history = await _pedidoService.GetUserOrderHistoryAsync(userId);
+
+                // Retorna 200 OK com os DTOs
+                return Ok(history);
+            }
+            catch (Exception ex)
+            {
+                // Qualquer problema será apanhado pelo teu GlobalExceptionHandlerMiddleware
+                throw;
+            }
         }
     }
 }

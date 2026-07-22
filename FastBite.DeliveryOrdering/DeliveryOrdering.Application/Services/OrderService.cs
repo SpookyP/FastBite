@@ -1,4 +1,5 @@
-﻿using DeliveryOrdering.Application.DTOs;
+﻿using AutoMapper;
+using DeliveryOrdering.Application.DTOs;
 using DeliveryOrdering.Application.Interfaces;
 using DeliveryOrdering.Domain.Entities;
 using DeliveryOrdering.Domain.Interfaces;
@@ -14,12 +15,14 @@ namespace DeliveryOrdering.Application.Services
     {
         private readonly IMenuCatalogService _catalogService;
         private readonly IOrderRepository _orderRepository;
+        private readonly IMapper _mapper;
 
         // Construtor da classe PedidoService, que recebe as dependências necessárias
-        public OrderService(IMenuCatalogService catalogService, IOrderRepository orderRepository)
+        public OrderService(IMenuCatalogService catalogService, IOrderRepository orderRepository, IMapper mapper)
         {
             _catalogService = catalogService;
             _orderRepository = orderRepository;
+            _mapper = mapper;
         }
 
         // Método para criar um pedido
@@ -71,5 +74,17 @@ namespace DeliveryOrdering.Application.Services
 
             return novoPedido;
         }
+
+        public async Task<IEnumerable<OrderHistoryResponseDto>> GetUserOrderHistoryAsync(string userId)
+        {
+            // Recupera o histórico de pedidos do usuário
+            var orders = await _orderRepository.GetOrdersByUserIdAsync(userId);
+
+            // Mapeia os pedidos para DTOs de resposta
+            var response = _mapper.Map<IEnumerable<OrderHistoryResponseDto>>(orders);
+
+            return response;
+        }
+
     }
 }
