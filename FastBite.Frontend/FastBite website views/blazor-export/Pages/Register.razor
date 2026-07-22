@@ -1,0 +1,114 @@
+@page "/register"
+@using FastBite.Models
+@using FastBite.Services
+@inject IdentityService IdentityService
+@inject AuthState Auth
+@inject NavigationManager Nav
+
+<PageTitle>Create account — FastBite</PageTitle>
+
+<div class="flex min-h-screen items-center justify-center bg-orange-50 px-4 py-12">
+    <div class="w-full max-w-md">
+
+        <div class="mb-8 flex flex-col items-center gap-2 text-center">
+            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-600 text-3xl shadow-lg">
+                🍽️
+            </div>
+            <h1 class="text-3xl font-bold text-orange-600" style="font-family: Poppins, sans-serif;">FastBite</h1>
+            <p class="text-gray-500">Create your account to start ordering.</p>
+        </div>
+
+        <div class="rounded-2xl bg-white p-8 shadow-xl">
+            <h2 class="mb-6 text-2xl font-bold">Create account</h2>
+
+            <EditForm Model="@_model" OnValidSubmit="HandleRegister">
+                <DataAnnotationsValidator />
+
+                @if (!string.IsNullOrEmpty(_error))
+                {
+                    <div class="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">@_error</div>
+                }
+
+                <div class="mb-4 flex flex-col gap-1.5">
+                    <label class="text-sm font-medium">Full name</label>
+                    <InputText @bind-Value="_model.Name"
+                               class="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                               placeholder="Jane Doe" />
+                </div>
+
+                <div class="mb-4 flex flex-col gap-1.5">
+                    <label class="text-sm font-medium">Email</label>
+                    <InputText @bind-Value="_model.Email" type="email"
+                               class="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                               placeholder="you@example.com" />
+                </div>
+
+                <div class="mb-4 flex flex-col gap-1.5">
+                    <label class="text-sm font-medium">Phone (optional)</label>
+                    <InputText @bind-Value="_model.Phone" type="tel"
+                               class="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                               placeholder="+351 900 000 000" />
+                </div>
+
+                <div class="mb-4 flex flex-col gap-1.5">
+                    <label class="text-sm font-medium">Password</label>
+                    <InputText @bind-Value="_model.Password" type="password"
+                               class="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                               placeholder="Min. 6 characters" />
+                </div>
+
+                <div class="mb-6 flex flex-col gap-1.5">
+                    <label class="text-sm font-medium">Confirm password</label>
+                    <input @bind="_confirmPassword" type="password"
+                           class="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                           placeholder="Repeat your password" />
+                    @if (_passwordMismatch)
+                    {
+                        <span class="text-xs text-red-500">Passwords do not match.</span>
+                    }
+                </div>
+
+                <button type="submit" disabled="@_loading"
+                        class="w-full rounded-lg bg-orange-600 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60">
+                    @(_loading ? "Creating account…" : "Create account")
+                </button>
+            </EditForm>
+
+            <p class="mt-6 text-center text-sm text-gray-500">
+                Already have an account?
+                <a href="/login" class="font-medium text-orange-600 hover:underline">Sign in</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+@code {
+    private readonly RegisterPayload _model = new();
+    private string _confirmPassword = "";
+    private bool _loading;
+    private bool _passwordMismatch;
+    private string? _error;
+
+    private async Task HandleRegister()
+    {
+        _passwordMismatch = _model.Password != _confirmPassword;
+        if (_passwordMismatch) return;
+
+        _loading = true;
+        _error = null;
+        try
+        {
+            var result = await IdentityService.RegisterAsync(_model);
+            Auth.SetUser(result.User, result.Token);
+            Nav.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+}

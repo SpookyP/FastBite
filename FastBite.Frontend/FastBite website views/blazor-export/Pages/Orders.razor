@@ -1,0 +1,153 @@
+@page "/orders"
+@using FastBite.Models
+@using FastBite.Services
+@inject OrderingService OrderingService
+@implements IAsyncDisposable
+
+<PageTitle>My orders — FastBite</PageTitle>
+
+@if (_loading)
+{
+    <div class="flex h-64 items-center justify-center">
+        <div class="h-8 w-8 animate-spin rounded-full border-4 border-orange-600 border-t-transparent"></div>
+    </div>
+}
+else if (_orders is { Count: 0 })
+{
+    <div class="flex min-h-screen flex-col items-center justify-center gap-4 text-center">
+        <span class="text-6xl">📦</span>
+        <h2 class="text-2xl font-bold">No orders yet</h2>
+        <p class="text-gray-500">You haven't placed any orders. Time to eat!</p>
+        <a href="/" class="mt-2 rounded-lg bg-orange-600 px-6 py-3 font-semibold text-white hover:opacity-90">
+            Browse menu
+        </a>
+    </div>
+}
+else
+{
+    <div class="mx-auto max-w-3xl px-4 py-8">
+        <div class="mb-6 flex items-center justify-between">
+            <h1 class="text-3xl font-bold">My orders</h1>
+            <span class="rounded-full bg-orange-100 px-3 py-1 text-sm font-medium text-orange-700">
+                @_orders!.Count orders
+            </span>
+        </div>
+
+        <div class="flex flex-col gap-4">
+            @foreach (var order in _orders!)
+            {
+                <div class="rounded-xl border bg-white p-5 shadow-sm">
+                    <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                            <p class="text-xs text-gray-400">Order ID</p>
+                            <p class="font-semibold">@order.Id</p>
+                        </div>
+                        <span class="@StatusBadgeClass(order.Status) rounded-full px-3 py-1 text-xs font-medium">
+                            @StatusLabel(order.Status)
+                        </span>
+                    </div>
+
+                    <OrderTracker Status="@order.Status" />
+
+                    <hr class="my-4" />
+
+                    <div class="mb-3 flex flex-col gap-1 text-sm">
+                        @foreach (var line in order.Lines)
+                        {
+                            <div class="flex justify-between text-gray-500">
+                                <span>@line.Name × @line.Quantity</span>
+                                <span>@((line.Price * line.Quantity).ToString("C"))</span>
+                            </div>
+                        }
+                    </div>
+
+                    <hr class="mb-3" />
+
+                    <div class="flex items-center justify-between">
+                        <div class="text-sm text-gray-500">
+                            <p>@order.CreatedAt.ToLocalTime().ToString("g")</p>
+                            <p class="font-medium text-gray-800">Total: @order.Total.ToString("C")</p>
+                        </div>
+                        <div class="flex gap-2">
+                            @if (order.Status != OrderStatus.DELIVERED && order.Status != OrderStatus.CANCELLED)
+                            {
+                                var orderId = order.Id;
+                                <button @onclick="() => CancelOrder(orderId)"
+                                        class="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50">
+                                    Cancel
+                                </button>
+                            }
+                            <a href="/orders/@order.Id"
+                               class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium hover:bg-gray-50">
+                                Details ›
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private List<Order>? _orders;
+    private bool _loading = true;
+    private PeriodicTimer? _timer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadOrders();
+        _timer = new PeriodicTimer(TimeSpan.FromSeconds(15));
+        _ = PollAsync();
+    }
+
+    private async Task PollAsync()
+    {
+        while (_timer is not null && await _timer.WaitForNextTickAsync())
+        {
+            await LoadOrders();
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task LoadOrders()
+    {
+        _orders = await OrderingService.GetOrdersAsync();
+        _loading = false;
+    }
+
+    private async Task CancelOrder(string id)
+    {
+        await OrderingService.CancelOrderAsync(id);
+        await LoadOrders();
+    }
+
+    private static string StatusLabel(OrderStatus s) => s switch
+    {
+        OrderStatus.PENDING          => "Pending",
+        OrderStatus.CONFIRMED        => "Confirmed",
+        OrderStatus.PREPARING        => "Preparing",
+        OrderStatus.OUT_FOR_DELIVERY => "On the way",
+        OrderStatus.DELIVERED        => "Delivered",
+        OrderStatus.CANCELLED        => "Cancelled",
+        _                            => s.ToString()
+    };
+
+    private static string StatusBadgeClass(OrderStatus s) => s switch
+    {
+        OrderStatus.PENDING          => "bg-yellow-100 text-yellow-800",
+        OrderStatus.CONFIRMED        => "bg-blue-100 text-blue-800",
+        OrderStatus.PREPARING        => "bg-orange-100 text-orange-800",
+        OrderStatus.OUT_FOR_DELIVERY => "bg-indigo-100 text-indigo-800",
+        OrderStatus.DELIVERED        => "bg-green-100 text-green-800",
+        OrderStatus.CANCELLED        => "bg-red-100 text-red-800",
+        _                            => "bg-gray-100 text-gray-800"
+    };
+
+    public async ValueTask DisposeAsync()
+    {
+        _timer?.Dispose();
+        _timer = null;
+        await Task.CompletedTask;
+    }
+}

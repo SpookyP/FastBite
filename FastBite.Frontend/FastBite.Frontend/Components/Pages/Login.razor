@@ -1,0 +1,96 @@
+@page "/login"
+@using FastBite.Models
+@using FastBite.Services
+@inject IdentityService IdentityService
+@inject AuthState Auth
+@inject NavigationManager Nav
+
+<PageTitle>Sign in — FastBite</PageTitle>
+
+<div class="flex min-h-screen items-center justify-center bg-orange-50 px-4 py-12">
+    <div class="w-full max-w-md">
+
+        <div class="mb-8 flex flex-col items-center gap-2 text-center">
+            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-600 text-3xl shadow-lg">
+                🍽️
+            </div>
+            <h1 class="text-3xl font-bold text-orange-600" style="font-family: Poppins, sans-serif;">FastBite</h1>
+            <p class="text-gray-500">Good food, fast delivery.</p>
+        </div>
+
+        <div class="rounded-2xl bg-white p-8 shadow-xl">
+            <h2 class="mb-1 text-2xl font-bold">Sign in</h2>
+            <p class="mb-6 text-sm text-gray-500">
+                Demo: <strong>demo&#64;fastbite.com</strong> / <strong>password</strong>
+            </p>
+
+            <EditForm Model="@_model" OnValidSubmit="HandleLogin">
+                <DataAnnotationsValidator />
+
+                @if (!string.IsNullOrEmpty(_error))
+                {
+                    <div class="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">@_error</div>
+                }
+
+                <div class="mb-4 flex flex-col gap-1.5">
+                    <label class="text-sm font-medium">Email</label>
+                    <InputText @bind-Value="_model.Email" type="email"
+                               class="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                               placeholder="you@example.com" />
+                    <ValidationMessage For="@(() => _model.Email)" class="text-xs text-red-500" />
+                </div>
+
+                <div class="mb-6 flex flex-col gap-1.5">
+                    <label class="text-sm font-medium">Password</label>
+                    <InputText @bind-Value="_model.Password" type="password"
+                               class="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                               placeholder="••••••••" />
+                    <ValidationMessage For="@(() => _model.Password)" class="text-xs text-red-500" />
+                </div>
+
+                <button type="submit" disabled="@_loading"
+                        class="w-full rounded-lg bg-orange-600 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60">
+                    @(_loading ? "Signing in…" : "Sign in")
+                </button>
+            </EditForm>
+
+            <p class="mt-6 text-center text-sm text-gray-500">
+                Don't have an account?
+                <a href="/register" class="font-medium text-orange-600 hover:underline">Create one</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromQuery] public string? ReturnUrl { get; set; }
+
+    private readonly LoginPayload _model = new()
+    {
+        Email = "demo@fastbite.com",
+        Password = "password"
+    };
+
+    private bool _loading;
+    private string? _error;
+
+    private async Task HandleLogin()
+    {
+        _loading = true;
+        _error = null;
+        try
+        {
+            var result = await IdentityService.LoginAsync(_model);
+            Auth.SetUser(result.User, result.Token);
+            Nav.NavigateTo(ReturnUrl ?? "/");
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+}

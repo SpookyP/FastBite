@@ -1,0 +1,175 @@
+@page "/orders/{Id}"
+@using FastBite.Models
+@using FastBite.Services
+@inject OrderingService OrderingService
+@inject NavigationManager Nav
+@implements IAsyncDisposable
+
+<PageTitle>Order @Id — FastBite</PageTitle>
+
+@if (_loading)
+{
+    <div class="flex h-64 items-center justify-center">
+        <div class="h-8 w-8 animate-spin rounded-full border-4 border-orange-600 border-t-transparent"></div>
+    </div>
+}
+else if (_order is not null)
+{
+    bool active = _order.Status != OrderStatus.DELIVERED && _order.Status != OrderStatus.CANCELLED;
+
+    <div class="mx-auto max-w-2xl px-4 py-8">
+        <a href="/orders" class="mb-4 inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800">
+            ← Back to orders
+        </a>
+
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+            <div>
+                <h1 class="text-2xl font-bold">Order @_order.Id</h1>
+                <p class="mt-0.5 text-sm text-gray-500">
+                    Placed @_order.CreatedAt.ToLocalTime().ToString("g")
+                </p>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="@StatusBadgeClass(_order.Status) rounded-full px-3 py-1 text-xs font-medium">
+                    @StatusLabel(_order.Status)
+                </span>
+                <button @onclick="LoadOrder"
+                        class="rounded-lg border border-gray-200 p-1.5 text-gray-400 hover:bg-gray-50"
+                        title="Refresh">
+                    🔄
+                </button>
+            </div>
+        </div>
+
+        <!-- Tracker -->
+        <div class="mb-4 rounded-xl border bg-white p-5 shadow-sm">
+            <OrderTracker Status="@_order.Status" />
+            @if (active)
+            {
+                <p class="mt-4 text-center text-sm text-gray-400">
+                    🕐 Estimated delivery in ~@_order.EstimatedMinutes minutes. Updates every 10 s.
+                </p>
+            }
+        </div>
+
+        <!-- Address -->
+        <div class="mb-4 flex items-start gap-3 rounded-xl border bg-white p-5 shadow-sm">
+            <span class="mt-0.5 text-xl">📍</span>
+            <div>
+                <p class="font-medium">Delivery address</p>
+                <p class="text-sm text-gray-500">@_order.DeliveryAddress</p>
+            </div>
+        </div>
+
+        <!-- Items + totals -->
+        <div class="rounded-xl border bg-white p-5 shadow-sm">
+            <h2 class="mb-3 font-semibold">Items ordered</h2>
+            <div class="mb-3 flex flex-col gap-2 text-sm">
+                @foreach (var line in _order.Lines)
+                {
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">@line.Name × @line.Quantity</span>
+                        <span>@((line.Price * line.Quantity).ToString("C"))</span>
+                    </div>
+                }
+            </div>
+            <hr class="mb-3" />
+            <div class="mb-2 flex justify-between text-sm">
+                <span class="text-gray-500">Subtotal</span>
+                <span>@_order.Subtotal.ToString("C")</span>
+            </div>
+            <div class="mb-2 flex justify-between text-sm">
+                <span class="text-gray-500">Delivery</span>
+                @if (_order.DeliveryFee == 0)
+                {
+                    <span class="font-medium text-orange-600">Free</span>
+                }
+                else
+                {
+                    <span>@_order.DeliveryFee.ToString("C")</span>
+                }
+            </div>
+            <hr class="mb-3" />
+            <div class="mb-4 flex justify-between font-semibold">
+                <span>Total</span>
+                <span class="text-orange-600">@_order.Total.ToString("C")</span>
+            </div>
+
+            @if (active)
+            {
+                <button @onclick="CancelOrder" disabled="@_cancelling"
+                        class="w-full rounded-lg border border-red-200 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-60">
+                    @(_cancelling ? "Cancelling…" : "Cancel order")
+                </button>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public string Id { get; set; } = "";
+
+    private Order? _order;
+    private bool _loading = true;
+    private bool _cancelling;
+    private PeriodicTimer? _timer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadOrder();
+        _timer = new PeriodicTimer(TimeSpan.FromSeconds(10));
+        _ = PollAsync();
+    }
+
+    private async Task PollAsync()
+    {
+        while (_timer is not null && await _timer.WaitForNextTickAsync())
+        {
+            await LoadOrder();
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task LoadOrder()
+    {
+        _order = await OrderingService.GetOrderAsync(Id);
+        if (_order is null) Nav.NavigateTo("/orders", replace: true);
+        _loading = false;
+    }
+
+    private async Task CancelOrder()
+    {
+        _cancelling = true;
+        _order = await OrderingService.CancelOrderAsync(Id);
+        _cancelling = false;
+    }
+
+    private static string StatusLabel(OrderStatus s) => s switch
+    {
+        OrderStatus.PENDING          => "Pending",
+        OrderStatus.CONFIRMED        => "Confirmed",
+        OrderStatus.PREPARING        => "Preparing",
+        OrderStatus.OUT_FOR_DELIVERY => "On the way",
+        OrderStatus.DELIVERED        => "Delivered",
+        OrderStatus.CANCELLED        => "Cancelled",
+        _                            => s.ToString()
+    };
+
+    private static string StatusBadgeClass(OrderStatus s) => s switch
+    {
+        OrderStatus.PENDING          => "bg-yellow-100 text-yellow-800",
+        OrderStatus.CONFIRMED        => "bg-blue-100 text-blue-800",
+        OrderStatus.PREPARING        => "bg-orange-100 text-orange-800",
+        OrderStatus.OUT_FOR_DELIVERY => "bg-indigo-100 text-indigo-800",
+        OrderStatus.DELIVERED        => "bg-green-100 text-green-800",
+        OrderStatus.CANCELLED        => "bg-red-100 text-red-800",
+        _                            => "bg-gray-100 text-gray-800"
+    };
+
+    public async ValueTask DisposeAsync()
+    {
+        _timer?.Dispose();
+        _timer = null;
+        await Task.CompletedTask;
+    }
+}
