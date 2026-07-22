@@ -12,8 +12,9 @@ namespace MenuCatalog.Application.IService
     {
         Task<MenuResponseDto> ObterPorIdAsync(int id);
         Task<IEnumerable<MenuResponseDto>> ObterTodosAsync();
-        Task<MenuResponseDto> AdicionarMenuAsync(Menu menu);
+        Task<MenuResponseDto> AdicionarMenuAsync(MenuCreateEditDto request);
         Task AtualizarMenuAsync(int id, MenuCreateEditDto request);
         Task RemoverMenuAsync(int id);
+        Task<bool> VerDisponibilidadeAsync(int id, int quantidade);
     }
 }
