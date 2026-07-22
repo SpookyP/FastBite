@@ -1,4 +1,5 @@
-﻿using MenuCatalog.Application.IService;
+﻿using MenuCatalog.Application.DTOs;
+using MenuCatalog.Application.IService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +13,7 @@ namespace MenuCatalog.Api.Controllers
 
 
         [HttpGet("ObterPorId")]
+        [AllowAnonymous]
         public async Task<IActionResult> ObterPorId(int id)
         {
             if (id <= 0)
@@ -30,6 +32,44 @@ namespace MenuCatalog.Api.Controllers
 
         }
 
+        [HttpGet("ObterTodos")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ObterTodos()
+        {
+            var menus = await _menuService.ObterTodosAsync();
+
+            return Ok(menus);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Adicionar([FromBody] MenuCreateEditDto menuCreateDto) //FromBody -> Lê o JSON que está dentro da "caixa" (O corpo do pedido HTTP) ex: { "nome": "Bife", "preco": 15.5 }
+        {
+
+            var menuCriado = await _menuService.AdicionarMenuAsync(menuCreateDto);
+
+            return CreatedAtAction(nameof(ObterPorId), new { id = menuCriado.Id }, menuCriado);
+        }
+
+        [HttpPut("Atualizar")]
+        public async Task<IActionResult> Atualizar(int id, [FromBody] MenuCreateEditDto menuUpdateDto)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("ID inválido.");
+            }
+
+            try
+            {
+                await _menuService.AtualizarMenuAsync(id, menuUpdateDto);
+
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex) 
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
         [HttpDelete("Eliminar")]
         //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> RemoverMenu(int id)
@@ -39,17 +79,19 @@ namespace MenuCatalog.Api.Controllers
                 return BadRequest("ID inválido. O ID deve ser maior do que zero.");
             }
 
-            var menuExistente = await _menuService.ObterPorIdAsync(id);
-            if (menuExistente == null)
+            try
             {
-                return NotFound("Menu não encontrado.");
+                await _menuService.RemoverMenuAsync(id);
+                return NoContent();
             }
-
-            await _menuService.RemoverMenuAsync(id);
-            return NoContent(); //204 - O servidor respondeu ao pedido, mas não retorna nenhum conteúdo.
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            } 
         }
 
         [HttpGet("VerDisponibilidade")]
+        [AllowAnonymous]
         public async Task<IActionResult> VerDisponibilidade(int id, [FromQuery] int quantidade) //FromQuery - 'ensina' o controller a ler tudo o que vem depois do ? no URL (?quantidade=5)
         {
             if (id <= 0 || quantidade <= 0)
