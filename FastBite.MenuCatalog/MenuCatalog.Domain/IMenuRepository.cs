@@ -14,5 +14,6 @@ namespace MenuCatalog.Domain
         Task<Menu> AddMenuAsync(Menu menu);
         Task<Menu> UpdateMenuAsync(Menu menu);
         Task<Menu> DeleteMenuAsync(int id);
+        Task<IEnumerable<Menu>> GetAvailableAsync();
     }
 }

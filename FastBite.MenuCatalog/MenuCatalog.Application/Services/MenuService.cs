@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using MenuCatalog.Application.DTOs;
+using MenuCatalog.Application.IService;
 using MenuCatalog.Domain;
 using MenuCatalog.Domain.Entities;
 
 namespace MenuCatalog.Application.Services
 {
-    public class MenuService
+    public class MenuService : IMenuService
     {
         private readonly IMenuRepository _menuRepository;
         private readonly IMapper _mapper;
@@ -18,10 +19,7 @@ namespace MenuCatalog.Application.Services
         public async Task<MenuResponseDto> ObterPorIdAsync(int id)
         {
             var menuId = await _menuRepository.GetByIdAsync(id);
-            if (menuId == null)
-            {
-                throw new Exception("Menu não encontrado");
-            }
+            
             return _mapper.Map<MenuResponseDto>(menuId);
         }
 
@@ -45,10 +43,7 @@ namespace MenuCatalog.Application.Services
         public async Task AtualizarMenuAsync(int id, MenuCreateEditDto request)
         {
             var menuExistente = await _menuRepository.GetByIdAsync(id);
-            if (menuExistente == null)
-            {
-                throw new Exception("Menu não encontrado");
-            }
+            
             _mapper.Map(request, menuExistente); // Atualizar as propriedades do menu existente com os valores do request
 
             await _menuRepository.UpdateMenuAsync(menuExistente);
@@ -74,6 +69,12 @@ namespace MenuCatalog.Application.Services
             }
 
             return false;
+        }
+        public async Task<IEnumerable<MenuResponseDto>> ObterPratosDisponiveisAsync()
+        {
+            var pratosDisponiveis = await _menuRepository.GetAvailableAsync();
+
+            return _mapper.Map<IEnumerable<MenuResponseDto>>(pratosDisponiveis);
         }
     }
 }

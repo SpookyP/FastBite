@@ -57,5 +57,11 @@ namespace MenuCatalog.Infrastructure.Repositories
 
             return menuParaApagar;
         }
+        public async Task<IEnumerable<Menu>> GetAvailableAsync()
+        {
+            return await _context.Menus
+                                 .Where(m => m.LimiteDiario > 0)
+                                 .ToListAsync();
+        }
     }
 }
