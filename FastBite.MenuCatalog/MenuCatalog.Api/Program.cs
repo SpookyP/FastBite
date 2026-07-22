@@ -42,7 +42,6 @@ public class Program
             config.AddMaps(typeof(MenuProfile).Assembly);
         });
 
-
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
