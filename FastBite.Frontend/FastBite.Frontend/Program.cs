@@ -1,3 +1,4 @@
+            app.MapRazorComponents<App>()
 using FastBite.Frontend.Components;
 using FastBite.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
