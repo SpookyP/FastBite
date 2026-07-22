@@ -71,7 +71,7 @@ namespace MenuCatalog.Api.Controllers
         }
 
         [HttpDelete("Eliminar")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RemoverMenu(int id)
         {
             if (id <= 0)
