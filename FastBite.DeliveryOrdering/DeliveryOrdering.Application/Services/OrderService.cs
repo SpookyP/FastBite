@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace DeliveryOrdering.Application.Services
 {
-    public class PedidoService : IPedido
+    public class OrderService : IOrder
     {
         private readonly IMenuCatalogService _catalogService;
         private readonly IOrderRepository _orderRepository;
 
         // Construtor da classe PedidoService, que recebe as dependências necessárias
-        public PedidoService(IMenuCatalogService catalogService, IOrderRepository orderRepository)
+        public OrderService(IMenuCatalogService catalogService, IOrderRepository orderRepository)
         {
             _catalogService = catalogService;
             _orderRepository = orderRepository;
