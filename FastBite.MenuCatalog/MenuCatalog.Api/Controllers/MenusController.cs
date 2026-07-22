@@ -1,4 +1,5 @@
-﻿using MenuCatalog.Infrastructure.Data;
+﻿using MenuCatalog.Application.IService;
+using MenuCatalog.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -50,5 +51,19 @@ namespace MenuCatalog.Api.Controllers
             await _menuService.RemoverMenuAsync(id);
             return NoContent(); //204 - O servidor respondeu ao pedido, mas não retorna nenhum conteúdo.
         }
+
+        [HttpGet("VerDisponibilidade")]
+        public async Task<IActionResult> VerDisponibilidade(int id, [FromQuery] int quantidade) //FromQuery - 'ensina' o controller a ler tudo o que vem depois do ? no URL (?quantidade=5)
+        {
+            if (id <= 0 || quantidade <= 0)
+            {
+                return BadRequest("O ID do prato e a quantidade devem ser maiores que zero.");
+            }
+
+            var qntDisponivel = await _menuService.VerDisponibilidadeAsync(id, quantidade);
+
+            return Ok(qntDisponivel);
+        }
+        
     }
 }
