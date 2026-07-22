@@ -1,8 +1,6 @@
 ﻿using MenuCatalog.Application.IService;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.Design;
 
 namespace MenuCatalog.Api.Controllers
 {
@@ -33,7 +31,7 @@ namespace MenuCatalog.Api.Controllers
         }
 
         [HttpDelete("Eliminar")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> RemoverMenu(int id)
         {
             if (id <= 0)

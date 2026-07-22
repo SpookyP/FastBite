@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using MenuCatalog.Application.DTOs;
 using MenuCatalog.Domain.Entities;
 
 
 namespace MenuCatalog.Application.Mapping
 {
-    public class MenuProfile:Profile
+    public class MenuProfile : Profile
     {
         public MenuProfile()
         {
@@ -26,7 +21,7 @@ namespace MenuCatalog.Application.Mapping
                 .ForMember(dest => dest.Alergenios,
                     opt => opt.MapFrom(src => src.Alergenios))
                 .ForMember(dest => dest.PrecoBase,
-                    opt => opt.MapFrom(src => $"{src.PrecoBase} €"))
+                    opt => opt.MapFrom(src => src.PrecoBase))
                 .ForMember(dest => dest.LimiteDiario,
                     opt => opt.MapFrom(src => src.LimiteDiario));
         }
