@@ -59,11 +59,9 @@ namespace DeliveryOrdering
 
 
             builder.Services.AddAutoMapper(config =>
-
             {
-
-                config.AddMaps(typeof(OrderProfile).Assembly); // Regista todos os Profiles de AutoMapper no assembly atual            }); // Regista todos os Profiles de AutoMapper no assembly atual
-            } );
+                config.AddMaps(typeof(OrderProfile).Assembly); // Regista todos os Profiles de AutoMapper no assembly atual
+            });
 
             var app = builder.Build();
 
