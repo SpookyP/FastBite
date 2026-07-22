@@ -1,0 +1,138 @@
+@page "/"
+@using FastBite.Models
+@using FastBite.Services
+@inject CatalogService CatalogService
+
+<PageTitle>Menu — FastBite</PageTitle>
+
+<div class="mx-auto max-w-6xl px-4 py-8">
+
+    <!-- Hero -->
+    <div class="mb-8 overflow-hidden rounded-2xl bg-gradient-to-br from-orange-600 via-orange-500 to-amber-400 px-8 py-10 text-white shadow-lg">
+        <h1 class="text-4xl font-bold leading-tight" style="font-family: Poppins, sans-serif;">
+            What are you<br />craving today? 🍽️
+        </h1>
+        <p class="mt-2 text-white/80">Fresh ingredients · Fast delivery · Happy eating</p>
+    </div>
+
+    <!-- Search -->
+    <div class="relative mb-6">
+        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+        <input @bind:event="oninput" @oninput="OnSearchChanged"
+               class="h-12 w-full rounded-xl border border-gray-200 bg-white pl-11 pr-4 text-sm outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+               placeholder="Search burgers, pizza, sushi…" />
+    </div>
+
+    <!-- Category pills -->
+    <div class="mb-6 flex gap-2 overflow-x-auto pb-2">
+        @if (_categories is null)
+        {
+            @for (int i = 0; i < 7; i++)
+            {
+                <div class="h-9 w-20 shrink-0 animate-pulse rounded-full bg-gray-200"></div>
+            }
+        }
+        else
+        {
+            @foreach (var cat in _categories)
+            {
+                var catId = cat.Id;
+                <button @onclick="() => SelectCategory(catId)"
+                        class="@(_activeCat == cat.Id
+                            ? "border-orange-600 bg-orange-600 text-white"
+                            : "border-gray-200 bg-white text-gray-700 hover:bg-orange-50")
+                               flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-1.5 text-sm font-medium transition-colors">
+                    @cat.Icon @cat.Name
+                </button>
+            }
+        }
+    </div>
+
+    <!-- Results count -->
+    @if (_items is not null)
+    {
+        <div class="mb-4 flex items-center gap-2">
+            <h2 class="text-lg font-semibold">
+                @(string.IsNullOrEmpty(_search)
+                    ? (_categories?.FirstOrDefault(c => c.Id == _activeCat)?.Name ?? "All")
+                    : $"Results for \"{_search}\"")
+            </h2>
+            <span class="rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-medium text-orange-700">
+                @_items.Count items
+            </span>
+        </div>
+    }
+
+    <!-- Grid -->
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        @if (_items is null)
+        {
+            @for (int i = 0; i < 8; i++)
+            {
+                <div class="overflow-hidden rounded-xl border bg-white">
+                    <div class="h-44 w-full animate-pulse bg-gray-200"></div>
+                    <div class="flex flex-col gap-2 p-4">
+                        <div class="h-5 w-3/4 animate-pulse rounded bg-gray-200"></div>
+                        <div class="h-4 w-full animate-pulse rounded bg-gray-200"></div>
+                        <div class="mt-2 h-9 w-full animate-pulse rounded bg-gray-200"></div>
+                    </div>
+                </div>
+            }
+        }
+        else if (_items.Count == 0)
+        {
+            <div class="col-span-full flex flex-col items-center gap-3 py-20 text-gray-400">
+                <span class="text-5xl">🫙</span>
+                <p class="text-lg font-medium">No items found</p>
+                <p class="text-sm">Try a different category or search term.</p>
+            </div>
+        }
+        else
+        {
+            @foreach (var item in _items)
+            {
+                <ItemCard Item="@item" />
+            }
+        }
+    </div>
+</div>
+
+@code {
+    private List<Category>? _categories;
+    private List<MenuItem>? _items;
+    private string _activeCat = "all";
+    private string _search = "";
+    private CancellationTokenSource? _debounce;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _categories = await CatalogService.GetCategoriesAsync();
+        await LoadItems();
+    }
+
+    private async Task SelectCategory(string catId)
+    {
+        _activeCat = catId;
+        await LoadItems();
+    }
+
+    private async Task OnSearchChanged(ChangeEventArgs e)
+    {
+        _search = e.Value?.ToString() ?? "";
+        _debounce?.Cancel();
+        _debounce = new CancellationTokenSource();
+        try
+        {
+            await Task.Delay(300, _debounce.Token);
+            await LoadItems();
+        }
+        catch (TaskCanceledException) { }
+    }
+
+    private async Task LoadItems()
+    {
+        _items = null;
+        StateHasChanged();
+        _items = await CatalogService.GetItemsAsync(_activeCat, _search);
+    }
+}

@@ -1,0 +1,47 @@
+@using FastBite.Models
+
+@if (Status == OrderStatus.CANCELLED)
+{
+    <div class="flex items-center gap-2 rounded-lg bg-red-50 p-4 text-red-600">
+        ❌ <span>This order was cancelled.</span>
+    </div>
+}
+else
+{
+    <div class="flex items-start justify-between">
+        @foreach (var (step, index) in Steps.Select((s, i) => (s, i)))
+        {
+            bool done = index <= CurrentIndex;
+            bool active = index == CurrentIndex;
+
+            <div class="flex flex-1 flex-col items-center text-center">
+                <div class="flex w-full items-center">
+                    <div class="@(index == 0 ? "bg-transparent" : done ? "bg-orange-600" : "bg-gray-200") h-1 flex-1 rounded transition-colors"></div>
+                    <div class="@(done ? "bg-orange-600 text-white" : "bg-gray-100 text-gray-400") @(active ? "ring-4 ring-orange-200" : "") flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm transition-colors">
+                        @step.Icon
+                    </div>
+                    <div class="@(index == Steps.Count - 1 ? "bg-transparent" : index < CurrentIndex ? "bg-orange-600" : "bg-gray-200") h-1 flex-1 rounded transition-colors"></div>
+                </div>
+                <span class="@(done ? "text-gray-800" : "text-gray-400") mt-2 text-xs">@step.Label</span>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    [Parameter, EditorRequired] public OrderStatus Status { get; set; }
+
+    record StepInfo(OrderStatus Value, string Label, string Icon);
+
+    private static readonly List<StepInfo> Steps =
+    [
+        new(OrderStatus.PENDING,          "Placed",     "🕐"),
+        new(OrderStatus.CONFIRMED,        "Confirmed",  "✅"),
+        new(OrderStatus.PREPARING,        "Preparing",  "👨‍🍳"),
+        new(OrderStatus.OUT_FOR_DELIVERY, "On the way", "🚴"),
+        new(OrderStatus.DELIVERED,        "Delivered",  "🎉"),
+    ];
+
+    private int CurrentIndex =>
+        Math.Max(0, Steps.FindIndex(s => s.Value == Status));
+}

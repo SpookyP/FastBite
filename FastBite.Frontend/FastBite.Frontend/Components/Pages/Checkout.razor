@@ -1,0 +1,183 @@
+@page "/checkout"
+@using FastBite.Models
+@using FastBite.Services
+@inject CartState Cart
+@inject AuthState Auth
+@inject OrderingService OrderingService
+@inject NavigationManager Nav
+
+<PageTitle>Checkout — FastBite</PageTitle>
+
+<div class="mx-auto max-w-4xl px-4 py-8">
+    <div class="mb-2 flex items-center gap-2 text-sm text-gray-400">
+        <a href="/cart" class="hover:text-gray-600">Cart</a>
+        <span>›</span>
+        <span class="font-medium text-gray-800">Checkout</span>
+    </div>
+    <h1 class="mb-6 text-3xl font-bold">Checkout</h1>
+
+    <EditForm Model="@this" OnValidSubmit="PlaceOrder">
+        <div class="flex flex-col gap-6 lg:flex-row">
+
+            <!-- Left -->
+            <div class="flex flex-1 flex-col gap-5">
+
+                <!-- Delivery address -->
+                <div class="rounded-xl border bg-white p-5 shadow-sm">
+                    <div class="mb-4 flex items-center gap-2">
+                        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-orange-600 text-white text-sm">📍</div>
+                        <h2 class="text-lg font-semibold">Delivery address</h2>
+                    </div>
+                    <input @bind="_address"
+                           class="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                           placeholder="123 Main Street, City" required />
+                </div>
+
+                <!-- Payment -->
+                <div class="rounded-xl border bg-white p-5 shadow-sm">
+                    <div class="mb-4 flex items-center gap-2">
+                        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-orange-600 text-white text-sm">💳</div>
+                        <h2 class="text-lg font-semibold">Payment method</h2>
+                    </div>
+                    <div class="flex flex-col gap-3">
+                        @foreach (var method in _paymentMethods)
+                        {
+                            var m = method;
+                            <label class="@(_payment == m.Value
+                                ? "border-orange-500 bg-orange-50"
+                                : "border-gray-200 hover:bg-gray-50")
+                                       flex cursor-pointer items-center gap-3 rounded-xl border p-4 transition-colors">
+                                <input type="radio" name="payment" value="@m.Value"
+                                       checked="@(_payment == m.Value)"
+                                       @onchange="() => _payment = m.Value"
+                                       class="accent-orange-600" />
+                                <span>@m.Icon</span>
+                                <span class="text-sm font-medium">@m.Label</span>
+                            </label>
+                        }
+                    </div>
+
+                    @if (_payment == "card")
+                    {
+                        <div class="mt-4 flex flex-col gap-1.5">
+                            <label class="text-sm font-medium">Card number</label>
+                            <input @bind="_cardNumber"
+                                   class="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm outline-none focus:border-orange-500"
+                                   placeholder="•••• •••• •••• ••••" maxlength="19" />
+                            <p class="text-xs text-gray-400">Demo — no real payment processed.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Right — summary -->
+            <div class="w-full lg:w-80">
+                <div class="sticky top-20 rounded-xl border bg-white p-5 shadow-sm">
+                    <h2 class="mb-4 text-lg font-semibold">🛍️ @(Cart.Count) items</h2>
+                    <hr class="mb-3" />
+                    <div class="mb-3 flex flex-col gap-2 text-sm">
+                        @foreach (var ci in Cart.Items)
+                        {
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">@ci.Item.Name × @ci.Quantity</span>
+                                <span>@((ci.Item.Price * ci.Quantity).ToString("C"))</span>
+                            </div>
+                        }
+                    </div>
+                    <hr class="mb-3" />
+                    <div class="mb-2 flex justify-between text-sm">
+                        <span class="text-gray-500">Subtotal</span>
+                        <span>@Cart.Subtotal.ToString("C")</span>
+                    </div>
+                    <div class="mb-2 flex justify-between text-sm">
+                        <span class="text-gray-500">Delivery</span>
+                        @if (DeliveryFee == 0)
+                        {
+                            <span class="font-medium text-orange-600">Free</span>
+                        }
+                        else
+                        {
+                            <span>@DeliveryFee.ToString("C")</span>
+                        }
+                    </div>
+                    <hr class="mb-3" />
+                    <div class="mb-4 flex justify-between font-semibold">
+                        <span>Total</span>
+                        <span class="text-orange-600">@Total.ToString("C")</span>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(_error))
+                    {
+                        <div class="mb-3 rounded-lg bg-red-50 p-3 text-sm text-red-600">@_error</div>
+                    }
+
+                    <button type="submit" disabled="@_loading"
+                            class="w-full rounded-lg bg-orange-600 py-3 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-60">
+                        @(_loading ? "Placing order…" : "Place order")
+                    </button>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    private string _address = "";
+    private string _payment = "card";
+    private string _cardNumber = "";
+    private bool _loading;
+    private string? _error;
+
+    private const decimal FreeDeliveryThreshold = 25m;
+    private decimal DeliveryFee => Cart.Subtotal >= FreeDeliveryThreshold ? 0m : 2.99m;
+    private decimal Total => Cart.Subtotal + DeliveryFee;
+
+    record PaymentMethod(string Value, string Label, string Icon);
+    private readonly List<PaymentMethod> _paymentMethods =
+    [
+        new("card",  "Credit / Debit card", "💳"),
+        new("cash",  "Cash on delivery",    "💵"),
+        new("mbway", "MB WAY",              "📱"),
+    ];
+
+    protected override void OnInitialized()
+    {
+        if (Auth.User?.Address is { } addr) _address = addr;
+    }
+
+    private async Task PlaceOrder()
+    {
+        if (string.IsNullOrWhiteSpace(_address))
+        {
+            _error = "Please enter a delivery address.";
+            return;
+        }
+        _loading = true;
+        _error = null;
+        try
+        {
+            var order = await OrderingService.CreateOrderAsync(new CreateOrderPayload
+            {
+                Lines = Cart.Items.Select(ci => new OrderLine
+                {
+                    ItemId   = ci.Item.Id,
+                    Name     = ci.Item.Name,
+                    Price    = ci.Item.Price,
+                    Quantity = ci.Quantity
+                }).ToList(),
+                DeliveryAddress = _address,
+                PaymentMethod   = _payment
+            });
+            Cart.Clear();
+            Nav.NavigateTo($"/orders/{order.Id}");
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+}
