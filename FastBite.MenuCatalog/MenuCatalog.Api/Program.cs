@@ -21,7 +21,6 @@ public class Program
         // Configurações do Swagger / OpenAPI
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-        builder.Services.AddOpenApi();
 
         // Configuração do AutoMapper
         builder.Services.AddAutoMapper(config =>
@@ -67,7 +66,6 @@ public class Program
 
         if (app.Environment.IsDevelopment())
         {
-            app.MapOpenApi();
             app.UseSwagger();
             app.UseSwaggerUI();
         }
