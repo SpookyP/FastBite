@@ -1,4 +1,5 @@
 using DeliveryOrdering.Application.Interfaces;
+using DeliveryOrdering.Application.Profile;
 using DeliveryOrdering.Application.Services;
 using DeliveryOrdering.Domain.Interfaces;
 using DeliveryOrdering.Infrastructure.Data;
@@ -37,9 +38,13 @@ namespace DeliveryOrdering
 
             // Registo dos Repositórios e Serviços da Aplicação
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-            builder.Services.AddScoped<IPedido, PedidoService>();
+            builder.Services.AddScoped<IOrder, OrderService>();
             builder.Services.AddScoped<IMenuCatalogService, MenuCatalogService>();
 
+            builder.Services.AddAutoMapper(config =>
+            {
+                config.AddMaps(typeof(OrderProfile).Assembly); // Regista todos os Profiles de AutoMapper no assembly atual
+            }); // Regista todos os Profiles de AutoMapper no assembly atual
 
             var app = builder.Build();
 

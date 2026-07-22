@@ -12,9 +12,9 @@ namespace DeliveryOrdering.Controllers
     [Authorize]
     public class OrderController : ControllerBase
     {
-        private readonly IPedido _pedidoService;
+        private readonly IOrder _pedidoService;
 
-        public OrderController(IPedido pedidoService)
+        public OrderController(IOrder pedidoService)
         {
             _pedidoService = pedidoService;
         }
