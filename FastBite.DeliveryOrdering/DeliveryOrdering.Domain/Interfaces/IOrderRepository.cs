@@ -10,7 +10,7 @@ namespace DeliveryOrdering.Domain.Interfaces
     public interface IOrderRepository
     {
         Task AdicionarAsync(Order order);   // Método para adicionar um pedido
-        Task<IEnumerable<Order>> ObterPorUserIdAsync(string userId);    // Método para obter pedidos por UserId
+        Task<IEnumerable<Order>> GetOrdersByUserIdAsync(string userId);         // Novo método para o GET
         Task SaveChangesAsync();    // Método para salvar as alterações
     }
 }
