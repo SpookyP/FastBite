@@ -1,3 +1,4 @@
+using MenuCatalog.Api.Middlewares;
 using MenuCatalog.Application.IService;
 using MenuCatalog.Application.Mapping; // Se o MenuProfile estiver aqui
 using MenuCatalog.Application.Services;
@@ -63,6 +64,8 @@ public class Program
         });
 
         var app = builder.Build();
+
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
 
         if (app.Environment.IsDevelopment())
         {

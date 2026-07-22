@@ -58,16 +58,10 @@ namespace MenuCatalog.Api.Controllers
                 return BadRequest("ID inválido.");
             }
 
-            try
-            {
-                await _menuService.AtualizarMenuAsync(id, menuUpdateDto);
+            await _menuService.AtualizarMenuAsync(id, menuUpdateDto);
 
-                return NoContent();
-            }
-            catch (KeyNotFoundException ex) 
-            {
-                return NotFound(ex.Message);
-            }
+            return NoContent();
+            
         }
 
         [HttpDelete("Eliminar")]
@@ -79,15 +73,10 @@ namespace MenuCatalog.Api.Controllers
                 return BadRequest("ID inválido. O ID deve ser maior do que zero.");
             }
 
-            try
-            {
-                await _menuService.RemoverMenuAsync(id);
-                return NoContent();
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            } 
+            
+            await _menuService.RemoverMenuAsync(id);
+
+            return NoContent();
         }
 
         [HttpGet("VerDisponibilidade")]
