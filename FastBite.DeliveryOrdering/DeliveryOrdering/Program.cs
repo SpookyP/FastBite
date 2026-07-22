@@ -1,4 +1,3 @@
-
 using DeliveryOrdering.Application.Interfaces;
 using DeliveryOrdering.Application.Services;
 using DeliveryOrdering.Domain.Interfaces;
@@ -43,6 +42,9 @@ namespace DeliveryOrdering
 
 
             var app = builder.Build();
+
+            // Ativa o teu Middleware global de tratamento de erros
+            app.UseMiddleware<DeliveryOrdering.API.Middlewares.GlobalExceptionHandlerMiddleware>();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
