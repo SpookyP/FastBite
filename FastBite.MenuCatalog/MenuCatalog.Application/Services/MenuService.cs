@@ -43,7 +43,12 @@ namespace MenuCatalog.Application.Services
         public async Task AtualizarMenuAsync(int id, MenuCreateEditDto request)
         {
             var menuExistente = await _menuRepository.GetByIdAsync(id);
-            
+
+            if (menuExistente == null)
+            {
+                throw new KeyNotFoundException($"O menu com o ID {id} não foi encontrado.");
+            }
+
             _mapper.Map(request, menuExistente); // Atualizar as propriedades do menu existente com os valores do request
 
             await _menuRepository.UpdateMenuAsync(menuExistente);
@@ -51,6 +56,13 @@ namespace MenuCatalog.Application.Services
 
         public async Task RemoverMenuAsync(int id)
         {
+            var menuExistente = await _menuRepository.GetByIdAsync(id);
+
+            if (menuExistente == null)
+            {
+                throw new KeyNotFoundException($"O menu com o ID {id} não foi encontrado.");
+            }
+
             await _menuRepository.DeleteMenuAsync(id);
         }
 
@@ -70,6 +82,7 @@ namespace MenuCatalog.Application.Services
 
             return false;
         }
+
         public async Task<IEnumerable<MenuResponseDto>> ObterPratosDisponiveisAsync()
         {
             var pratosDisponiveis = await _menuRepository.GetAvailableAsync();
