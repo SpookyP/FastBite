@@ -16,18 +16,18 @@ namespace DeliveryOrdering
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddAuthentication("Bearer")
-            .AddJwtBearer("Bearer", options =>
-            {
-                options.Authority = "https://localhost:7281";
-                options.RequireHttpsMetadata = false;
-
-                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                .AddJwtBearer("Bearer", options =>
                 {
-                    ValidateAudience = true,
-                    ValidateIssuer = true,
-                    ValidAudience = "fastbite.order"
-                };
-            });
+                    options.Authority = "https://localhost:7281";
+                    options.RequireHttpsMetadata = false;
+
+                    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                    {
+                        ValidateAudience = true,
+                        ValidateIssuer = true,
+                        ValidAudience = "fastbite.order"
+                    };
+                });
 
             builder.Services.AddAuthorization(options =>
             {
@@ -38,39 +38,36 @@ namespace DeliveryOrdering
                 });
             });
 
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
-
-
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
 
             builder.Services.AddHttpClient();
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.Authority = "https://localhost:5001"; // URL
-                });
+
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // Registo dos Repositórios e Serviços da Aplicação
+
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+
             builder.Services.AddScoped<IOrder, OrderService>();
+
             builder.Services.AddScoped<IMenuCatalogService, MenuCatalogService>();
 
+
             builder.Services.AddAutoMapper(config =>
+
             {
-                config.AddMaps(typeof(OrderProfile).Assembly); // Regista todos os Profiles de AutoMapper no assembly atual
-            }); // Regista todos os Profiles de AutoMapper no assembly atual
+
+                config.AddMaps(typeof(OrderProfile).Assembly); // Regista todos os Profiles de AutoMapper no assembly atual            }); // Regista todos os Profiles de AutoMapper no assembly atual
+            } );
 
             var app = builder.Build();
 
-            // Ativa o teu Middleware global de tratamento de erros
-            app.UseMiddleware<DeliveryOrdering.API.Middlewares.GlobalExceptionHandlerMiddleware>();
+            app.UseMiddleware<API.Middlewares.GlobalExceptionHandlerMiddleware>();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
