@@ -10,7 +10,7 @@ namespace DeliveryOrdering.Application.Interfaces
 {
     public interface IOrder
     {
-        Task<Order?> CriarPedidoAsync(CreateOrderRequestDto dto, string userId);    // Método para criar um pedido
+        Task<OrderHistoryResponseDto?> CriarPedidoAsync(CreateOrderRequestDto dto, string userId);
 
         Task<IEnumerable<OrderHistoryResponseDto>> GetUserOrderHistoryAsync(string userId); // Método para obter histórico de pedidos por UserId
     }
