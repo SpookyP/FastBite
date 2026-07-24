@@ -18,14 +18,14 @@ namespace DeliveryOrdering
             builder.Services.AddAuthentication("Bearer")
                 .AddJwtBearer("Bearer", options =>
                 {
-                    options.Authority = "https://localhost:7281";
+                    options.Authority = builder.Configuration["JwtSettings:Issuer"];
                     options.RequireHttpsMetadata = false;
 
                     options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                     {
                         ValidateAudience = true,
                         ValidateIssuer = true,
-                        ValidAudience = "fastbite.order"
+                        ValidAudience = builder.Configuration["JwtSettings:Audience"],
                     };
                 });
 

@@ -35,8 +35,12 @@ namespace FastBite.Identity.Api.Data
                 },
             };
 
-        public static IEnumerable<Client> Clients =>
-            new Client[] {
+        public static IEnumerable<Client> GetClients(IConfiguration configuration)
+        {
+            var clientSecret = configuration["JwtSettings:Secret"];
+            int tokenLifetime = int.TryParse(configuration["JwtSettings:ExpirationInMinutes"], out var lifetime) ? lifetime * 60 : 3600;
+
+            return new Client[] {
                 new Client{
                     ClientId = "fastbite.frontend",
                     ClientName = "FastBite Online",
@@ -44,10 +48,12 @@ namespace FastBite.Identity.Api.Data
                     AllowedGrantTypes = GrantTypes.Code,
                     RequirePkce = true,
 
-                    ClientSecrets = { new Secret("FastBite@!CHavEsUpErsEcrEtA".Sha256())},
+                    ClientSecrets = { new Secret(clientSecret.Sha256())},
 
                     RedirectUris = {"https://localhost:7280/signin-oidc"},
                     PostLogoutRedirectUris = {"https://localhost:7280/signout-callback-oidc"},
+
+                    AccessTokenLifetime = tokenLifetime,
 
                     AllowedScopes =
                     {
@@ -66,13 +72,17 @@ namespace FastBite.Identity.Api.Data
                     ClientId = "api.client.test",
                     ClientName = "Postman Test Client",
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
-                    ClientSecrets = { new Secret("FastBite@!CHavEsUpErsEcrEtA".Sha256()) },
+                    ClientSecrets = { new Secret(clientSecret.Sha256()) },
+
+                    AccessTokenLifetime = tokenLifetime,
+
                     AllowedScopes =
                     {
                         "MenuCatalog.api.full",
                         "DeliveryOrdering.api.full"
                     }
                 }
-        };
+            };
+        }
     }
 }

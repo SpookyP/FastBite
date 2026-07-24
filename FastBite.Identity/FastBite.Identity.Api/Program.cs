@@ -32,7 +32,7 @@ namespace IdentityServer.Host
                 .AddInMemoryIdentityResources(Config.IdentityResources)
                 .AddInMemoryApiScopes(Config.ApiScopes)
                 .AddInMemoryApiResources(Config.ApiResources)
-                .AddInMemoryClients(Config.Clients)
+                .AddInMemoryClients(Config.GetClients(builder.Configuration))
                 .AddAspNetIdentity<IdentityUser>()
                 .AddDeveloperSigningCredential();
             
