@@ -42,14 +42,14 @@ public class Program
         builder.Services.AddAuthentication("Bearer")
             .AddJwtBearer("Bearer", options =>
             {
-                options.Authority = "https://localhost:7281";
+                options.Authority = builder.Configuration["JwtSettings:Issuer"];
                 options.RequireHttpsMetadata = false;
 
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateAudience = true,
                     ValidateIssuer = true,
-                    ValidAudience = "fastbite.menu"
+                    ValidAudience = builder.Configuration["JwtSettings:Audience"],
                 };
             });
 
