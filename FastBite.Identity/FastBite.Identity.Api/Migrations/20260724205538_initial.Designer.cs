@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FastBite.Identity.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260712152049_initial")]
+    [Migration("20260724205538_initial")]
     partial class initial
     {
         /// <inheritdoc />
