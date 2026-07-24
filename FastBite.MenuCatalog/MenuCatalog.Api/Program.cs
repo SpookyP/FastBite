@@ -50,13 +50,14 @@ public class Program
                     ValidateAudience = true,
                     ValidateIssuer = true,
                     ValidAudience = builder.Configuration["JwtSettings:Audience"],
+                    RoleClaimType = "role" // Configura o tipo de claim para roles
                 };
             });
 
         // Autorização (Validar as Regras/Policies)
         builder.Services.AddAuthorization(options =>
         {
-            options.AddPolicy("MenuAdminPolicy", policy =>
+            options.AddPolicy("MtoMPolicy", policy => //Política EXCLUSIVA para a Ordering.API conseguir falar com a MenuCatalog.API
             {
                 policy.RequireAuthenticatedUser();
                 policy.RequireClaim("scope", "MenuCatalog.api.full");

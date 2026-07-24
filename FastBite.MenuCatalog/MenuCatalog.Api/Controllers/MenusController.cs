@@ -13,7 +13,7 @@ namespace MenuCatalog.Api.Controllers
 
 
         [HttpGet("ObterPorId")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin,Client")]
         public async Task<IActionResult> ObterPorId(int id)
         {
             if (id <= 0)
@@ -33,7 +33,7 @@ namespace MenuCatalog.Api.Controllers
         }
 
         [HttpGet("ObterTodos")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin,Client")]
         public async Task<IActionResult> ObterTodos()
         {
             var menus = await _menuService.ObterTodosAsync();
@@ -42,6 +42,7 @@ namespace MenuCatalog.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Adicionar([FromBody] MenuCreateEditDto menuCreateDto) //FromBody -> Lê o JSON que está dentro da "caixa" (O corpo do pedido HTTP) ex: { "nome": "Bife", "preco": 15.5 }
         {
 
@@ -51,6 +52,7 @@ namespace MenuCatalog.Api.Controllers
         }
 
         [HttpPut("Atualizar")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Atualizar(int id, [FromBody] MenuCreateEditDto menuUpdateDto)
         {
             if (id <= 0)
@@ -61,11 +63,11 @@ namespace MenuCatalog.Api.Controllers
             await _menuService.AtualizarMenuAsync(id, menuUpdateDto);
 
             return NoContent();
-            
+
         }
 
         [HttpDelete("Eliminar")]
-        [Authorize(Policy = "MenuAdminPolicy")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RemoverMenu(int id)
         {
             if (id <= 0)
@@ -73,7 +75,7 @@ namespace MenuCatalog.Api.Controllers
                 return BadRequest("ID inválido. O ID deve ser maior do que zero.");
             }
 
-            
+
             await _menuService.RemoverMenuAsync(id);
 
             return NoContent();
