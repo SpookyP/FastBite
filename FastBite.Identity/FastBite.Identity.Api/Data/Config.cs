@@ -42,16 +42,12 @@ namespace FastBite.Identity.Api.Data
 
             return new Client[] {
                 new Client{
-                    ClientId = "fastbite.frontend",
-                    ClientName = "FastBite Online",
+                    ClientId = "api.test.user",
+                    ClientName = "Bruno User CLient",
 
-                    AllowedGrantTypes = GrantTypes.Code,
-                    RequirePkce = true,
+                    AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
 
                     ClientSecrets = { new Secret(clientSecret.Sha256())},
-
-                    RedirectUris = {"https://localhost:7280/signin-oidc"},
-                    PostLogoutRedirectUris = {"https://localhost:7280/signout-callback-oidc"},
 
                     AccessTokenLifetime = tokenLifetime,
 
@@ -70,7 +66,7 @@ namespace FastBite.Identity.Api.Data
                 new Client
                 {
                     ClientId = "api.client.test",
-                    ClientName = "Postman Test Client",
+                    ClientName = "Bruno Test Client",
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
                     ClientSecrets = { new Secret(clientSecret.Sha256()) },
 
