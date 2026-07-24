@@ -37,10 +37,37 @@ namespace FastBite.Identity.Api.Data
 
         public static IEnumerable<Client> GetClients(IConfiguration configuration)
         {
-            var clientSecret = configuration["JwtSettings:Secret"];
+            var clientSecret = configuration["JwtSettings:Secret"] ?? throw new InvalidOperationException("Client secret is missing from configuration!");
+            var redirectUris = configuration["JwtSettings:RedirectUri"] ?? throw new InvalidOperationException("RedirectUri is missing from configuration!");
+            var postLogoutRedirectUris = configuration["JwtSettings:PostLogoutRedirectUri"] ?? throw new InvalidOperationException("PostLogoutRedirectUri is missing from configuration!");
+            var clientOrigin = configuration["JwtSettings:ClientOrigin"] ?? throw new InvalidOperationException("ClientOrigin is missing from configuration!");
+
             int tokenLifetime = int.TryParse(configuration["JwtSettings:ExpirationInMinutes"], out var lifetime) ? lifetime * 60 : 3600;
 
             return new Client[] {
+                new Client{
+                    ClientId = "fastbite.web",
+                    ClientName = "FastBite Web App",
+                    AllowedGrantTypes = GrantTypes.Code,
+                    RequirePkce = true,
+                    RequireConsent = false,
+                    RequireClientSecret = false,
+                    RedirectUris = { redirectUris },
+                    PostLogoutRedirectUris = { postLogoutRedirectUris },
+                    AllowedCorsOrigins = { clientOrigin },
+                    AccessTokenLifetime = tokenLifetime,
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Email,
+                        IdentityServerConstants.StandardScopes.OfflineAccess,
+                        "roles",
+                        "MenuCatalog.api.full",
+                        "DeliveryOrdering.api.full"
+                    },
+                    AllowOfflineAccess = true,
+                },
                 new Client{
                     ClientId = "api.test.user",
                     ClientName = "Bruno User CLient",
