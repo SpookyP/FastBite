@@ -14,7 +14,7 @@ namespace DeliveryOrdering.Domain.Entities
         public Guid OrderId { get; set; }
 
         // ID do prato (Para o Desenvolvedor A validar na Catalog.API)
-        public Guid ProductId { get; set; }
+        public int ProductId { get; set; }
 
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }

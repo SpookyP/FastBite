@@ -19,7 +19,7 @@ namespace DeliveryOrdering.Application.Services
         }
 
         // Método para validar se o item está disponível no catálogo
-        public async Task<CatalogItemResponse?> ValidarItemNoCatalogoAsync(Guid productId, int quantity)
+        public async Task<CatalogItemResponse?> ValidarItemNoCatalogoAsync(int productId, int quantity)
         {
             try
             {
@@ -37,7 +37,7 @@ namespace DeliveryOrdering.Application.Services
         }
 
         // Método para obter o preço do item no catálogo
-        public async Task<CatalogItemResponse?> ObterPrecoDoItemAsync(Guid productId)
+        public async Task<CatalogItemResponse?> ObterPrecoDoItemAsync(int productId)
         {
             try
             {
