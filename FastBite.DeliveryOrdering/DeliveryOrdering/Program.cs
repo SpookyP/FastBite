@@ -15,19 +15,23 @@ namespace DeliveryOrdering
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddAuthentication("Bearer")
-                .AddJwtBearer("Bearer", options =>
-                {
-                    options.Authority = builder.Configuration["JwtSettings:Issuer"];
-                    options.RequireHttpsMetadata = false;
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.Authority = builder.Configuration["JwtSettings:Issuer"];
+                options.RequireHttpsMetadata = false;
 
-                    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-                    {
-                        ValidateAudience = true,
-                        ValidateIssuer = true,
-                        ValidAudience = builder.Configuration["JwtSettings:Audience"],
-                    };
-                });
+                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    ValidateAudience = true,
+                    ValidateIssuer = true,
+                    ValidAudience = builder.Configuration["JwtSettings:Audience"],
+                };
+            });
 
             builder.Services.AddAuthorization(options =>
             {
@@ -43,19 +47,19 @@ namespace DeliveryOrdering
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-
-            builder.Services.AddHttpClient();
-
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // Registo dos Repositórios e Serviços da Aplicação
 
+            builder.Services.AddHttpClient<IMenuCatalogService, MenuCatalogService>(client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration["ApiUrls:MenuCatalogApi"]);
+            });
+
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
             builder.Services.AddScoped<IOrder, OrderService>();
-
-            builder.Services.AddScoped<IMenuCatalogService, MenuCatalogService>();
 
 
             builder.Services.AddAutoMapper(config =>
