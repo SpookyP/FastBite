@@ -63,6 +63,22 @@ public class Program
             });
         });
 
+        // Regra de Apresentação (API): Ensinamos a API a permitir ligações externas (CORS).
+        // Colocamos isto aqui na API porque as camadas Application e Domain não sabem nem devem saber 
+        // o que são navegadores web, endereços HTTP ou segurança de redes.
+
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("PermitirFrontendBlazor", policy =>
+            {
+                // Para facilitar os nossos testes locais, permitimos pedidos de qualquer origem, 
+                // com qualquer cabeçalho e qualquer método (GET, POST, PUT, DELETE).
+                policy.AllowAnyOrigin()
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
+            });
+        });
+
         var app = builder.Build();
 
         app.UseMiddleware<ExceptionHandlingMiddleware>();
@@ -72,6 +88,10 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+
+        // IMPORTANTE: O UseCors tem de ficar ANTES do app.UseAuthorization() 
+        // e do app.MapControllers(), para que o segurança atue logo na entrada do pedido!
+        app.UseCors("PermitirFrontendBlazor");
 
         app.UseHttpsRedirection();
 
