@@ -5,18 +5,27 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
 
-    <title>Duende IdentityServer</title>
-    
-    <link rel="icon" type="image/x-icon" href="~/favicon.ico" />
-    <link rel="shortcut icon" type="image/x-icon" href="~/favicon.ico" />
-    
+    <title>FastBite - Autenticação</title>
+
+    <!-- Podes depois colocar aqui o logo do FastBite -->
+    <link rel="icon" type="image/png" href="~/favicon.png" />
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/lib/bootstrap4-glyphicons/css/bootstrap-glyphicons.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <style>
+            /* Garante que TODAS as páginas do IdentityServer têm o fundo bege da tua marca */
+            body {
+                background-color: #FAF8F5;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            }
+    </style>
 </head>
 <body>
+    <!-- A barra de navegação do topo (Menu, Saco, Sign in) -->
     <partial name="_Nav" />
-   
+
+    <!-- Conteúdo das páginas (Login, Registo, Logout) -->
     <div class="container body-container">
         @RenderBody()
     </div>
