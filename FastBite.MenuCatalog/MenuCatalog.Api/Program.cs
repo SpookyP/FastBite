@@ -50,16 +50,33 @@ public class Program
                     ValidateAudience = true,
                     ValidateIssuer = true,
                     ValidAudience = builder.Configuration["JwtSettings:Audience"],
+                    RoleClaimType = "role" // Configura o tipo de claim para roles
                 };
             });
 
         // Autorização (Validar as Regras/Policies)
         builder.Services.AddAuthorization(options =>
         {
-            options.AddPolicy("MenuAdminPolicy", policy =>
+            options.AddPolicy("MtoMPolicy", policy => //Política EXCLUSIVA para a Ordering.API conseguir falar com a MenuCatalog.API
             {
                 policy.RequireAuthenticatedUser();
                 policy.RequireClaim("scope", "MenuCatalog.api.full");
+            });
+        });
+
+        // Regra de Apresentação (API): Ensinamos a API a permitir ligações externas (CORS).
+        // Colocamos isto aqui na API porque as camadas Application e Domain não sabem nem devem saber 
+        // o que são navegadores web, endereços HTTP ou segurança de redes.
+
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("PermitirFrontendBlazor", policy =>
+            {
+                // Para facilitar os nossos testes locais, permitimos pedidos de qualquer origem, 
+                // com qualquer cabeçalho e qualquer método (GET, POST, PUT, DELETE).
+                policy.AllowAnyOrigin()
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
             });
         });
 
@@ -72,6 +89,10 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+
+        // IMPORTANTE: O UseCors tem de ficar ANTES do app.UseAuthorization() 
+        // e do app.MapControllers(), para que o segurança atue logo na entrada do pedido!
+        app.UseCors("PermitirFrontendBlazor");
 
         app.UseHttpsRedirection();
 

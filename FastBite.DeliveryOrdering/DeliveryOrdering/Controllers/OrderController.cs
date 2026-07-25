@@ -19,6 +19,12 @@ namespace DeliveryOrdering.Controllers
             _pedidoService = pedidoService;
         }
 
+        /// <summary>
+        /// Endpoint para criar um novo pedido.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]    // Em caso de sucesso
         [ProducesResponseType(StatusCodes.Status400BadRequest)] // Em caso de erro de validação
@@ -48,6 +54,12 @@ namespace DeliveryOrdering.Controllers
             return StatusCode(StatusCodes.Status201Created, pedidoCriado);
         }
 
+
+        /// <summary>
+        /// Obtém o histórico de pedidos do usuário autenticado.
+        /// </summary>
+        /// <returns></returns>
+
         [HttpGet("my-orders")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -66,12 +78,10 @@ namespace DeliveryOrdering.Controllers
                 // Chama o serviço que preparaste
                 var history = await _pedidoService.GetUserOrderHistoryAsync(userId);
 
-                // Retorna 200 OK com os DTOs
                 return Ok(history);
             }
             catch (Exception ex)
             {
-                // Qualquer problema será apanhado pelo teu GlobalExceptionHandlerMiddleware
                 throw;
             }
         }

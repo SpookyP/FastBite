@@ -1,4 +1,5 @@
-﻿using DeliveryOrdering.Application.Interfaces;
+﻿using DeliveryOrdering.Application.DTOs;
+using DeliveryOrdering.Application.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,45 +19,32 @@ namespace DeliveryOrdering.Application.Services
             _httpClient = httpClient;
         }
 
-        // Método para validar se o item está disponível no catálogo
-        public async Task<CatalogItemResponse?> ValidarItemNoCatalogoAsync(Guid productId, int quantity)
+        public async Task<bool> VerificarDisponibilidadeAsync(int id, int quantidade)
         {
             try
             {
-                var response = await _httpClient.GetAsync($"api/menu/{productId}/availability?quantity={quantity}");
+                var response = await _httpClient.GetAsync($"api/Menus/VerDisponibilidade?id={id}&quantidade={quantidade}");
+                if (!response.IsSuccessStatusCode) return false;
+                return await response.Content.ReadFromJsonAsync<bool>();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
 
-                if (!response.IsSuccessStatusCode)
-                    return null;
-
-                return await response.Content.ReadFromJsonAsync<CatalogItemResponse>(); // Tranforma uma resposta JSON em um objeto CatalogItemResponse
+        public async Task<MenuResponseDto?> ObterMenuPorIdAsync(int id)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"api/Menus/ObterPorId?id={id}");
+                if (!response.IsSuccessStatusCode) return null;
+                return await response.Content.ReadFromJsonAsync<MenuResponseDto>();
             }
             catch (Exception)
             {
                 return null;
             }
         }
-
-        // Método para obter o preço do item no catálogo
-        public async Task<CatalogItemResponse?> ObterPrecoDoItemAsync(Guid productId)
-        {
-            try
-            {
-                var response = await _httpClient.GetAsync($"api/menu/{productId}/price");
-                if (!response.IsSuccessStatusCode)
-                    return null;
-                return await response.Content.ReadFromJsonAsync<CatalogItemResponse>(); // Tranforma uma resposta JSON em um objeto CatalogItemResponse
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-    }
-
-    public class CatalogItemResponse
-    {
-        public bool IsAvailable { get; set; }
-        public decimal UnitPrice { get; set; }
     }
 }

@@ -26,7 +26,7 @@ namespace DeliveryOrdering.Application.Services
         }
 
         // Método para criar um pedido
-        public async Task<Order?> CriarPedidoAsync(CreateOrderRequestDto dto, string userId)
+        public async Task<OrderHistoryResponseDto?> CriarPedidoAsync(CreateOrderRequestDto dto, string userId)
         {
             if (dto.Items == null || dto.Items.Count == 0) return null;
 
@@ -45,23 +45,24 @@ namespace DeliveryOrdering.Application.Services
             // Validação de cada item do pedido
             foreach (var itemDto in dto.Items)
             {
-                if (itemDto.Quantity <= 0) return null; 
+                if (itemDto.Quantity <= 0) return null;
 
-                var catalogInfo = await _catalogService.ValidarItemNoCatalogoAsync(itemDto.ProductId, itemDto.Quantity);    // Valida se o item existe no catálogo e se a quantidade é suficiente
+                bool disponivel = await _catalogService.VerificarDisponibilidadeAsync(itemDto.ProductId, itemDto.Quantity);
+                if (!disponivel) return null;
 
-                if (catalogInfo == null || !catalogInfo.IsAvailable) return null;
+                var menu = await _catalogService.ObterMenuPorIdAsync(itemDto.ProductId);
+                if (menu == null) return null;
 
-                decimal custoDoItem = catalogInfo.UnitPrice * itemDto.Quantity;
+                decimal custoDoItem = menu.PrecoBase * itemDto.Quantity;
                 totalAcumulado += custoDoItem;
 
-                // Criação do item do pedido
                 var orderItem = new OrderItem
                 {
                     Id = Guid.NewGuid(),
                     OrderId = novoPedido.Id,
                     ProductId = itemDto.ProductId,
                     Quantity = itemDto.Quantity,
-                    UnitPrice = catalogInfo.UnitPrice
+                    UnitPrice = menu.PrecoBase
                 };
 
                 novoPedido.Items.Add(orderItem);
@@ -72,7 +73,7 @@ namespace DeliveryOrdering.Application.Services
             await _orderRepository.AdicionarAsync(novoPedido);
             await _orderRepository.SaveChangesAsync();
 
-            return novoPedido;
+            return _mapper.Map<OrderHistoryResponseDto>(novoPedido);
         }
 
         public async Task<IEnumerable<OrderHistoryResponseDto>> GetUserOrderHistoryAsync(string userId)
