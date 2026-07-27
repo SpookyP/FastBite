@@ -19,9 +19,19 @@
         </div>
         <div class="d-flex align-items-center gap-3">
             <a href="#" class="text-decoration-none text-dark fw-semibold">Menu</a>
-            <button class="btn btn-light rounded-circle shadow-sm">🛍️</button>
-            <button class="btn text-white fw-bold px-4 rounded-pill shadow-sm" style="background-color: #ff6b00;">Sign in</button>
+            <a href="#" class="text-decoration-none text-dark fw-semibold">Orders</a>
+            <a href="#" class="text-decoration-none text-dark fw-semibold">Cart</a>
+            <Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+                <Authorized>
+                    <a href="/logout" data-enhance-nav="false" class="profile-btn btn text-white fw-bold px-4 rounded-pill shadow-sm" style="background-color: #ff6b00;">Logout</a>
+                </Authorized>
+                <NotAuthorized>
+                    @* <a href="/login" class="profile-btn btn text-white fw-bold px-4 rounded-pill shadow-sm" style="background-color: #ff6b00;">Sign in</a> *@
+                </NotAuthorized>
+            </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
         </div>
+
+
     </header>
 
     <!-- 2. Banner Hero Laranja com Gradiente -->

@@ -59,15 +59,14 @@ public class Index : PageModel
             }
         }
 
-
-        var existingUser = await _userManager.FindByNameAsync(Input.Username);
-        if (existingUser != null)
-        {
-            ModelState.AddModelError("Input.Username", "Invalid username");
-        }
-
         if (ModelState.IsValid)
         {
+            var existingUser = await _userManager.FindByNameAsync(Input.Username);
+            if (existingUser != null)
+            {
+                ModelState.AddModelError("Input.Username", "Invalid username");
+            }
+
             var user = new IdentityUser
             {
                 UserName = Input.Username,
@@ -95,7 +94,7 @@ public class Index : PageModel
                     return Redirect(Input.ReturnUrl);
                 }
 
-                return Redirect("~/");
+                return Redirect(Input.ReturnUrl ?? "~/");
             }
         }
         return Page();

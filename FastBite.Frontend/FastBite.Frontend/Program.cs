@@ -1,4 +1,5 @@
 using FastBite.Frontend.Components;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
@@ -34,6 +35,9 @@ namespace FastBite.Frontend
                 options.SaveTokens = true;
                 options.GetClaimsFromUserInfoEndpoint = true;
 
+                options.SignedOutCallbackPath = new PathString("/signout-callback-oidc");
+                options.SignedOutRedirectUri = "/";
+
                 options.Scope.Clear();
                 options.Scope.Add("openid");
                 options.Scope.Add("profile");
@@ -41,6 +45,9 @@ namespace FastBite.Frontend
                 options.Scope.Add(builder.Configuration["JwtSettings:ApiOrderScope"] ?? "");
                 options.Scope.Add(builder.Configuration["JwtSettings:ApiMenuScope"] ?? "");
             });
+
+            builder.Services.AddAuthorization();
+            builder.Services.AddCascadingAuthenticationState();
 
             //builder.Services.AddScoped(sp => new HttpClient
             //{
@@ -65,6 +72,16 @@ namespace FastBite.Frontend
 
             app.UseStaticFiles();
             app.UseAntiforgery();
+
+            app.MapGet("/logout", () => Results.SignOut(
+                new AuthenticationProperties
+                {
+                    RedirectUri = "/"
+                },
+                [
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    OpenIdConnectDefaults.AuthenticationScheme
+                ]));
 
             app.MapRazorComponents<App>()
                 .AddInteractiveServerRenderMode();

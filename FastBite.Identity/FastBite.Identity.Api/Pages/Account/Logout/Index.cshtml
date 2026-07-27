@@ -2,7 +2,7 @@
 @model FastBite.Pages.Logout.Index
 
 <div class="login-page">
-    <div class="login-card" style="text-align: center; margin-top: 80px;">
+    <div class="login-card" style="text-align: center; margin-top: 200px;">
 
         <!-- Ícone de Saída -->
         <div style="background-color: #FFF0ED; color: #FF3B30; width: 64px; height: 64px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px;">
@@ -16,7 +16,7 @@
             <input type="hidden" name="logoutId" value="@Model.LogoutId" />
 
             <button class="btn-fastbite" style="background-color: #1A1A1A; margin-bottom: 12px;">Yes, sign me out</button>
-            <a href="javascript:history.back()" class="register-link" style="color: #7A7571; font-weight: 500;">Cancel and return</a>
+            <a href="@Model.CancelUrl" class="register-link" style="color: #7A7571; font-weight: 500;">Cancel and return</a>
         </form>
     </div>
 </div>
