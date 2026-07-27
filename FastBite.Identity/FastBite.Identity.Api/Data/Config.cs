@@ -40,7 +40,7 @@ namespace FastBite.Identity.Api.Data
             var clientSecret = configuration["JwtSettings:Secret"] ?? throw new InvalidOperationException("Client secret is missing from configuration!");
             var redirectUris = configuration["JwtSettings:RedirectUri"] ?? throw new InvalidOperationException("RedirectUri is missing from configuration!");
             var postLogoutRedirectUris = configuration["JwtSettings:PostLogoutRedirectUri"] ?? throw new InvalidOperationException("PostLogoutRedirectUri is missing from configuration!");
-            var clientOrigin = configuration["JwtSettings:ClientOrigin"] ?? throw new InvalidOperationException("ClientOrigin is missing from configuration!");
+            var clientOrigin = configuration["ClientOrigin"] ?? throw new InvalidOperationException("ClientOrigin is missing from configuration!");
 
             int tokenLifetime = int.TryParse(configuration["JwtSettings:ExpirationInMinutes"], out var lifetime) ? lifetime * 60 : 3600;
 

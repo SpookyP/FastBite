@@ -84,27 +84,9 @@
 
     <!-- Menu Direita -->
     <div class="nav-actions">
-        <a href="#" class="nav-link-custom">Menu</a>
-
-        <!-- Ícone do Saco de Compras -->
-        <a href="#" class="nav-link-custom">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
-                <path d="M3 6h18"></path>
-                <path d="M16 10a4 4 0 0 1-8 0"></path>
-            </svg>
-        </a>
-
-        @if (!string.IsNullOrWhiteSpace(name))
+        @if (User.Identity?.IsAuthenticated == true)
         {
-            <div class="dropdown">
-                <button class="profile-btn dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-                    @name
-                </button>
-                <div class="dropdown-menu dropdown-menu-right" style="border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 8px;">
-                    <a class="dropdown-item" style="color: #FF3B30; font-weight: 500;" asp-page="/Account/Logout/Index">Sign out</a>
-                </div>
-            </div>
+            <a href="/Account/Logout" class="profile-btn">Logout</a>
         }
     </div>
 </div>

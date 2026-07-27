@@ -1,7 +1,5 @@
-using Duende.IdentityServer;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -61,6 +59,7 @@ public class Index : PageModel
             }
         }
 
+
         var existingUser = await _userManager.FindByNameAsync(Input.Username);
         if (existingUser != null)
         {
@@ -91,26 +90,14 @@ public class Index : PageModel
                     return Redirect(Input.ReturnUrl ?? "~/");
                 }
 
-                if (Url.IsLocalUrl(Input.ReturnUrl))
+                if (!string.IsNullOrEmpty(Input.ReturnUrl) && _interaction.IsValidReturnUrl(Input.ReturnUrl))
                 {
                     return Redirect(Input.ReturnUrl);
                 }
-                else if (string.IsNullOrEmpty(Input.ReturnUrl))
-                {
-                    return Redirect("~/");
-                }
-                else
-                {
-                    throw new ArgumentException("invalid return URL");
-                }
-            }
 
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
+                return Redirect("~/");
             }
         }
-
         return Page();
     }
 }
