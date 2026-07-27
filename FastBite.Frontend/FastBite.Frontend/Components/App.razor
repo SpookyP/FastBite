@@ -13,7 +13,11 @@
 </head>
 
 <body>
-    <Routes />
+    <CascadingAuthenticationState>
+        <Routes @rendermode="InteractiveServer" />
+    </CascadingAuthenticationState>
+
+    <ImportMap />
     <script src="_framework/blazor.web.js"></script>
 </body>
 

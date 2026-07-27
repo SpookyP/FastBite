@@ -2,6 +2,7 @@
 using FastBite.Identity.Api.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace IdentityServer.Host
 {
@@ -58,6 +59,7 @@ namespace IdentityServer.Host
             app.UseIdentityServer();
             app.UseAuthorization();
 
+            app.MapGet("/", () => Results.Redirect(builder.Configuration["ClientOrigin"]??"/Home/Error"));
 
             app.MapRazorPages().RequireAuthorization();
 

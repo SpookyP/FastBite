@@ -1,4 +1,7 @@
 using FastBite.Frontend.Components;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 namespace FastBite.Frontend
 {
@@ -8,14 +11,51 @@ namespace FastBite.Frontend
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
 
-            //Ligação à API MenuCatalog
-            builder.Services.AddScoped(sp => new HttpClient
+            builder.Services.AddAuthentication(options =>
             {
-                BaseAddress = new Uri("https://localhost:7255/")
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            })
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Forces cookie over HTTPS
+                options.Cookie.SameSite = SameSiteMode.Strict; // CSRF 
+            })
+            .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+            {
+                options.Authority = builder.Configuration["JwtSettings:Authority"];
+                options.ClientId = builder.Configuration["JwtSettings:ClientId"];
+                options.ClientSecret = builder.Configuration["JwtSettings:ClientSecret"];
+
+                options.ResponseType = "code";
+                options.SaveTokens = true;
+                options.GetClaimsFromUserInfoEndpoint = true;
+
+                options.SignedOutCallbackPath = new PathString("/signout-callback-oidc");
+                options.SignedOutRedirectUri = "/";
+
+                options.Scope.Clear();
+                options.Scope.Add("openid");
+                options.Scope.Add("profile");
+                options.Scope.Add("email");
+                options.Scope.Add(builder.Configuration["JwtSettings:ApiOrderScope"] ?? "");
+                options.Scope.Add(builder.Configuration["JwtSettings:ApiMenuScope"] ?? "");
+            });
+
+            builder.Services.AddAuthorization();
+            builder.Services.AddCascadingAuthenticationState();
+
+            //builder.Services.AddScoped(sp => new HttpClient
+            //{
+            //    BaseAddress = new Uri(builder.Configuration["JwtSettings:MenuApiAddress"]??"")
+            //});
+            builder.Services.AddHttpClient("MenuApi", client =>
+            { 
+                client.BaseAddress = new Uri(builder.Configuration["ApiSettings:MenuCatalogUrl"] ?? "");
             });
 
             var app = builder.Build();
@@ -32,6 +72,16 @@ namespace FastBite.Frontend
 
             app.UseStaticFiles();
             app.UseAntiforgery();
+
+            app.MapGet("/logout", () => Results.SignOut(
+                new AuthenticationProperties
+                {
+                    RedirectUri = "/"
+                },
+                [
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    OpenIdConnectDefaults.AuthenticationScheme
+                ]));
 
             app.MapRazorComponents<App>()
                 .AddInteractiveServerRenderMode();

@@ -8,13 +8,25 @@ namespace FastBite.Pages.Create;
 public class InputModel
 {
     [Required]
-    public string? Username { get; set; }
+    public string Username { get; set; }
 
     [Required]
-    public string? Password { get; set; }
+    public string Password { get; set; }
 
-    public string? Name { get; set; }
-    public string? Email { get; set; }
+    [Required]
+    [Compare("Password")]
+    public string ConfirmPassword { get; set; }
+    
+    [Required]
+    public string Name { get; set; }
+    
+    [Required]
+    [EmailAddress]
+    public string Email { get; set; }
+    [Required]
+    [EmailAddress]
+    [Compare("Email")]
+    public string ConfirmEmail { get; set; }
 
     public string? ReturnUrl { get; set; }
 

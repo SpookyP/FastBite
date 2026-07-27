@@ -1,6 +1,6 @@
 @using Duende.IdentityServer.Extensions
 @{
-    #nullable enable
+#nullable enable
     string? name = null;
     if (!true.Equals(ViewData["signed-out"]))
     {
@@ -8,26 +8,85 @@
     }
 }
 
-<div class="nav-page">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<style>
+    .fastbite-nav {
+        background-color: #FFFFFF;
+        padding: 16px 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 
-        <a href="~/" class="navbar-brand">
-            <img src="~/duende-logo.svg" class="icon-banner">
-            Duende IdentityServer
-        </a>
+    .nav-brand {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+    }
 
-        @if (!string.IsNullOrWhiteSpace(name))
-        {
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">@name <b class="caret"></b></a>
-                    
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" asp-page="/Account/Logout/Index">Logout</a>
-                    </div>
-              </li>
-            </ul>
+    .nav-icon {
+        background-color: #F25F1D;
+        color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+    }
+
+    .nav-title {
+        color: #F25F1D;
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+    }
+
+    .nav-link-custom {
+        color: #1A1A1A;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 15px;
+    }
+
+        .nav-link-custom:hover {
+            color: #F25F1D;
         }
-    
-    </nav>
+
+    .profile-btn {
+        background-color: #F6F3EB;
+        color: #F25F1D;
+        border-radius: 8px;
+        padding: 8px 16px;
+        font-weight: 600;
+        border: none;
+    }
+</style>
+
+<div class="fastbite-nav">
+    <!-- Logótipo Esquerda -->
+    <a href="~/" class="nav-brand">
+        <div class="nav-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" />
+                <path d="M7 2v20" />
+                <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
+            </svg>
+        </div>
+        <span class="nav-title">FastBite</span>
+    </a>
+
+    <!-- Menu Direita -->
+    <div class="nav-actions">
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <a href="/Account/Logout" class="profile-btn">Logout</a>
+        }
+    </div>
 </div>

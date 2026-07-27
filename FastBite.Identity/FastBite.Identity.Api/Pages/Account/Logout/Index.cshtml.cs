@@ -7,6 +7,7 @@ using Duende.IdentityServer.Services;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -18,19 +19,27 @@ public class Index : PageModel
 {
     private readonly IIdentityServerInteractionService _interaction;
     private readonly IEventService _events;
+    private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly IConfiguration _configuration;
 
     [BindProperty] 
     public string? LogoutId { get; set; }
 
-    public Index(IIdentityServerInteractionService interaction, IEventService events)
+    public string CancelUrl { get; set; } = string.Empty;
+
+    public Index(IIdentityServerInteractionService interaction, IEventService events, SignInManager<IdentityUser> signInManager, IConfiguration configuration)
     {
         _interaction = interaction;
         _events = events;
+        _signInManager = signInManager;
+        _configuration = configuration;
     }
 
     public async Task<IActionResult> OnGet(string? logoutId)
     {
         LogoutId = logoutId;
+
+        CancelUrl = _configuration["ClientOrigin"] ?? "";
 
         var showLogoutPrompt = LogoutOptions.ShowLogoutPrompt;
 
@@ -44,8 +53,8 @@ public class Index : PageModel
             var context = await _interaction.GetLogoutContextAsync(LogoutId);
             if (context?.ShowSignoutPrompt == false)
             {
-                // it's safe to automatically sign-out
-                showLogoutPrompt = false;
+                // force Prompt
+                showLogoutPrompt = true;
             }
         }
             
@@ -67,7 +76,9 @@ public class Index : PageModel
             // this captures necessary info from the current logged in user
             // this can still return null if there is no context needed
             LogoutId ??= await _interaction.CreateLogoutContextAsync();
-                
+
+            await _signInManager.SignOutAsync();
+
             // delete local authentication cookie
             await HttpContext.SignOutAsync();
 

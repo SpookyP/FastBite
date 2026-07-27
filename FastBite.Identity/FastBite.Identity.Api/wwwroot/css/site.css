@@ -1,39 +1,219 @@
-﻿.welcome-page .logo {
-  width: 64px;
+﻿/* ==========================================
+   FASTBITE - ESTILOS GLOBAIS DE AUTENTICAÇÃO
+   ========================================== */
+
+body {
+    background-color: #FAF8F5 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
-.icon-banner {
-  width: 32px;
+/* Navbar Customizada */
+.fastbite-nav {
+    background-color: #FFFFFF;
+    padding: 16px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.02);
 }
 
-.body-container {
-  margin-top: 60px;
-  padding-bottom: 40px;
+.fastbite-nav .nav-brand {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
 }
 
-.welcome-page li {
-  list-style: none;
-  padding: 4px;
+.fastbite-nav .nav-icon {
+    background-color: #F25F1D;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
 }
 
-.logged-out-page iframe {
-  display: none;
-  width: 0;
-  height: 0;
+.fastbite-nav .nav-title {
+    color: #F25F1D;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
 }
 
-.grants-page .card {
-  margin-top: 20px;
-  border-bottom: 1px solid lightgray;
+.fastbite-nav .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 24px;
 }
-.grants-page .card .card-title {
-  font-size: 120%;
-  font-weight: bold;
+
+.fastbite-nav .nav-link-custom {
+    color: #1A1A1A;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
 }
-.grants-page .card .card-title img {
-  width: 100px;
-  height: 100px;
+
+.fastbite-nav .nav-link-custom:hover {
+    color: #F25F1D;
 }
-.grants-page .card label {
-  font-weight: bold;
+
+.fastbite-nav .profile-btn {
+    background-color: #F6F3EB;
+    color: #F25F1D;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 600;
+    border: none;
+}
+
+/* Página de Login / Centrada */
+.login-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 50px;
+}
+
+.brand-header {
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+.brand-header .brand-logo-icon {
+    background-color: #F25F1D;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.brand-header .brand-title {
+    color: #F25F1D;
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.brand-header .brand-subtitle {
+    color: #7A7571;
+    font-size: 15px;
+    margin-top: 4px;
+}
+
+/* Cartão Branco */
+.login-card {
+    background-color: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+    padding: 40px;
+    width: 100%;
+    max-width: 440px;
+    border: none;
+}
+
+.login-card h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1A1A1A;
+    margin-bottom: 8px;
+}
+
+.login-card .login-subtitle {
+    color: #7A7571;
+    font-size: 14px;
+    margin-bottom: 28px;
+    line-height: 1.5;
+}
+
+/* Inputs */
+.form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1A1A1A;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.custom-input-group {
+    display: flex;
+    align-items: center;
+    background-color: #F6F3EB;
+    border-radius: 8px;
+    padding: 0 14px;
+    margin-bottom: 20px;
+    transition: all 0.2s;
+}
+
+.custom-input-group:focus-within {
+    box-shadow: 0 0 0 2px rgba(242, 95, 29, 0.2);
+}
+
+.custom-input-group .custom-input-icon {
+    color: #A39E99;
+    display: flex;
+    align-items: center;
+}
+
+.custom-input-group .custom-input {
+    background: transparent;
+    border: none;
+    padding: 12px 10px;
+    width: 100%;
+    color: #1A1A1A;
+    font-size: 14px;
+    outline: none;
+}
+
+.custom-input-group .custom-input::placeholder {
+    color: #A39E99;
+}
+
+/* Botões */
+.btn-fastbite {
+    background-color: #F25F1D;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-weight: 600;
+    font-size: 15px;
+    width: 100%;
+    transition: background-color 0.2s;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.btn-fastbite:hover {
+    background-color: #D95317;
+    color: #FFFFFF;
+}
+
+.register-link-container {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 13px;
+    color: #7A7571;
+}
+
+.register-link-container .register-link {
+    color: #F25F1D;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    background: none;
+    border: none;
+}
+
+.register-link-container .register-link:hover {
+    text-decoration: underline;
 }
