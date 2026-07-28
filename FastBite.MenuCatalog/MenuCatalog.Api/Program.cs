@@ -45,6 +45,8 @@ public class Program
                 options.Authority = builder.Configuration["JwtSettings:Issuer"];
                 options.RequireHttpsMetadata = false;
 
+                options.MapInboundClaims = false;
+
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateAudience = true,

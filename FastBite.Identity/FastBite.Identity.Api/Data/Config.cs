@@ -18,8 +18,8 @@ namespace FastBite.Identity.Api.Data
         public static IEnumerable<ApiScope> ApiScopes =>
             new ApiScope[]
             {
-                new ApiScope("MenuCatalog.api.full", "FastBite Food Catalog"),
-                new ApiScope("DeliveryOrdering.api.full", "FastBite Food Ordering"),
+                new ApiScope("MenuCatalog.api.full", "FastBite Food Catalog", new[]{"role"}),
+                new ApiScope("DeliveryOrdering.api.full", "FastBite Food Ordering", new[]{"role"}),
             };
 
         public static IEnumerable<ApiResource> ApiResources =>
@@ -28,10 +28,12 @@ namespace FastBite.Identity.Api.Data
                 new ApiResource("fastbite.menu", "FastBite Menu API")
                 {
                     Scopes = { "MenuCatalog.api.full" },
+                    UserClaims = { "role" }
                 },
                 new ApiResource("fastbite.order", "FastBite Order API")
                 {
                     Scopes = { "DeliveryOrdering.api.full" },
+                    UserClaims = { "role" }
                 },
             };
 
