@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace DeliveryOrdering.Application.DTOs
 {
+    /// <summary>
+    /// Corpo do pedido enviado pelo cliente ao criar uma nova encomenda (POST /order).
+    /// </summary>
     public class CreateOrderRequestDto
     {
-        // Uma lista com os pratos que o cliente quer encomendar
         public List<CreateOrderItemDto> Items { get; set; } = new List<CreateOrderItemDto>();
     }
 }

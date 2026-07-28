@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace DeliveryOrdering.Application.DTOs
 {
+    /// <summary>
+    /// Representa um item pedido pelo cliente no momento da criação do pedido.
+    /// </summary>
     public class CreateOrderItemDto
     {
-        // O ID do prato que vem do catálogo
         public int ProductId { get; set; }
         public int Quantity { get; set; }
     }

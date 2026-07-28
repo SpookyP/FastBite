@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace DeliveryOrdering.Application.Interfaces
 {
+    /// <summary>
+    /// criação de pedidos e obtenção do histórico de pedidos de um usuário.
+    /// </summary>
     public interface IOrder
     {
         Task<OrderHistoryResponseDto?> CriarPedidoAsync(CreateOrderRequestDto dto, string userId);

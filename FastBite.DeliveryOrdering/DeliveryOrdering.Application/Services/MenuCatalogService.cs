@@ -9,6 +9,10 @@ using System.Threading.Tasks;
 
 namespace DeliveryOrdering.Application.Services
 {
+    /// <summary>
+    /// Contrato para consultar a MenuCatalog.API. A implementação (Infrastructure)
+    /// é quem sabe que esta comunicação acontece via HTTP.
+    /// </summary>
     public class MenuCatalogService : IMenuCatalogService
     {
         private readonly HttpClient _httpClient;

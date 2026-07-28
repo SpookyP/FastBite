@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DeliveryOrdering.Application.DTOs
 {
+    /// <summary>
+    /// Representa uma linha de pedido devolvida ao cliente.
+    /// </summary>
     public class OrderItemResponseDto
     {
         public int ProductId { get; set; }

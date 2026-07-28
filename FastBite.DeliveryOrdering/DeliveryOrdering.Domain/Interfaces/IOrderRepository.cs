@@ -7,10 +7,15 @@ using System.Threading.Tasks;
 
 namespace DeliveryOrdering.Domain.Interfaces
 {
+    /// <summary>
+    /// Contrato de acesso a dados para a entidade Order.
+    /// Implementado na camada Infrastructure (OrderRepository), usando EF Core.
+    /// </summary>
+
     public interface IOrderRepository
     {
-        Task AdicionarAsync(Order order);   // Método para adicionar um pedido
-        Task<IEnumerable<Order>> GetOrdersByUserIdAsync(string userId);         // Novo método para o GET
-        Task SaveChangesAsync();    // Método para salvar as alterações
+        Task OrderCreateAsync(Order order);
+        Task<IEnumerable<Order>> GetOrdersByUserIdAsync(string userId); 
+        Task SaveChangesAsync();
     }
 }

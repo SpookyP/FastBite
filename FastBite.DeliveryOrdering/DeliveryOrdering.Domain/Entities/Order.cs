@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DeliveryOrdering.Domain.Entities
 {
+    /// <summary>
+    /// Representa um pedido de entrega feito por um utilizador autenticado.
+    /// </summary>
     public class Order
     {
         public Guid Id { get; set; } // Identificador único do pedido

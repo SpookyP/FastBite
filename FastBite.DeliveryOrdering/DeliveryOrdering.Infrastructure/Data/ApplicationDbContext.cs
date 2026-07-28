@@ -9,7 +9,11 @@ using System.Threading.Tasks;
 
 namespace DeliveryOrdering.Infrastructure.Data
 {
-    public  class ApplicationDbContext : DbContext
+    /// <summary>
+    /// Contexto de acesso à base de dados da DeliveryOrdering.API via Entity Framework Core.
+    /// Mapeia as entidades Order e OrderItem e a relação 1:N entre elas.
+    /// </summary>
+    public class ApplicationDbContext : DbContext 
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options): base(options)
         {
@@ -21,7 +25,6 @@ namespace DeliveryOrdering.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
         }
     }
 }

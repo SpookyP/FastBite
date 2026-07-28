@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DeliveryOrdering.Domain.Entities
 {
+    /// <summary>
+    /// Representa um item de pedido, que contém informações sobre o prato, quantidade e preço unitário.
+    /// </summary>
     public class OrderItem
     {
         public Guid Id { get; set; }

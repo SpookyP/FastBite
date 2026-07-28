@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace DeliveryOrdering.Application.Profile
 {
+    /// <summary>
+    /// Perfil de mapeamento do AutoMapper para as entidades de pedido e os DTOs correspondentes.
+    /// </summary>
     public class OrderProfile : AutoMapper.Profile
     {
         public OrderProfile()

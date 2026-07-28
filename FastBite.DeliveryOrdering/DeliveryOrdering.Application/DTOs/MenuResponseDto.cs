@@ -6,11 +6,15 @@ using System.Threading.Tasks;
 
 namespace DeliveryOrdering.Application.DTOs
 {
+    /// <summary>
+    /// Representa a resposta do endpoint ObterPorId da MenuCatalog.API.
+    /// Usado para obter o preço base de um prato ao calcular o total do pedido.
+    /// </summary>
     public class MenuResponseDto
     {
-        public int id { get; set; }
+        public int Id { get; set; }
 
-        public string nome { get; set; }
+        public string Nome { get; set; }
 
         public decimal PrecoBase { get; set; }
 

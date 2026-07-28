@@ -11,6 +11,11 @@ using System.Threading.Tasks;
 
 namespace DeliveryOrdering.Application.Services
 {
+    /// <summary>
+    /// Implementação do caso de uso de criação e consulta de pedidos.
+    /// Orquestra a validação de disponibilidade e preço junto da MenuCatalog.API,
+    /// o cálculo do valor total e a persistência via IOrderRepository.
+    /// </summary>
     public class OrderService : IOrder
     {
         private readonly IMenuCatalogService _catalogService;
@@ -70,7 +75,7 @@ namespace DeliveryOrdering.Application.Services
 
             novoPedido.TotalAmount = totalAcumulado;
 
-            await _orderRepository.AdicionarAsync(novoPedido);
+            await _orderRepository.OrderCreateAsync(novoPedido);
             await _orderRepository.SaveChangesAsync();
 
             return _mapper.Map<OrderHistoryResponseDto>(novoPedido);

@@ -1,6 +1,5 @@
 ﻿using DeliveryOrdering.Application.DTOs;
 using DeliveryOrdering.Application.Interfaces;
-using DeliveryOrdering.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -73,17 +72,10 @@ namespace DeliveryOrdering.Controllers
                 return Unauthorized("Utilizador não identificado.");
             }
 
-            try
-            {
-                // Chama o serviço que preparaste
-                var history = await _pedidoService.GetUserOrderHistoryAsync(userId);
+            var history = await _pedidoService.GetUserOrderHistoryAsync(userId);
 
-                return Ok(history);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            return Ok(history);
+
         }
     }
 }

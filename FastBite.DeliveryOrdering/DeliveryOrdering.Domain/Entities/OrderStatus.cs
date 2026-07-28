@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 
 namespace DeliveryOrdering.Domain.Entities
 {
-    public enum OrderStatus // Enum - Valores fixos
+    /// <summary>
+    /// Estados possíveis de um pedido, do momento da criação até à entrega.
+    /// </summary>
+    public enum OrderStatus
     {
-        Pendente,   // Estado inicial do pedido
+        Pendente,   
         APreparar,
         ACaminho,
         Entregue
