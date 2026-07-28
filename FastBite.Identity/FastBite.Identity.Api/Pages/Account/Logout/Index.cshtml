@@ -2,21 +2,25 @@
 @model FastBite.Pages.Logout.Index
 
 <div class="login-page">
-    <div class="login-card" style="text-align: center; margin-top: 200px;">
+    <div class="login-card logout-card">
 
-        <!-- Ãcone de SaÃ­da -->
-        <div style="background-color: #FFF0ED; color: #FF3B30; width: 64px; height: 64px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        <div class="logout-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            <h2>Terminar sessão</h2>
         </div>
 
-        <h2>Sign out</h2>
-        <p class="login-subtitle">Are you sure you want to log out of your FastBite account?</p>
+        <p class="login-subtitle">Tem a certeza de que deseja terminar a sessão?</p>
 
-        <form asp-page="/Account/Logout/Index">
+        <form asp-page="/Account/Logout/Index" class="logout-form">
             <input type="hidden" name="logoutId" value="@Model.LogoutId" />
 
-            <button class="btn-fastbite" style="background-color: #1A1A1A; margin-bottom: 12px;">Yes, sign me out</button>
-            <a href="@Model.CancelUrl" class="register-link" style="color: #7A7571; font-weight: 500;">Cancel and return</a>
+            <button class="btn-fastbite btn-logout">Sim, terminar sessão</button>
+
+            <a href="@Model.CancelUrl" class="register-link cancel-link">Cancelar e voltar</a>
         </form>
     </div>
 </div>
