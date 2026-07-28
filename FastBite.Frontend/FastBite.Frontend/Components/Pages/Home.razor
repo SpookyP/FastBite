@@ -2,11 +2,11 @@
 @attribute [Microsoft.AspNetCore.Authorization.Authorize]
 @using FastBite.Frontend.ViewModels
 @*
-   Injetamos o nosso "rádio de comunicação" (HttpClient).
-   Na nossa Clean Architecture, o Frontend é um projeto cliente 100% isolado.
-   Ele não acede ao DbContext nem à camada Domain do Backend; comunica apenas via HTTP!
+   CLEAN ARCHITECTURE: Como temos várias APIs (Menus, Encomendas, Identidade),
+   injetamos a IHttpClientFactory. Ela permite-nos pedir o cliente HTTP correto
+   para cada responsabilidade, sem aceder diretamente às camadas internas do Backend.
 *@
-@inject HttpClient Http
+@inject IHttpClientFactory ClientFactory
 
 <PageTitle>FastBite - What are you craving today?</PageTitle>
 
@@ -150,11 +150,14 @@
     {
         try
         {
-            // O Fluxo da Informação:
-            // 1. O Blazor envia um pedido HTTP GET ao endpoint da nossa camada API.
-            // 2. A API delega para a Application (Service) -> que consulta a Infrastructure (Repository) -> Base de Dados.
-            // 3. O GetFromJsonAsync pega no JSON que voltou e converte-o magicamente para a nossa lista C#!
-            _menuItems = await Http.GetFromJsonAsync<List<MenuItemViewModel>>("api/menus/ObterTodos");
+            // 1. Pedimos à Central Telefónica a linha configurada com o nome "MenuApi"
+            // (Este nome tem de ser igual ao que colocaste no AddHttpClient do Program.cs!)
+            var http = ClientFactory.CreateClient("MenuApi");
+
+            // 2. O Fluxo da Informação:
+            // O Frontend envia o pedido HTTP -> O Controller (API) recebe -> Chama o Service (Application)
+            // -> O Repository (Infrastructure) vai à Base de Dados -> Devolve o JSON -> Convertemos para C#!
+            _menuItems = await http.GetFromJsonAsync<List<MenuItemViewModel>>("api/menus/ObterTodos");
         }
         catch (Exception ex)
         {
