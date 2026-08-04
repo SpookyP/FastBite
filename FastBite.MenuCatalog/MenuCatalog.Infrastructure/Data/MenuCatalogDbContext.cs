@@ -8,7 +8,7 @@ namespace MenuCatalog.Infrastructure.Data
         public MenuCatalogDbContext(DbContextOptions<MenuCatalogDbContext> options) : base(options)
         {
         }
-        public DbSet<Item> Menus { get; set; }
+        public DbSet<Item> Items { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -17,6 +17,7 @@ namespace MenuCatalog.Infrastructure.Data
             modelBuilder.Entity<Item>()
             .Property(p => p.PrecoBase)
             .HasColumnType("decimal(18,2)");
+
         }
     }
 }

@@ -12,26 +12,26 @@ using System.Threading.Tasks;
 
 namespace MenuCatalog.Infrastructure.Repositories
 {
-    public class MenuRepository : IItemRepository
+    public class ItemRepository : IItemRepository
     {
         private readonly MenuCatalogDbContext _context;
 
-        public MenuRepository(MenuCatalogDbContext context)
+        public ItemRepository(MenuCatalogDbContext context)
         {
             _context = context;
         }
 
         public async Task<IEnumerable<Item>> GetAllAsync()
         {
-            return await _context.Menus.ToListAsync();
+            return await _context.Items.ToListAsync();
         }
 
         public async Task<Item> GetByIdAsync(int id)
         {
-            return await _context.Menus.FirstOrDefaultAsync(m => m.Id == id);
+            return await _context.Items.FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        public async Task<Item> AddMenuAsync(Item menu)
+        public async Task<Item> AddMenuAsync(Item item)
         {
             _context.Menus.Add(menu);
             await _context.SaveChangesAsync();
