@@ -9,9 +9,9 @@ namespace MenuCatalog.Application.Mapping
     {
         public MenuProfile()
         {
-            CreateMap<MenuCreateEditDto, Menu>();
+            CreateMap<ItemCreateEditDto, Menu>();
 
-            CreateMap<Menu, MenuResponseDto>()
+            CreateMap<Menu, ItemResponseDto>()
                 .ForMember(dest => dest.Nome,
                     opt => opt.MapFrom(src => src.Nome))
                 .ForMember(dest => dest.Descricao,

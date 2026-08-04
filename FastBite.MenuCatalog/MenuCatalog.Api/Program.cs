@@ -35,7 +35,7 @@ public class Program
 
         // Injeção de Dependências (Serviços e Repositórios)
         builder.Services.AddScoped<IMenuRepository, MenuRepository>();
-        builder.Services.AddScoped<IMenuService, MenuService>();
+        builder.Services.AddScoped<IItemService, ItemService>();
 
 
         // Autenticação (Ler o Token JWT)
