@@ -56,11 +56,6 @@ namespace FastBite.Frontend
             // Registamos o nosso "colador de crachás" na injeção de dependências
             builder.Services.AddTransient<TokenHandler>();
 
-            //builder.Services.AddScoped(sp => new HttpClient
-            //{
-            //    BaseAddress = new Uri(builder.Configuration["JwtSettings:MenuApiAddress"]??"")
-            //});
-
             builder.Services.AddHttpClient("MenuApi", client =>
             { 
                 client.BaseAddress = new Uri(builder.Configuration["JwtSettings:MenuApiAddress"] ?? "");
