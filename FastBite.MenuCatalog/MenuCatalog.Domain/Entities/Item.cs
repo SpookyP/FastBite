@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MenuCatalog.Domain.Entities
 {
-    public class Menu
+    public class Item
     {
         public int Id { get; set; }
         public string Nome {  get; set; } = string.Empty;

@@ -34,9 +34,11 @@ public class Program
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
         // Injeção de Dependências (Serviços e Repositórios)
-        builder.Services.AddScoped<IMenuRepository, MenuRepository>();
+        builder.Services.AddScoped<IItemRepository, MenuRepository>();
         builder.Services.AddScoped<IMenuService, MenuService>();
 
+        //builder.Services.AddScoped<IMenuComboRepository, MenuRepository>();
+       
 
         // Autenticação (Ler o Token JWT)
         builder.Services.AddAuthentication("Bearer")
