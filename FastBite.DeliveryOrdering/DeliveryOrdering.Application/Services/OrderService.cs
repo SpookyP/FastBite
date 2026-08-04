@@ -48,7 +48,7 @@ namespace DeliveryOrdering.Application.Services
                 if (itemDto.Quantity <= 0) return null;
 
                 bool disponivel = await _catalogService.VerificarDisponibilidadeAsync(itemDto.ProductId, itemDto.Quantity);
-                if (!disponivel) return null;
+                    if (!disponivel) return null;
 
                 var menu = await _catalogService.ObterMenuPorIdAsync(itemDto.ProductId);
                 if (menu == null) return null;

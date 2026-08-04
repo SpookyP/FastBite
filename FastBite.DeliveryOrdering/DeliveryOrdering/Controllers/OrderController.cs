@@ -29,6 +29,7 @@ namespace DeliveryOrdering.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]    // Em caso de sucesso
         [ProducesResponseType(StatusCodes.Status400BadRequest)] // Em caso de erro de validação
         [ProducesResponseType(StatusCodes.Status401Unauthorized)] // Se o usuário não estiver autenticado
+        [Authorize(Roles = "Admin,Client")]
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequestDto request)
         {
             if (!ModelState.IsValid)
@@ -63,6 +64,7 @@ namespace DeliveryOrdering.Controllers
         [HttpGet("my-orders")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Authorize(Roles = "Admin,Client")]
         public async Task<IActionResult> GetMyOrders()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value   // Obtém o ID do usuário a partir do token JWT ou pelo claim "sub" (abreviação de subject)
