@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using MenuCatalog.Application.DTOs;
 using MenuCatalog.Application.IService;
 using MenuCatalog.Domain;
@@ -6,41 +6,41 @@ using MenuCatalog.Domain.Entities;
 
 namespace MenuCatalog.Application.Services
 {
-    public class MenuService : IMenuService
+    public class ItemService : IMenuService
     {
         private readonly IItemRepository _menuRepository;
         private readonly IMapper _mapper;
-        public MenuService(IItemRepository menuRepository, IMapper mapper)
+        public ItemService(IMenuRepository menuRepository, IMapper mapper)
         {
             _menuRepository = menuRepository;
             _mapper = mapper;
         }
 
-        public async Task<MenuResponseDto> ObterPorIdAsync(int id)
+        public async Task<ItemResponseDto> ObterPorIdAsync(int id)
         {
             var menuId = await _menuRepository.GetByIdAsync(id);
             
-            return _mapper.Map<MenuResponseDto>(menuId);
+            return _mapper.Map<ItemResponseDto>(menuId);
         }
 
-        public async Task<IEnumerable<MenuResponseDto>> ObterTodosAsync()
+        public async Task<IEnumerable<ItemResponseDto>> ObterTodosAsync()
         {
             var listaMenus = await _menuRepository.GetAllAsync();
 
-            return _mapper.Map<IEnumerable<MenuResponseDto>>(listaMenus);
+            return _mapper.Map<IEnumerable<ItemResponseDto>>(listaMenus);
         }
 
-        public async Task<MenuResponseDto> AdicionarMenuAsync(MenuCreateEditDto request)
+        public async Task<ItemResponseDto> AdicionarMenuAsync(ItemCreateEditDto request)
         {
             // Mapear o DTO recebido para a entidade de domínio Menu
             var menuInserido = _mapper.Map<Item>(request);
 
             var menuGuardado = await _menuRepository.AddMenuAsync(menuInserido);
 
-            return _mapper.Map<MenuResponseDto>(menuGuardado);
+            return _mapper.Map<ItemResponseDto>(menuGuardado);
         }
 
-        public async Task AtualizarMenuAsync(int id, MenuCreateEditDto request)
+        public async Task AtualizarMenuAsync(int id, ItemCreateEditDto request)
         {
             var menuExistente = await _menuRepository.GetByIdAsync(id);
 
@@ -83,11 +83,11 @@ namespace MenuCatalog.Application.Services
             return false;
         }
 
-        public async Task<IEnumerable<MenuResponseDto>> ObterPratosDisponiveisAsync()
+        public async Task<IEnumerable<ItemResponseDto>> ObterPratosDisponiveisAsync()
         {
             var pratosDisponiveis = await _menuRepository.GetAvailableAsync();
 
-            return _mapper.Map<IEnumerable<MenuResponseDto>>(pratosDisponiveis);
+            return _mapper.Map<IEnumerable<ItemResponseDto>>(pratosDisponiveis);
         }
     }
 }
