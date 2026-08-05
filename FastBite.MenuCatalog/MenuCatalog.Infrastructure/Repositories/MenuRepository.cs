@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace MenuCatalog.Infrastructure.Repositories
 {
-    public class MenuRepository : IMenuRepository
+    public class MenuRepository : IItemRepository
     {
         private readonly MenuCatalogDbContext _context;
 
@@ -21,31 +21,31 @@ namespace MenuCatalog.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Menu>> GetAllAsync()
+        public async Task<IEnumerable<Item>> GetAllAsync()
         {
             return await _context.Menus.ToListAsync();
         }
 
-        public async Task<Menu> GetByIdAsync(int id)
+        public async Task<Item> GetByIdAsync(int id)
         {
             return await _context.Menus.FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        public async Task<Menu> AddMenuAsync(Menu menu)
+        public async Task<Item> AddMenuAsync(Item menu)
         {
             _context.Menus.Add(menu);
             await _context.SaveChangesAsync();
             return await GetByIdAsync(menu.Id);
         }
 
-        public async Task<Menu> UpdateMenuAsync(Menu menu)
+        public async Task<Item> UpdateMenuAsync(Item menu)
         {
             _context.Menus.Update(menu);
             await _context.SaveChangesAsync();
             return await GetByIdAsync(menu.Id);
         }
 
-        public async Task<Menu> DeleteMenuAsync(int id)
+        public async Task<Item> DeleteMenuAsync(int id)
         {
             var menuParaApagar = await GetByIdAsync(id);
 
@@ -57,7 +57,7 @@ namespace MenuCatalog.Infrastructure.Repositories
 
             return menuParaApagar;
         }
-        public async Task<IEnumerable<Menu>> GetAvailableAsync()
+        public async Task<IEnumerable<Item>> GetAvailableAsync()
         {
             return await _context.Menus
                                  .Where(m => m.LimiteDiario > 0)

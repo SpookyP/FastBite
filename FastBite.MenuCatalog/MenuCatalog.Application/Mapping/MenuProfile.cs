@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using MenuCatalog.Application.DTOs;
 using MenuCatalog.Domain.Entities;
 

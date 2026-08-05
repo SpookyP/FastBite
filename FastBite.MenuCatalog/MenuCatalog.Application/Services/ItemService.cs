@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using MenuCatalog.Application.DTOs;
 using MenuCatalog.Application.IService;
 using MenuCatalog.Domain;
@@ -8,7 +8,7 @@ namespace MenuCatalog.Application.Services
 {
     public class ItemService : IMenuService
     {
-        private readonly IMenuRepository _menuRepository;
+        private readonly IItemRepository _menuRepository;
         private readonly IMapper _mapper;
         public ItemService(IMenuRepository menuRepository, IMapper mapper)
         {
@@ -33,7 +33,7 @@ namespace MenuCatalog.Application.Services
         public async Task<ItemResponseDto> AdicionarMenuAsync(ItemCreateEditDto request)
         {
             // Mapear o DTO recebido para a entidade de domínio Menu
-            var menuInserido = _mapper.Map<Menu>(request);
+            var menuInserido = _mapper.Map<Item>(request);
 
             var menuGuardado = await _menuRepository.AddMenuAsync(menuInserido);
 
