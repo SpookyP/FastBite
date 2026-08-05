@@ -2,13 +2,6 @@
 using MenuCatalog.Domain.Entities;
 using MenuCatalog.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MenuCatalog.Infrastructure.Repositories
 {
@@ -31,35 +24,35 @@ namespace MenuCatalog.Infrastructure.Repositories
             return await _context.Items.FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        public async Task<Item> AddMenuAsync(Item item)
+        public async Task<Item> AddItemAsync(Item item)
         {
-            _context.Menus.Add(menu);
+            _context.Items.Add(item);
             await _context.SaveChangesAsync();
-            return await GetByIdAsync(menu.Id);
+            return await GetByIdAsync(item.Id);
         }
 
-        public async Task<Item> UpdateMenuAsync(Item menu)
+        public async Task<Item> UpdateItemAsync(Item item)
         {
-            _context.Menus.Update(menu);
+            _context.Items.Update(item);
             await _context.SaveChangesAsync();
-            return await GetByIdAsync(menu.Id);
+            return await GetByIdAsync(item.Id);
         }
 
-        public async Task<Item> DeleteMenuAsync(int id)
+        public async Task<Item> DeleteItemAsync(int id)
         {
-            var menuParaApagar = await GetByIdAsync(id);
+            var itemParaApagar = await GetByIdAsync(id);
 
-            if (menuParaApagar != null)
+            if (itemParaApagar != null)
             {
-                _context.Menus.Remove(menuParaApagar);
+                _context.Items.Remove(itemParaApagar);
                 await _context.SaveChangesAsync();
             }
 
-            return menuParaApagar;
+            return itemParaApagar;
         }
         public async Task<IEnumerable<Item>> GetAvailableAsync()
         {
-            return await _context.Menus
+            return await _context.Items
                                  .Where(m => m.LimiteDiario > 0)
                                  .ToListAsync();
         }
