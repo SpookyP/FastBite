@@ -34,10 +34,10 @@ public class Program
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
         // Inje��o de Depend�ncias (Servi�os e Reposit�rios)
-        builder.Services.AddScoped<IMenuRepository, MenuRepository>();
-        builder.Services.AddScoped<IItemService, ItemService>();
+        builder.Services.AddScoped<IItemRepository, ItemRepository>();
+        builder.Services.AddScoped<IMenuService, MenuService>();
 
-        //builder.Services.AddScoped<IMenuComboRepository, MenuRepository>();
+        
        
 
         // Autentica��o (Ler o Token JWT)
