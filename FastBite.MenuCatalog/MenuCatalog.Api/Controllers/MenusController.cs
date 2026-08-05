@@ -7,10 +7,11 @@ namespace MenuCatalog.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MenusController(IItemService menuService) : ControllerBase
+    public class MenusController(IItemService menuService, IMenuComboService menuComboService) : ControllerBase
     {
-        private readonly IItemService _menuService = menuService;
 
+        private readonly IItemService _menuService = menuService;
+        private readonly IMenuComboService _menuComboService = menuComboService;
 
         [HttpGet("ObterPorId")]
         [Authorize(Roles = "Admin,Client")]
@@ -102,6 +103,14 @@ namespace MenuCatalog.Api.Controllers
             var menusDisponiveis = await _menuService.ObterPratosDisponiveisAsync();
 
             return Ok(menusDisponiveis);
+        }
+
+        [HttpPost("combo")]
+        [AllowAnonymous]
+        public async Task<ActionResult<MenuComboResponseDto>> MontarCombo([FromBody] MenuComboCreateDto request)
+        {
+            var resultado = await _menuComboService.MontarComboAsync(request);
+            return Ok(resultado);
         }
     }
 }
