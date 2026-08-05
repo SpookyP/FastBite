@@ -26,7 +26,7 @@ public class Program
         // Configura��o do AutoMapper
         builder.Services.AddAutoMapper(config =>
         {
-            config.AddMaps(typeof(MenuProfile).Assembly);
+            config.AddMaps(typeof(ItemProfile).Assembly);
         });
 
         // Configura��o da Base de Dados (Entity Framework)
@@ -35,10 +35,10 @@ public class Program
 
         // Inje��o de Depend�ncias (Servi�os e Reposit�rios)
         builder.Services.AddScoped<IItemRepository, ItemRepository>();
-        builder.Services.AddScoped<IMenuService, MenuService>();
+        builder.Services.AddScoped<IItemService, ItemService>();
 
-        
-       
+        builder.Services.AddScoped<IMenuComboService, MenuComboService>();
+
 
         // Autentica��o (Ler o Token JWT)
         builder.Services.AddAuthentication("Bearer")
