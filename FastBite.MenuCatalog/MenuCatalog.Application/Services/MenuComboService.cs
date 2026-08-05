@@ -1,4 +1,5 @@
-﻿.using MenuCatalog.Application.DTOs;
+﻿using AutoMapper;
+using MenuCatalog.Application.DTOs;
 using MenuCatalog.Application.IService;
 using MenuCatalog.Domain;
 using MenuCatalog.Domain.Entities;
@@ -8,11 +9,13 @@ namespace MenuCatalog.Application.Services
     public class MenuComboService : IMenuComboService
     {
         private readonly IItemRepository _itemRepository;
+        private readonly IMapper _mapper;
         private const decimal DescontoMenu = 0.10m;
 
-        public MenuComboService(IItemRepository itemRepository)
+        public MenuComboService(IItemRepository itemRepository, IMapper mapper)
         {
             _itemRepository = itemRepository;
+            _mapper = mapper;
         }
 
         public async Task<MenuComboResponseDto> MontarComboAsync(MenuComboCreateDto request)
@@ -32,15 +35,7 @@ namespace MenuCatalog.Application.Services
             var precoOriginal = prato.PrecoBase + acompanhamento.PrecoBase + bebida.PrecoBase;
             var precoComDesconto = precoOriginal * (1 - DescontoMenu);
 
-            return new MenuComboResponseDto
-            {
-                Nome = menuCriado.Nome,
-                PratoNome = prato.Nome,
-                AcompanhamentoNome = acompanhamento.Nome,
-                BebidaNome = bebida.Nome,
-                PrecoOriginal = precoOriginal,
-                PrecoFinal = precoComDesconto
-            };
+            return _mapper.Map<MenuComboResponseDto>(menuCriado);
         }
     }
 }

@@ -5,13 +5,13 @@ using MenuCatalog.Domain.Entities;
 
 namespace MenuCatalog.Application.Mapping
 {
-    public class MenuProfile : Profile
+    public class ItemProfile : Profile
     {
-        public MenuProfile()
+        public ItemProfile()
         {
-            CreateMap<ItemCreateEditDto, Menu>();
+            CreateMap<ItemCreateEditDto, Item>();
 
-            CreateMap<Menu, ItemResponseDto>()
+            CreateMap<Item, ItemResponseDto>()
                 .ForMember(dest => dest.Nome,
                     opt => opt.MapFrom(src => src.Nome))
                 .ForMember(dest => dest.Descricao,
