@@ -8,9 +8,9 @@ namespace MenuCatalog.Application.Services
 {
     public class MenuService : IMenuService
     {
-        private readonly IMenuRepository _menuRepository;
+        private readonly IItemRepository _menuRepository;
         private readonly IMapper _mapper;
-        public MenuService(IMenuRepository menuRepository, IMapper mapper)
+        public MenuService(IItemRepository menuRepository, IMapper mapper)
         {
             _menuRepository = menuRepository;
             _mapper = mapper;
@@ -33,7 +33,7 @@ namespace MenuCatalog.Application.Services
         public async Task<MenuResponseDto> AdicionarMenuAsync(MenuCreateEditDto request)
         {
             // Mapear o DTO recebido para a entidade de domínio Menu
-            var menuInserido = _mapper.Map<Menu>(request);
+            var menuInserido = _mapper.Map<Item>(request);
 
             var menuGuardado = await _menuRepository.AddMenuAsync(menuInserido);
 

@@ -1,4 +1,5 @@
 using FastBite.Frontend.Components;
+using FastBite.Frontend.Handlers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -52,14 +53,16 @@ namespace FastBite.Frontend
             builder.Services.AddAuthorization();
             builder.Services.AddCascadingAuthenticationState();
 
-            //builder.Services.AddScoped(sp => new HttpClient
-            //{
-            //    BaseAddress = new Uri(builder.Configuration["JwtSettings:MenuApiAddress"]??"")
-            //});
+            // Permite que o nosso TokenHandler consiga ler os cookies e sessão do utilizador atual
+            builder.Services.AddHttpContextAccessor();
+
+            // Registamos o nosso "colador de crachás" na injeção de dependências
+            builder.Services.AddTransient<TokenHandler>();
+
             builder.Services.AddHttpClient("MenuApi", client =>
             { 
-                client.BaseAddress = new Uri(builder.Configuration["ApiSettings:MenuCatalogUrl"] ?? "");
-            });
+                client.BaseAddress = new Uri(builder.Configuration["JwtSettings:MenuApiAddress"] ?? "");
+            }).AddHttpMessageHandler<TokenHandler>();
 
             var app = builder.Build();
 

@@ -217,3 +217,28 @@ body {
 .register-link-container .register-link:hover {
     text-decoration: underline;
 }
+.login-page {
+    padding-top: 40px;
+}
+
+.logout-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+    .logout-header h2 {
+        margin: 0;
+    }
+
+.logout-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.cancel-link {
+    text-align: left;
+}
