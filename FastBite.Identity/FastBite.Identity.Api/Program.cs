@@ -13,7 +13,9 @@ namespace IdentityServer.Host
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddRazorPages();
-            
+
+            builder.Services.AddHealthChecks();
+
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             
@@ -27,8 +29,6 @@ namespace IdentityServer.Host
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;
                 options.Events.RaiseSuccessEvents = true;
-
-                options.EmitStaticAudienceClaim = false;
             })
                 .AddInMemoryIdentityResources(Config.IdentityResources)
                 .AddInMemoryApiScopes(Config.ApiScopes)
@@ -58,6 +58,8 @@ namespace IdentityServer.Host
 
             app.UseIdentityServer();
             app.UseAuthorization();
+
+            app.MapHealthChecks("/health");
 
             app.MapGet("/", () => Results.Redirect(builder.Configuration["ClientOrigin"]??"/Home/Error"));
 

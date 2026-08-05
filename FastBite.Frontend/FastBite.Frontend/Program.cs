@@ -42,8 +42,11 @@ namespace FastBite.Frontend
                 options.Scope.Add("openid");
                 options.Scope.Add("profile");
                 options.Scope.Add("email");
+                options.Scope.Add("roles");
                 options.Scope.Add(builder.Configuration["JwtSettings:ApiOrderScope"] ?? "");
                 options.Scope.Add(builder.Configuration["JwtSettings:ApiMenuScope"] ?? "");
+
+                options.TokenValidationParameters.RoleClaimType = "role";
             });
 
             builder.Services.AddAuthorization();
