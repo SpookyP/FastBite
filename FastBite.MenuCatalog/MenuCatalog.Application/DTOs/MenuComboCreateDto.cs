@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace MenuCatalog.Application.DTOs
 {
-    public class MenuComboRequestDto
+    public class MenuComboCreateDto
     {
+        [Required(ErrorMessage = "O Nome do Prato é obrigatório")]
+        public string Nome { get; set; } = string.Empty;
+
         [Required(ErrorMessage = "O Id do Prato é obrigatório")]
         public int PratoId { get; set; }
 
