@@ -7,10 +7,11 @@ namespace MenuCatalog.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MenusController(IMenuService menuService) : ControllerBase
+    public class MenusController(IItemService menuService, IMenuComboService menuComboService) : ControllerBase
     {
-        private readonly IMenuService _menuService = menuService;
 
+        private readonly IItemService _menuService = menuService;
+        private readonly IMenuComboService _menuComboService = menuComboService;
 
         [HttpGet("ObterPorId")]
         [Authorize(Roles = "Admin,Client")]
@@ -43,7 +44,7 @@ namespace MenuCatalog.Api.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Adicionar([FromBody] MenuCreateEditDto menuCreateDto) //FromBody -> Lê o JSON que está dentro da "caixa" (O corpo do pedido HTTP) ex: { "nome": "Bife", "preco": 15.5 }
+        public async Task<IActionResult> Adicionar([FromBody] ItemCreateEditDto menuCreateDto) //FromBody -> Lê o JSON que está dentro da "caixa" (O corpo do pedido HTTP) ex: { "nome": "Bife", "preco": 15.5 }
         {
 
             var menuCriado = await _menuService.AdicionarMenuAsync(menuCreateDto);
@@ -53,7 +54,7 @@ namespace MenuCatalog.Api.Controllers
 
         [HttpPut("Atualizar")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Atualizar(int id, [FromBody] MenuCreateEditDto menuUpdateDto)
+        public async Task<IActionResult> Atualizar(int id, [FromBody] ItemCreateEditDto menuUpdateDto)
         {
             if (id <= 0)
             {
@@ -102,6 +103,14 @@ namespace MenuCatalog.Api.Controllers
             var menusDisponiveis = await _menuService.ObterPratosDisponiveisAsync();
 
             return Ok(menusDisponiveis);
+        }
+
+        [HttpPost("combo")]
+        [Authorize(Roles = "Admin,Client")]
+        public async Task<ActionResult<MenuComboResponseDto>> MontarCombo([FromBody] MenuComboCreateDto request)
+        {
+            var resultado = await _menuComboService.MontarComboAsync(request);
+            return Ok(resultado);
         }
     }
 }

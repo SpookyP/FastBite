@@ -1,17 +1,17 @@
-﻿using AutoMapper;
+using AutoMapper;
 using MenuCatalog.Application.DTOs;
 using MenuCatalog.Domain.Entities;
 
 
 namespace MenuCatalog.Application.Mapping
 {
-    public class MenuProfile : Profile
+    public class ItemProfile : Profile
     {
-        public MenuProfile()
+        public ItemProfile()
         {
-            CreateMap<MenuCreateEditDto, Item>();
+            CreateMap<ItemCreateEditDto, Item>();
 
-            CreateMap<Item, MenuResponseDto>()
+            CreateMap<Item, ItemResponseDto>()
                 .ForMember(dest => dest.Nome,
                     opt => opt.MapFrom(src => src.Nome))
                 .ForMember(dest => dest.Descricao,

@@ -19,28 +19,28 @@ public class Program
         // Controladores
         builder.Services.AddControllers();
 
-        // Configurações do Swagger / OpenAPI
+        // Configuraï¿½ï¿½es do Swagger / OpenAPI
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-        // Configuração do AutoMapper
+        // Configuraï¿½ï¿½o do AutoMapper
         builder.Services.AddAutoMapper(config =>
         {
-            config.AddMaps(typeof(MenuProfile).Assembly);
+            config.AddMaps(typeof(ItemProfile).Assembly);
         });
 
-        // Configuração da Base de Dados (Entity Framework)
+        // Configuraï¿½ï¿½o da Base de Dados (Entity Framework)
         builder.Services.AddDbContext<MenuCatalogDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-        // Injeção de Dependências (Serviços e Repositórios)
-        builder.Services.AddScoped<IItemRepository, MenuRepository>();
-        builder.Services.AddScoped<IMenuService, MenuService>();
+        // Injeï¿½ï¿½o de Dependï¿½ncias (Serviï¿½os e Repositï¿½rios)
+        builder.Services.AddScoped<IItemRepository, ItemRepository>();
+        builder.Services.AddScoped<IItemService, ItemService>();
 
-        //builder.Services.AddScoped<IMenuComboRepository, MenuRepository>();
-       
+        builder.Services.AddScoped<IMenuComboService, MenuComboService>();
 
-        // Autenticação (Ler o Token JWT)
+
+        // Autenticaï¿½ï¿½o (Ler o Token JWT)
         builder.Services.AddAuthentication("Bearer")
             .AddJwtBearer("Bearer", options =>
             {
@@ -58,26 +58,26 @@ public class Program
                 };
             });
 
-        // Autorização (Validar as Regras/Policies)
+        // Autorizaï¿½ï¿½o (Validar as Regras/Policies)
         builder.Services.AddAuthorization(options =>
         {
-            options.AddPolicy("MtoMPolicy", policy => //Política EXCLUSIVA para a Ordering.API conseguir falar com a MenuCatalog.API
+            options.AddPolicy("MtoMPolicy", policy => //Polï¿½tica EXCLUSIVA para a Ordering.API conseguir falar com a MenuCatalog.API
             {
                 policy.RequireAuthenticatedUser();
                 policy.RequireClaim("scope", "MenuCatalog.api.full");
             });
         });
 
-        // Regra de Apresentação (API): Ensinamos a API a permitir ligações externas (CORS).
-        // Colocamos isto aqui na API porque as camadas Application e Domain não sabem nem devem saber 
-        // o que são navegadores web, endereços HTTP ou segurança de redes.
+        // Regra de Apresentaï¿½ï¿½o (API): Ensinamos a API a permitir ligaï¿½ï¿½es externas (CORS).
+        // Colocamos isto aqui na API porque as camadas Application e Domain nï¿½o sabem nem devem saber 
+        // o que sï¿½o navegadores web, endereï¿½os HTTP ou seguranï¿½a de redes.
 
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("PermitirFrontendBlazor", policy =>
             {
                 // Para facilitar os nossos testes locais, permitimos pedidos de qualquer origem, 
-                // com qualquer cabeçalho e qualquer método (GET, POST, PUT, DELETE).
+                // com qualquer cabeï¿½alho e qualquer mï¿½todo (GET, POST, PUT, DELETE).
                 policy.AllowAnyOrigin()
                       .AllowAnyHeader()
                       .AllowAnyMethod();
@@ -95,7 +95,7 @@ public class Program
         }
 
         // IMPORTANTE: O UseCors tem de ficar ANTES do app.UseAuthorization() 
-        // e do app.MapControllers(), para que o segurança atue logo na entrada do pedido!
+        // e do app.MapControllers(), para que o seguranï¿½a atue logo na entrada do pedido!
         app.UseCors("PermitirFrontendBlazor");
 
         app.UseHttpsRedirection();
