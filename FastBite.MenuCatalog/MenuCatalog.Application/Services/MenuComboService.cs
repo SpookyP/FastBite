@@ -28,6 +28,20 @@ namespace MenuCatalog.Application.Services
             {
                 throw new KeyNotFoundException("Um ou mais itens não existem no catálogo.");
             }
+            if (prato.LimiteDiario <= 0)
+            {
+                throw new ArgumentException($"O prato '{prato.Nome}' encontra-se esgotado.");
+            }
+
+            if (acompanhamento.LimiteDiario <= 0)
+            {
+                throw new ArgumentException($"O acompanhamento '{acompanhamento.Nome}' encontra-se esgotado.");
+            }
+
+            if (bebida.LimiteDiario <= 0)
+            {
+                throw new ArgumentException($"A bebida '{bebida.Nome}' encontra-se esgotada.");
+            }
 
             // Mapear o DTO recebido para a entidade de domínio Menu
             var menuCriado = new MenuCombo(request.Nome, prato, acompanhamento, bebida);

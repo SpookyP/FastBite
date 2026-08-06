@@ -106,7 +106,7 @@ namespace MenuCatalog.Api.Controllers
         }
 
         [HttpPost("combo")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin,Client")]
         public async Task<ActionResult<MenuComboResponseDto>> MontarCombo([FromBody] MenuComboCreateDto request)
         {
             var resultado = await _menuComboService.MontarComboAsync(request);
