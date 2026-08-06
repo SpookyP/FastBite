@@ -35,7 +35,12 @@ namespace MenuCatalog.Application.Services
             var precoOriginal = prato.PrecoBase + acompanhamento.PrecoBase + bebida.PrecoBase;
             var precoComDesconto = precoOriginal * (1 - DescontoMenu);
 
-            return _mapper.Map<MenuComboResponseDto>(menuCriado);
+            var dto = _mapper.Map<MenuComboResponseDto>(menuCriado);
+
+            dto.PrecoOriginal = Math.Round(precoOriginal, 2);
+            dto.PrecoFinal = Math.Round(precoComDesconto, 2);
+
+            return dto;
         }
     }
 }
