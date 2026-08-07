@@ -21,7 +21,7 @@ namespace MenuCatalog.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("MenuCatalog.Domain.Entities.Menu", b =>
+            modelBuilder.Entity("MenuCatalog.Domain.Entities.Item", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -53,7 +53,7 @@ namespace MenuCatalog.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Menus");
+                    b.ToTable("Items");
                 });
 #pragma warning restore 612, 618
         }

@@ -11,7 +11,7 @@ const Navbar = ({ user, onLogout }) => {
 
                 {/* Links da Navbar */}
                 <div className="d-flex align-items-center ms-auto gap-4">
-                    <a href="#menu" className="text-decoration-none text-dark fw-semibold">Menu</a>
+                    <a href="#menu" className="text-decoration-none text-dark fw-semibold">Catalog</a>
                     <a href="#orders" className="text-decoration-none text-dark fw-semibold">Orders</a>
                     <a href="#cart" className="text-decoration-none text-dark fw-semibold">Cart</a>
 
@@ -19,7 +19,7 @@ const Navbar = ({ user, onLogout }) => {
                     {user ? (
                         <div className="d-flex align-items-center gap-3">
                             <span className="text-secondary small fw-bold">
-                                👤 {user.name || user.email || 'Utilizador'}
+                                👤 {user.name ?? 'Utilizador'}
                             </span>
                             <button 
                                 onClick={onLogout} 

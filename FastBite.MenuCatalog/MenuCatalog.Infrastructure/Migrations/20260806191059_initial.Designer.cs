@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MenuCatalog.Infrastructure.Migrations
 {
     [DbContext(typeof(MenuCatalogDbContext))]
-    [Migration("20260804194540_ini")]
-    partial class ini
+    [Migration("20260806191059_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,7 +24,7 @@ namespace MenuCatalog.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("MenuCatalog.Domain.Entities.Menu", b =>
+            modelBuilder.Entity("MenuCatalog.Domain.Entities.Item", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -56,7 +56,7 @@ namespace MenuCatalog.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Menus");
+                    b.ToTable("Items");
                 });
 #pragma warning restore 612, 618
         }

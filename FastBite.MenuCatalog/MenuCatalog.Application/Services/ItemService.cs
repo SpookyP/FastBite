@@ -46,7 +46,7 @@ namespace MenuCatalog.Application.Services
 
             if (menuExistente == null)
             {
-                throw new KeyNotFoundException($"O menu com o ID {id} não foi encontrado.");
+                throw new KeyNotFoundException($"O item com o ID {id} não foi encontrado.");
             }
 
             _mapper.Map(request, menuExistente); // Atualizar as propriedades do menu existente com os valores do request
@@ -60,7 +60,7 @@ namespace MenuCatalog.Application.Services
 
             if (menuExistente == null)
             {
-                throw new KeyNotFoundException($"O menu com o ID {id} não foi encontrado.");
+                throw new KeyNotFoundException($"O item com o ID {id} não foi encontrado.");
             }
 
             await _itemRepository.DeleteItemAsync(id);
