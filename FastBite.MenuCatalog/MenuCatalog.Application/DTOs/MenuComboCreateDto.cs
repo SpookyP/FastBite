@@ -4,7 +4,7 @@ namespace MenuCatalog.Application.DTOs
 {
     public class MenuComboCreateDto
     {
-        [Required(ErrorMessage = "O Nome do Prato é obrigatório")]
+        [Required(ErrorMessage = "O Nome do Menu é obrigatório")]
         public string Nome { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "O Id do Prato é obrigatório")]

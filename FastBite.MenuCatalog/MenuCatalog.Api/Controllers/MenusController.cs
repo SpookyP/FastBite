@@ -26,7 +26,7 @@ namespace MenuCatalog.Api.Controllers
 
             if (menuId == null)
             {
-                return NotFound("Menu não encontrado.");
+                return NotFound("Item não encontrado.");
             }
 
             return Ok(menuId);
@@ -88,7 +88,7 @@ namespace MenuCatalog.Api.Controllers
         {
             if (id <= 0 || quantidade <= 0)
             {
-                return BadRequest("O ID do prato e a quantidade devem ser maiores que zero.");
+                return BadRequest("O ID do item e a quantidade devem ser maiores que zero.");
             }
 
             var qntDisponivel = await _menuService.VerDisponibilidadeAsync(id, quantidade);

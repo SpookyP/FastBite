@@ -56,7 +56,7 @@ namespace FastBite.Identity.Api.Data
                     RequireClientSecret = false,
                     RedirectUris = { redirectUris },
                     PostLogoutRedirectUris = { postLogoutRedirectUris },
-                    AllowedCorsOrigins = { clientOrigin },
+                    AllowedCorsOrigins = { clientOrigin }, //Cross-Origin Resource Sharing (CORS)
                     AccessTokenLifetime = tokenLifetime,
                     AllowedScopes =
                     {

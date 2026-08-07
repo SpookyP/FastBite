@@ -49,6 +49,15 @@ public class Index : PageModel
 
     public async Task<IActionResult> OnGet(string? returnUrl)
     {
+        if (returnUrl != null)
+        {
+            var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
+            if (context?.IdP != null)
+            {
+                // this is meant to short circuit the UI and only trigger the one external IdP
+                return RedirectToPage("/ExternalLogin/Challenge", new { provider = context.IdP, returnUrl });
+            }
+        }
         await BuildModelAsync(returnUrl);
 
         if (View.IsExternalLoginOnly)
