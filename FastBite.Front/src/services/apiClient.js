@@ -2,33 +2,50 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const fetchComToken = async (endpoint, options = {}) => {
-    // O oidc-client guarda a sessão com uma chave específica no localStorage. 
-    // Para simplificar no react-oidc-context, costumamos ler do user gerido pelo auth:
-    const storageString = localStorage.getItem(`oidc.user:https://localhost:PORTA_DO_IDENTITY:NOME_DO_CLIENT`);
+   
     let token = null;
+
+    const oidcKey = Object.keys(localStorage).find(key => key.startsWith('oidc.user:'));
     
-    if (storageString) {
-        const oidcStorage = JSON.parse(storageString);
-        token = oidcStorage?.access_token;
+    if (oidcKey) {
+        const oidcUserString = localStorage.getItem(oidcKey);
+        if (oidcUserString) {
+            try {
+                const oidcUser = JSON.parse(oidcUserString);
+                token = oidcUser?.access_token;
+            } catch (e) {
+                console.error('Erro ao fazer parse do objeto OIDC da localStorage:', e);
+            }
+        }
     }
 
     const headers = {
         'Content-Type': 'application/json',
-        ...options.headers,
+        ...(options.headers || {}),
     };
 
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
+    } else {
+        console.warn('Aviso: Nenhum token na localStorage.');        
     }
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const config = {
         ...options,
         headers
-    });
-
-    if (!response.ok) {
-        throw new Error(`Erro na API: ${response.status} ${response.statusText}`);
     }
 
-    return response.json();
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+
+    if (!response.ok) {
+        if (response.status === 401) {
+            console.error('401 Unauthorized: O token pode ser inválido, estar expirado, ou faltam permissões de Admin.');
+        }
+            throw new Error(`Erro na API: ${response.status}`);
+    }
+
+    if (response.status !== 204) {
+        return await response.json();
+    }
+    return null;
 };

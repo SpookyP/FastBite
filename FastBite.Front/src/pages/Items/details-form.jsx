@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar/Navbar';
 import { menuService } from '../../services/menuService';
 
-const CreateItem = () => {
+const ShowItem = () => {
     const navigate = useNavigate();
     
     // Estado local para gerir os campos do formulário
@@ -30,11 +30,22 @@ const CreateItem = () => {
         setErro(null);
 
         try {
-            // Conversão correta dos tipos numéricos exigidos pela API
+            const preco = parseFloat(formData.precoBase) || 0;
+            const limite = parseInt(formData.limiteDiario, 10) || 0;
+
             const payload = {
-                ...formData,
-                precoBase: parseFloat(formData.precoBase) || 0,
-                limiteDiario: parseInt(formData.limiteDiario, 10) || 0
+                nome: formData.nome,
+                Nome: formData.nome,
+                descricao: formData.descricao,
+                Descricao: formData.descricao,
+                categoria: formData.categoria,
+                Categoria: formData.categoria,
+                alergenios: formData.alergenios || "",
+                Alergenios: formData.alergenios || "",
+                precoBase: preco,
+                PrecoBase: preco,
+                limiteDiario: limite,
+                LimiteDiario: limite
             };
 
             await menuService.create(payload);
@@ -161,4 +172,4 @@ const CreateItem = () => {
     );
 };
 
-export default CreateItem;
+export default ShowItem;

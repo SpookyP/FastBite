@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // <-- 1. Importar o hook de navegação
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar/Navbar';
 import { menuService } from '../../services/menuService';
 
-const AdminDashboard = () => {
-    const navigate = useNavigate(); // <-- 2. Inicializar o navigate
+const ListItems = () => {
+    const navigate = useNavigate();
     const [menus, setMenus] = useState([]);
     const [loading, setLoading] = useState(true);
     const [erro, setErro] = useState(null);
@@ -84,7 +84,9 @@ const AdminDashboard = () => {
                                                 <td>
                                                     <div className="d-flex justify-content-center gap-2">
                                                         <button type="button" className="btn btn-sm btn-success">Detalhes</button>
-                                                        <button type="button" className="btn btn-sm btn-primary">Editar</button>
+                                                            <a href={`/items/edit/${item.id}`} className="btn btn-sm btn-outline-primary">
+                                                                Editar
+                                                            </a>
                                                         <button type="button" className="btn btn-sm btn-danger">Apagar</button>
                                                     </div>
                                                 </td>
@@ -107,4 +109,4 @@ const AdminDashboard = () => {
     );
 };
 
-export default AdminDashboard;
+export default ListItems;

@@ -31,7 +31,7 @@ const Navbar = () => {
 
                     {isAdmin && (
                         <a 
-                            href="/admin" 
+                            href="/items" 
                             className="btn btn-outline-primary btn-sm rounded-pill px-3 fw-bold"
                         >
                             ⚙️ Gestão Admin

@@ -13,16 +13,14 @@ const oidcConfig = {
     scope: 'openid profile roles MenuCatalog.api.full DeliveryOrdering.api.full',
     post_logout_redirect_uri: import.meta.env.VITE_FRONTEND_URL,
     
-    // Integração perfeita com o LocalStorage
     userStore: new WebStorageStateStore({ store: window.localStorage }),
     
-    loadUserInfo: true, // <-- VÍRGULA ADICIONADA AQUI
+    loadUserInfo: true,
     automaticSilentRenew: true
 };
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
-        {/* Este é o único AuthProvider que a aplicação deve ter */}
         <AuthProvider {...oidcConfig}>
             <App />
         </AuthProvider>
