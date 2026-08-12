@@ -1,31 +1,26 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { fetchComToken } from './apiClient';
 
 export const menuService = {
-    // Recebe o token como parâmetro
-    async obterTodos(accessToken = null) {
-        const headers = {
+    obterTodos: () => fetchComToken('/Menus/ObterTodos'),
+    
+    obterPorId: async (id) => fetchComToken(`/Menus/ObterPorId?id=${id}`),
+
+    edit: async (id, data) => fetchComToken(`/Menus/Atualizar?id=${id}`, {
+        method: 'PUT',
+        headers:{
             'Content-Type': 'application/json',
-        };
+        },
+        body: JSON.stringify(data)
+    }),
 
-        // Se o utilizador estiver logado, envia o token de segurança
-        if (accessToken) {
-            headers['Authorization'] = `Bearer ${accessToken}`;
-        }
-
-        try {
-            const response = await fetch(`${API_BASE_URL}/menus/ObterTodos`, {
-                method: 'GET',
-                headers: headers
-            });
-
-            if (!response.ok) {
-                throw new Error(`Erro da API: ${response.statusText}`);
-            }
-
-            return await response.json();
-        } catch (error) {
-            console.error("Falha ao obter menus:", error);
-            throw error;
-        }
-    }
+    create: (novoItem) => fetchComToken('/Menus', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(novoItem)
+    }),
+    delete: (id) => fetchComToken(`/Menus/Eliminar?id=${id}`, {
+        method: 'DELETE',
+    })
 };
