@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { menuService } from '../../services/menuService';
 
 const EditItem = () => {
-  const { id } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
+
+  // Recebe o id de forma oculta a partir do location.state
+  const id = location.state?.id;
 
   const [formData, setFormData] = useState({
     nome: '',
@@ -19,12 +22,17 @@ const EditItem = () => {
   const [submitting, setSubmitting] = useState(false);
   const [erro, setErro] = useState(null);
 
-  // 1. Carregar os dados atuais do item ao montar a página
   useEffect(() => {
+    if (!id) {
+      navigate('/items');
+      return;
+    }
+
     const fetchItem = async () => {
       try {
         setLoading(true);
-        const data = await menuService.getById(id);
+        // Garante que o método do service está correto
+        const data = await menuService.obterPorId(id);
         
         setFormData({
           nome: data.nome || '',
@@ -42,16 +50,16 @@ const EditItem = () => {
       }
     };
 
-    if (id) fetchItem();
-  }, [id]);
+    fetchItem();
+  }, [id, navigate]);
 
-  // 2. Atualizar estado ao digitar nos inputs
+  // Handler para atualizar os campos do formulário ao digitar
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 3. Submeter formulário
+  // Handler para submeter as alterações
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
@@ -67,8 +75,8 @@ const EditItem = () => {
         limiteDiario: parseInt(formData.limiteDiario, 10) || 0
       };
 
-      await menuService.update(id, payload);
-      navigate('/items'); // Redireciona para a lista após atualizar
+      await menuService.edit(id, payload);
+      navigate('/items');
     } catch (err) {
       console.error(err);
       setErro('Erro ao atualizar o item. Verifica os dados enviados.');
@@ -77,13 +85,15 @@ const EditItem = () => {
     }
   };
 
+  if (!id) return null;
+
   if (loading) {
     return <div className="container mt-5 text-center">A carregar item...</div>;
   }
 
   return (
     <div className="container mt-4" style={{ maxWidth: '600px' }}>
-      <h2>Editar Item #{id}</h2>
+      <h2>Editar Item</h2>
 
       {erro && <div className="alert alert-danger">{erro}</div>}
 

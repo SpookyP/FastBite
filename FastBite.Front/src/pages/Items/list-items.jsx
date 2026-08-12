@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar/Navbar';
 import { menuService } from '../../services/menuService';
 
@@ -84,9 +85,9 @@ const ListItems = () => {
                                                 <td>
                                                     <div className="d-flex justify-content-center gap-2">
                                                         <button type="button" className="btn btn-sm btn-success">Detalhes</button>
-                                                            <a href={`/items/edit/${item.id}`} className="btn btn-sm btn-outline-primary">
+                                                            <Link to="/items/edit" state={{ id: item.id }} className="btn btn-primary">
                                                                 Editar
-                                                            </a>
+                                                            </Link>
                                                         <button type="button" className="btn btn-sm btn-danger">Apagar</button>
                                                     </div>
                                                 </td>

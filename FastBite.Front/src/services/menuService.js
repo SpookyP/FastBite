@@ -3,7 +3,7 @@ import { fetchComToken } from './apiClient';
 export const menuService = {
     obterTodos: () => fetchComToken('/Menus/ObterTodos'),
     
-    obterPorId: async (id) => fetchComToken(`/Menus/ObterPorId/${id}`),
+    obterPorId: async (id) => fetchComToken(`/Menus/ObterPorId?id=${id}`),
 
     edit: async (id, data) => fetchComToken(`/Menus/Atualizar?id=${id}`, {
         method: 'PUT',
