@@ -1,27 +1,28 @@
 import React from 'react';
 
-const CategoryFilters = () => {
-    return (
-        <>
-            {/* Barra de Pesquisa */}
-            <div className="mb-4">
-                <div className="input-group input-group-lg shadow-sm rounded-3 overflow-hidden">
-                    <span className="input-group-text bg-light border-0 ps-4">🔍</span>
-                    <input type="text" className="form-control bg-light border-0 fs-6 py-3" placeholder="Search burgers, pizza, sushi..." />
-                </div>
-            </div>
+// Agora recebemos a categoria escolhida e a função para a mudar como parâmetros (props)
+const CategoryFilters = ({ categoriaAtiva, onCategoriaChange }) => {
+    
+    const categorias = ['Tudo', 'Pratos', 'Acompanhamentos', 'Bebidas'];
 
-            {/* Filtros de Categoria */}
-            <div className="d-flex gap-2 mb-4 overflow-auto py-1">
-                <button className="btn btn-sm px-4 py-2 rounded-pill text-white fw-semibold shadow-sm" style={{ backgroundColor: '#ff6b00' }}>🍔 All</button>
-                <button className="btn btn-sm px-4 py-2 rounded-pill btn-light fw-semibold text-secondary border">🍔 Burgers</button>
-                <button className="btn btn-sm px-4 py-2 rounded-pill btn-light fw-semibold text-secondary border">🍕 Pizza</button>
-                <button className="btn btn-sm px-4 py-2 rounded-pill btn-light fw-semibold text-secondary border">🍣 Sushi</button>
-                <button className="btn btn-sm px-4 py-2 rounded-pill btn-light fw-semibold text-secondary border">🥗 Salads</button>
-                <button className="btn btn-sm px-4 py-2 rounded-pill btn-light fw-semibold text-secondary border">🍰 Desserts</button>
-                <button className="btn btn-sm px-4 py-2 rounded-pill btn-light fw-semibold text-secondary border">🥤 Drinks</button>
+    return (
+            <div className="d-flex gap-2 mb-4 overflow-auto py-1" style={{ whiteSpace: 'nowrap' }}>
+                {categorias.map((categoria) => (
+                    <button 
+                        key={categoria}
+                        // Quando clicamos, avisamos a página Home!
+                        onClick={() => onCategoriaChange(categoria)}
+                        className={`btn btn-sm px-4 py-2 rounded-pill fw-semibold shadow-sm transition-all ${
+                            categoriaAtiva === categoria 
+                                ? 'text-white border-0' 
+                                : 'btn-light text-secondary border' 
+                        }`}
+                        style={{ backgroundColor: categoriaAtiva === categoria ? '#ff6b00' : 'white' }}
+                    >
+                        {categoria}
+                    </button>
+                ))}
             </div>
-        </>
     );
 };
 

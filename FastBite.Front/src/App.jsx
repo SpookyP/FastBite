@@ -21,6 +21,7 @@ function App() {
             <Route path="/items/create" element={<CreateItem />} />
             <Route path="/items/edit" element={<EditItem />} />
             <Route path="/items/show" element={<ShowItem />} />
+            <Route path="/checkout" element={<Checkout />} />
             <Route path="/cart" element={<Cart />} />
           </Routes>
         </div>
