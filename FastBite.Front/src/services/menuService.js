@@ -23,4 +23,4 @@ export const menuService = {
     delete: (id) => fetchComToken(`/Menus/Eliminar?id=${id}`, {
         method: 'DELETE',
     })
-};
+};hff
