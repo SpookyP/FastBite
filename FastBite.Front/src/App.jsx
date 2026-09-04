@@ -8,21 +8,27 @@ import ShowItem from './pages/Items/details-form';
 import Checkout from './pages/Checkout/Checkout';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {CartProvider} from './context/CartContext';
+import Cart from './pages/Cart';
 
 function App() {
   return (
-    <Router>
-      <div className="app-container">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/items" element={<ListItems />} />
-          <Route path="/items/create" element={<CreateItem />} />
-          <Route path="/items/edit" element={<EditItem />} />
-          <Route path="/items/show" element={<ShowItem />} />
-          <Route path="/checkout" element={<Checkout />} />
-        </Routes>
-      </div>
-    </Router>
+View-Cart
+    <CartProvider>
+      <Router>
+        <div className="app-container">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/items" element={<ListItems />} />
+            <Route path="/items/create" element={<CreateItem />} />
+            <Route path="/items/edit" element={<EditItem />} />
+            {/* <Route path="/items/show" element={<ShowItem />} />
+            <Route path="/items/destroy" element={<DeleteItem />} /> */}
+            <Route path="/cart" element={<Cart />} />
+          </Routes>
+        </div>
+      </Router>
+    </CartProvider>
+main
   );
 }
 
