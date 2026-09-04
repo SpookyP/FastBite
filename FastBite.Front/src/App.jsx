@@ -5,7 +5,9 @@ import ListItems from './pages/Items/list-items';
 import CreateItem from './pages/Items/create-form';
 import EditItem from './pages/Items/edit-form';
 import ShowItem from './pages/Items/details-form';
+import Checkout from './pages/Checkout/Checkout';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {CartProvider} from './context/CartContext';
 
 function App() {
   return (
@@ -17,6 +19,7 @@ function App() {
           <Route path="/items/create" element={<CreateItem />} />
           <Route path="/items/edit" element={<EditItem />} />
           <Route path="/items/show" element={<ShowItem />} />
+          <Route path="/checkout" element={<Checkout />} />
         </Routes>
       </div>
     </Router>
