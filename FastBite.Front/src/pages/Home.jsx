@@ -11,6 +11,7 @@ const Home = () => {
     const [menuItems, setMenuItems] = useState([]);
     const [loadingMenus, setLoadingMenus] = useState(true);
     const [errorMenus, setErrorMenus] = useState(null);
+    const [categoriaSelecionada, setCategoriaSelecionada] = useState('Tudo');
 
     useEffect(() => {
         // Se já terminou de carregar, não tem erros e não está autenticado, força o login imediato
@@ -51,6 +52,18 @@ const Home = () => {
         return null; // Evita mostrar qualquer HTML antes do redirecionamento
     }
 
+    const produtosFiltrados = menuItems.filter(item => {
+        if (categoriaSelecionada === 'Tudo') {
+            return true;
+        }
+
+        const categoriaDoItem = item.categoria || "";
+        
+        return categoriaDoItem.toLowerCase() === categoriaSelecionada.toLowerCase();
+    });
+
+    console.log("C# enviou-me estes produtos:", menuItems);
+
     return (
         <div className="min-vh-100 bg-light">
             {/* Navbar com dados do utilizador e logout integrado */}
@@ -64,11 +77,10 @@ const Home = () => {
 
             <main className="container-fluid py-4 px-4">
                 {/* Filtros por Categoria */}
-                <CategoryFilters />
-
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h3 className="fw-bold">Menu em Destaque</h3>
-                </div>
+                <CategoryFilters 
+                    categoriaAtiva={categoriaSelecionada} 
+                    onCategoriaChange={setCategoriaSelecionada} 
+                />
 
                 {/* Tratamento de estados de carregamento da API de Menus */}
                 {loadingMenus && (
