@@ -1,6 +1,6 @@
 using MenuCatalog.Api.Middlewares;
 using MenuCatalog.Application.IService;
-using MenuCatalog.Application.Mapping; // Se o MenuProfile estiver aqui
+using MenuCatalog.Application.Mapping;
 using MenuCatalog.Application.Services;
 using MenuCatalog.Domain;
 using MenuCatalog.Infrastructure.Data;
@@ -16,31 +16,27 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Controladores
         builder.Services.AddControllers();
 
-        // Configura��es do Swagger / OpenAPI
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-        // Configura��o do AutoMapper
+
         builder.Services.AddAutoMapper(config =>
         {
             config.AddMaps(typeof(ItemProfile).Assembly);
         });
 
-        // Configura��o da Base de Dados (Entity Framework)
+
         builder.Services.AddDbContext<MenuCatalogDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-        // Inje��o de Depend�ncias (Servi�os e Reposit�rios)
         builder.Services.AddScoped<IItemRepository, ItemRepository>();
         builder.Services.AddScoped<IItemService, ItemService>();
 
         builder.Services.AddScoped<IMenuComboService, MenuComboService>();
 
 
-        // Autentica��o (Ler o Token JWT)
         builder.Services.AddAuthentication("Bearer")
             .AddJwtBearer("Bearer", options =>
             {
@@ -58,26 +54,22 @@ public class Program
                 };
             });
 
-        // Autoriza��o (Validar as Regras/Policies)
+
         builder.Services.AddAuthorization(options =>
         {
-            options.AddPolicy("MtoMPolicy", policy => //Pol�tica EXCLUSIVA para a Ordering.API conseguir falar com a MenuCatalog.API
+            options.AddPolicy("MtoMPolicy", policy =>
             {
                 policy.RequireAuthenticatedUser();
                 policy.RequireClaim("scope", "MenuCatalog.api.full");
             });
         });
 
-        // Regra de Apresenta��o (API): Ensinamos a API a permitir liga��es externas (CORS).
-        // Colocamos isto aqui na API porque as camadas Application e Domain n�o sabem nem devem saber 
-        // o que s�o navegadores web, endere�os HTTP ou seguran�a de redes.
 
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("PermitirFrontendBlazor", policy =>
             {
-                // Para facilitar os nossos testes locais, permitimos pedidos de qualquer origem, 
-                // com qualquer cabe�alho e qualquer m�todo (GET, POST, PUT, DELETE).
+
                 policy.AllowAnyOrigin()
                       .AllowAnyHeader()
                       .AllowAnyMethod();
@@ -94,8 +86,7 @@ public class Program
             app.UseSwaggerUI();
         }
 
-        // IMPORTANTE: O UseCors tem de ficar ANTES do app.UseAuthorization() 
-        // e do app.MapControllers(), para que o seguran�a atue logo na entrada do pedido!
+
         app.UseCors("PermitirFrontendBlazor");
 
         app.UseHttpsRedirection();

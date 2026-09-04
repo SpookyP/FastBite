@@ -13,8 +13,14 @@ namespace MenuCatalog.Api.Controllers
         private readonly IItemService _menuService = menuService;
         private readonly IMenuComboService _menuComboService = menuComboService;
 
+        /// <summary>
+        /// Este endpoint permite obter um item do menu pelo seu ID.
+        /// </summary>
+        /// <param name="id">O ID do item do menu a ser obtido.</param>
+        /// <returns>Retorna o item do menu correspondente ao ID fornecido, ou um erro se o ID for inválido ou o item não for encontrado.</returns>
         [HttpGet("ObterPorId")]
         [Authorize(Roles = "Admin,Client")]
+
         public async Task<IActionResult> ObterPorId(int id)
         {
             if (id <= 0)
@@ -32,7 +38,10 @@ namespace MenuCatalog.Api.Controllers
             return Ok(menuId);
 
         }
-
+        /// <summary>
+        /// Este endpoint permite obter todos os itens do menu.
+        /// </summary>
+        /// <returns>Retorna uma lista de todos os itens do menu.</returns>
         [HttpGet("ObterTodos")]
         [Authorize(Roles = "Admin,Client")]
         public async Task<IActionResult> ObterTodos()
@@ -42,9 +51,14 @@ namespace MenuCatalog.Api.Controllers
             return Ok(menus);
         }
 
+        /// <summary>
+        /// Este endpoint permite adicionar um novo item ao menu.
+        /// </summary>
+        /// <param name="menuCreateDto">O DTO contendo as informações do item do menu a ser criado.</param>
+        /// <returns>Retorna o item do menu criado com o respetivo id.</returns>
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Adicionar([FromBody] ItemCreateEditDto menuCreateDto) //FromBody -> Lê o JSON que está dentro da "caixa" (O corpo do pedido HTTP) ex: { "nome": "Bife", "preco": 15.5 }
+        public async Task<IActionResult> Adicionar([FromBody] ItemCreateEditDto menuCreateDto) //FromBody -> Lê o JSON que está dentro da "caixa" (O corpo do pedido HTTP)
         {
 
             var menuCriado = await _menuService.AdicionarMenuAsync(menuCreateDto);
@@ -52,6 +66,12 @@ namespace MenuCatalog.Api.Controllers
             return CreatedAtAction(nameof(ObterPorId), new { id = menuCriado.Id }, menuCriado);
         }
 
+        /// <summary>
+        /// Este endpoint permite atualizar um item do menu existente pelo seu ID.
+        /// </summary>
+        /// <param name="id">O ID do item do menu a ser atualizado.</param>
+        /// <param name="menuUpdateDto">O DTO contendo as informações do item do menu a ser atualizado.</param>
+        /// <returns>Retorna NoContent se a atualização for bem-sucedido e BadRequest se o ID for inválido.</returns>
         [HttpPut("Atualizar")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Atualizar(int id, [FromBody] ItemCreateEditDto menuUpdateDto)
@@ -67,6 +87,11 @@ namespace MenuCatalog.Api.Controllers
 
         }
 
+        /// <summary>
+        /// Este endpoint permite remover um item do menu pelo seu ID.
+        /// </summary>
+        /// <param name="id">O ID do item do menu a ser removido.</param>
+        /// <returns>Retorna NoContent se a remoção for bem-sucedida e BadRequest se o ID for inválido.</returns>
         [HttpDelete("Eliminar")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RemoverMenu(int id)
@@ -82,6 +107,12 @@ namespace MenuCatalog.Api.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Este endpoint permite verificar a disponibilidade de um item do menu com base no seu ID e na quantidade desejada.
+        /// </summary>
+        /// <param name="id">O ID do item do menu a ser verificado.</param>
+        /// <param name="quantidade">A quantidade desejada do item do menu.</param>
+        /// <returns>Retorna Ok com a quantidade disponível se bem-sucedido e BadRequest se o ID ou a quantidade forem inválidos.</returns>
         [HttpGet("VerDisponibilidade")]
         [AllowAnonymous]
         public async Task<IActionResult> VerDisponibilidade(int id, [FromQuery] int quantidade) //FromQuery - 'ensina' o controller a ler tudo o que vem depois do ? no URL (?quantidade=5)
@@ -96,6 +127,10 @@ namespace MenuCatalog.Api.Controllers
             return Ok(qntDisponivel);
         }
 
+        /// <summary>
+        /// Este endpoint permite obter todos os pratos disponíveis no menu.
+        /// </summary>
+        /// <returns>Retorna Ok com a lista de pratos disponíveis.</returns>
         [HttpGet("Disponiveis")]
         [AllowAnonymous]
         public async Task<IActionResult> ObterPratosDisponiveis()
@@ -105,6 +140,11 @@ namespace MenuCatalog.Api.Controllers
             return Ok(menusDisponiveis);
         }
 
+        /// <summary>
+        /// Este endpoint permite montar um combo de menu com base nos IDs do prato, acompanhamento e bebida fornecidos.
+        /// </summary>
+        /// <param name="request">O DTO contendo os IDs do prato, acompanhamento e bebida para montar o combo.</param>
+        /// <returns>Retorna Ok com o combo montado.</returns>
         [HttpPost("combo")]
         [Authorize(Roles = "Admin,Client")]
         public async Task<ActionResult<MenuComboResponseDto>> MontarCombo([FromBody] MenuComboCreateDto request)
