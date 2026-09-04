@@ -10,7 +10,19 @@ namespace DeliveryOrdering.Application.Interfaces
 {
     public interface IMenuCatalogService
     {
-        Task<bool> VerificarDisponibilidadeAsync(int id, int quantity);    // Método para validar se o item está disponível no catálogo
-        Task<MenuResponseDto?> ObterMenuPorIdAsync(int id);    // Método para obter o preço do item no catálogo
+        /// <summary>
+        /// Validar se um item está disponível no catálogo
+        /// </summary>
+        Task<bool> VerificarDisponibilidadeAsync(int id, int quantity);
+
+        /// <summary>
+        /// Obter detalhes e preço de um item
+        /// </summary>
+        Task<MenuResponseDto?> ObterMenuPorIdAsync(int id);
+
+        /// <summary>
+        /// Validar disponibilidade e obter preço de um combo
+        /// </summary>
+        Task<decimal> VerificarDisponibilidadeComboAsync(int pratoId, int acompanhamentoId, int bebidaId, int quantity);
     }
 }
