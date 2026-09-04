@@ -12,7 +12,6 @@ import Cart from './pages/Cart';
 
 function App() {
   return (
-View-Cart
     <CartProvider>
       <Router>
         <div className="app-container">
@@ -28,7 +27,6 @@ View-Cart
         </div>
       </Router>
     </CartProvider>
-main
   );
 }
 
