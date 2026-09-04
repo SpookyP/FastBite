@@ -1,60 +1,38 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar/Navbar';
 import { menuService } from '../../services/menuService';
 
 const ShowItem = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     
-    // Estado local para gerir os campos do formulário
-    const [formData, setFormData] = useState({
-        nome: '',
-        descricao: '',
-        categoria: '',
-        alergenios: '',
-        precoBase: '',
-        limiteDiario: ''
-    });
+    // Recupera o ID enviado pelo componente anterior (ListItems)
+    const id = location.state?.id;
 
-    const [loading, setLoading] = useState(false);
+    // Estado para guardar os dados recebidos da API
+    const [item, setItem] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [erro, setErro] = useState(null);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+    useEffect(() => {
+        if (!id) {
+            setErro('Nenhum item selecionado. Regressa à lista.');
+            setLoading(false);
+            return;
+        }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setErro(null);
+        carregarItemDetalhes(id);
+    }, [id]);
 
+    const carregarItemDetalhes = async (itemId) => {
         try {
-            const preco = parseFloat(formData.precoBase) || 0;
-            const limite = parseInt(formData.limiteDiario, 10) || 0;
-
-            const payload = {
-                nome: formData.nome,
-                Nome: formData.nome,
-                descricao: formData.descricao,
-                Descricao: formData.descricao,
-                categoria: formData.categoria,
-                Categoria: formData.categoria,
-                alergenios: formData.alergenios || "",
-                Alergenios: formData.alergenios || "",
-                precoBase: preco,
-                PrecoBase: preco,
-                limiteDiario: limite,
-                LimiteDiario: limite
-            };
-
-            await menuService.create(payload);
-            
-            // Redireciona de volta para o dashboard de admin após sucesso
-            navigate('/admin');
+            setLoading(true);
+            const dados = await menuService.obterPorId(itemId);
+            setItem(dados);
         } catch (err) {
             console.error(err);
-            setErro('Erro ao criar o item do menu. Verifica os dados ou permissões.');
+            setErro('Erro ao carregar os detalhes do item. O item pode já não existir.');
         } finally {
             setLoading(false);
         }
@@ -68,102 +46,76 @@ const ShowItem = () => {
                 <div className="row justify-content-center">
                     <div className="col-md-8">
                         <div className="card shadow-sm p-4">
-                            <h2 className="mb-4">Adicionar Novo Item ao Catálogo</h2>
+                            <h2 className="mb-4">Detalhes do Item</h2>
 
                             {erro && <div className="alert alert-danger">{erro}</div>}
 
-                            <form onSubmit={handleSubmit}>
-                                <div className="mb-3">
-                                    <label className="form-label fw-bold">Nome</label>
-                                    <input 
-                                        type="text" 
-                                        className="form-control" 
-                                        name="nome" 
-                                        value={formData.nome} 
-                                        onChange={handleChange} 
-                                        required 
-                                    />
-                                </div>
-
-                                <div className="mb-3">
-                                    <label className="form-label fw-bold">Descrição</label>
-                                    <textarea 
-                                        className="form-control" 
-                                        name="descricao" 
-                                        rows="3"
-                                        value={formData.descricao} 
-                                        onChange={handleChange} 
-                                        required 
-                                    />
-                                </div>
-
-                                <div className="mb-3">
-                                    <label className="form-label fw-bold">Categoria</label>
-                                    <input 
-                                        type="text" 
-                                        className="form-control" 
-                                        name="categoria" 
-                                        value={formData.categoria} 
-                                        onChange={handleChange} 
-                                        required 
-                                    />
-                                </div>
-
-                                <div className="mb-3">
-                                    <label className="form-label fw-bold">Alergénios</label>
-                                    <input 
-                                        type="text" 
-                                        className="form-control" 
-                                        name="alergenios" 
-                                        value={formData.alergenios} 
-                                        onChange={handleChange} 
-                                        placeholder="Ex: Glúten, Lactose"
-                                    />
-                                </div>
-
-                                <div className="row">
-                                    <div className="col-md-6 mb-3">
-                                        <label className="form-label fw-bold">Preço Base (€)</label>
-                                        <input 
-                                            type="number" 
-                                            step="0.01"
-                                            className="form-control" 
-                                            name="precoBase" 
-                                            value={formData.precoBase} 
-                                            onChange={handleChange} 
-                                            required 
-                                        />
-                                    </div>
-                                    <div className="col-md-6 mb-3">
-                                        <label className="form-label fw-bold">Limite Diário</label>
-                                        <input 
-                                            type="number" 
-                                            className="form-control" 
-                                            name="limiteDiario" 
-                                            value={formData.limiteDiario} 
-                                            onChange={handleChange} 
-                                            required 
-                                        />
+                            {loading ? (
+                                <div className="text-center py-4">
+                                    <div className="spinner-border text-primary" role="status">
+                                        <span className="visually-hidden">A carregar...</span>
                                     </div>
                                 </div>
+                            ) : item ? (
+                                <div>
+                                    {/* Apresentação dos dados em formato de grelha de leitura */}
+                                    <div className="row mb-3 border-bottom pb-2">
+                                        <div className="col-sm-4 fw-bold text-muted">ID</div>
+                                        <div className="col-sm-8">{item.id || item.Id}</div>
+                                    </div>
 
-                                <div className="d-flex justify-content-between mt-4">
-                                    <button 
-                                        type="button" 
-                                        className="btn btn-secondary px-4" 
-                                        onClick={() => navigate('/admin')}
-                                    >
-                                        Cancelar
-                                    </button>
-                                    <button 
-                                        type="submit" 
-                                        className="btn btn-success px-4" 
-                                        disabled={loading}
-                                    >
-                                        {loading ? 'A guardar...' : 'Criar Item'}
-                                    </button>
+                                    <div className="row mb-3 border-bottom pb-2">
+                                        <div className="col-sm-4 fw-bold text-muted">Nome</div>
+                                        <div className="col-sm-8">{item.nome || item.Nome}</div>
+                                    </div>
+
+                                    <div className="row mb-3 border-bottom pb-2">
+                                        <div className="col-sm-4 fw-bold text-muted">Descrição</div>
+                                        <div className="col-sm-8">{item.descricao || item.Descricao}</div>
+                                    </div>
+
+                                    <div className="row mb-3 border-bottom pb-2">
+                                        <div className="col-sm-4 fw-bold text-muted">Categoria</div>
+                                        <div className="col-sm-8">
+                                            <span className="badge bg-secondary">
+                                                {item.categoria || item.Categoria}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="row mb-3 border-bottom pb-2">
+                                        <div className="col-sm-4 fw-bold text-muted">Alergénios</div>
+                                        <div className="col-sm-8">{item.alergenios || item.Alergenios || 'Nenhum'}</div>
+                                    </div>
+
+                                    <div className="row mb-3 border-bottom pb-2">
+                                        <div className="col-sm-4 fw-bold text-muted">Preço Base</div>
+                                        <div className="col-sm-8">{Number(item.precoBase || item.PrecoBase).toFixed(2)} €</div>
+                                    </div>
+
+                                    <div className="row mb-4">
+                                        <div className="col-sm-4 fw-bold text-muted">Limite Diário</div>
+                                        <div className="col-sm-8">{item.limiteDiario || item.LimiteDiario} unidades</div>
+                                    </div>
+
+                                    <div className="d-flex mt-4">
+                                        <button 
+                                            type="button" 
+                                            className="btn btn-secondary px-4 me-2" 
+                                            onClick={() => navigate('/items')} 
+                                        >
+                                            Voltar à Lista
+                                        </button>
+                                        <button 
+                                            type="button" 
+                                            className="btn btn-primary px-4" 
+                                            onClick={() => navigate('/items/edit', { state: { id: item.id || item.Id } })}
+                                        >
+                                            Editar Item
+                                        </button>
+                                    </div>
                                 </div>
-                            </form>
+                            ) : null}
                         </div>
                     </div>
                 </div>
