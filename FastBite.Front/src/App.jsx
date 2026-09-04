@@ -20,6 +20,7 @@ function App() {
             <Route path="/items" element={<ListItems />} />
             <Route path="/items/create" element={<CreateItem />} />
             <Route path="/items/edit" element={<EditItem />} />
+            <Route path="/checkout" element={<Checkout />} />
             {/* <Route path="/items/show" element={<ShowItem />} />
             <Route path="/items/destroy" element={<DeleteItem />} /> */}
             <Route path="/cart" element={<Cart />} />
