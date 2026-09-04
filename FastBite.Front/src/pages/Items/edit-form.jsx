@@ -125,16 +125,19 @@ const EditItem = () => {
         </div>
 
         <div className="row">
-          <div className="col-md-6 mb-3">
-            <label className="form-label">Categoria</label>
-            <input
-              type="text"
-              className="form-control"
-              name="categoria"
-              value={formData.categoria}
-              onChange={handleChange}
-              required
-            />
+          <div className="mb-3">
+            <label className="form-label fw-bold">Categoria</label>
+            <select
+                className="form-select"
+                name="categoria"
+                value={formData.categoria}
+                onChange={handleChange}
+                required>
+                <option value="">Select one</option>
+                <option value="Prato">Prato</option>
+                <option value="Bebida">Bebida</option>
+                <option value="Acompanhamento">Acompanhamento</option>
+            </select>
           </div>
 
           <div className="col-md-6 mb-3">

@@ -85,7 +85,22 @@ const ShowItem = () => {
 
                                     <div className="row mb-3 border-bottom pb-2">
                                         <div className="col-sm-4 fw-bold text-muted">Alergénios</div>
-                                        <div className="col-sm-8">{item.alergenios || item.Alergenios || 'Nenhum'}</div>
+                                        <div className="col-sm-8">
+                                            {item.alergenios || item.Alergenios ? (
+                                                <div className="d-flex flex-wrap gap-1">
+                                                    {(item.alergenios || item.Alergenios)
+                                                        .split(/[\s, ]+/) // Separa por vírgulas ou espaços
+                                                        .filter(Boolean) // Remove vazios
+                                                        .map((tag, index) => (
+                                                            <span key={index} className="badge bg-warning text-dark px-2 py-1">
+                                                                {tag}
+                                                            </span>
+                                                        ))}
+                                                </div>
+                                            ) : (
+                                                <span className="text-muted">Nenhum alergénio registado</span>
+                                            )}
+                                        </div>
                                     </div>
 
                                     <div className="row mb-3 border-bottom pb-2">
