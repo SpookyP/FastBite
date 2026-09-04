@@ -7,6 +7,7 @@ import EditItem from './pages/Items/edit-form';
 import Checkout from './pages/Checkout/Checkout';
 // import ShowItem from './pages/Items/details-form';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {CartProvider} from './context/CartContext';
 
 function App() {
   return (
