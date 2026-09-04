@@ -26,9 +26,7 @@ const Navbar = () => {
                 </a>
 
                 <div className="d-flex align-items-center ms-auto gap-4">
-                    <Link to="/menu" className="nav-link fw-semibold">Menu</Link>
-                    <Link to="/orders" className="nav-link fw-semibold">Orders</Link>
-                    <Link to="/cart" className="nav-link fw-semibold">Cart</Link>
+                    <Link to="/cart" className="nav-link fw-semibold">🛒 Cart</Link>
 
                     {isAdmin && (
                         <a 
