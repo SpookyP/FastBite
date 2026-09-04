@@ -99,8 +99,8 @@ const Home = () => {
                 {/* Grelha de Produtos */}
                 {!loadingMenus && !errorMenus && (
                     <div className="row g-4">
-                        {menuItems.length > 0 ? (
-                            menuItems.map((item) => (
+                        {produtosFiltrados.length > 0 ? (
+                            produtosFiltrados.map((item) => (
                                 <div className="col-12 col-sm-6 col-md-4 col-lg-3" key={item.id || item.codigo}>
                                     <ProductCard item={item} />
                                 </div>

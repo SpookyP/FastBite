@@ -3,7 +3,7 @@ import React from 'react';
 // Agora recebemos a categoria escolhida e a função para a mudar como parâmetros (props)
 const CategoryFilters = ({ categoriaAtiva, onCategoriaChange }) => {
     
-    const categorias = ['Tudo', 'Pratos', 'Acompanhamentos', 'Bebidas'];
+    const categorias = ['Tudo', 'Prato', 'Acompanhamento', 'Bebida'];
 
     return (
             <div className="d-flex gap-2 mb-4 overflow-auto py-1" style={{ whiteSpace: 'nowrap' }}>

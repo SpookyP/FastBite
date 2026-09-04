@@ -89,7 +89,7 @@ const ShowItem = () => {
                                             {item.alergenios || item.Alergenios ? (
                                                 <div className="d-flex flex-wrap gap-1">
                                                     {(item.alergenios || item.Alergenios)
-                                                        .split(/[\s, ]+/) // Separa por vírgulas ou espaços
+                                                        .split(/[\s,]+/) // Separa por vírgulas ou espaços
                                                         .filter(Boolean) // Remove vazios
                                                         .map((tag, index) => (
                                                             <span key={index} className="badge bg-warning text-dark px-2 py-1">
