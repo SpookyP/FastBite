@@ -9,6 +9,8 @@ import Checkout from './pages/Checkout/Checkout';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {CartProvider} from './context/CartContext';
 import Cart from './pages/Cart';
+import Unauthorized from './pages/Home';
+import ProtectedRoute from './components/Security/ProtectedRoute';
 
 function App() {
   return (
@@ -17,10 +19,13 @@ function App() {
         <div className="app-container">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/items" element={<ListItems />} />
-            <Route path="/items/create" element={<CreateItem />} />
-            <Route path="/items/edit" element={<EditItem />} />
-            <Route path="/items/show" element={<ShowItem />} />
+            <Route path="/unauthorized" element={<Unauthorized />} />
+            <Route element={<ProtectedRoute allowedRoles={['Admin']} />}>
+              <Route path="/items" element={<ListItems />} />
+              <Route path="/items/create" element={<CreateItem />} />
+              <Route path="/items/edit" element={<EditItem />} />
+              <Route path="/items/show" element={<ShowItem />} />
+            </Route>
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/cart" element={<Cart />} />
           </Routes>
