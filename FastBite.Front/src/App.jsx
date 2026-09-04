@@ -7,6 +7,7 @@ import EditItem from './pages/Items/edit-form';
 // import ShowItem from './pages/Items/details-form';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {CartProvider} from './context/CartContext';
+import Cart from './pages/Cart';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
             <Route path="/items/edit" element={<EditItem />} />
             {/* <Route path="/items/show" element={<ShowItem />} />
             <Route path="/items/destroy" element={<DeleteItem />} /> */}
+            <Route path="/cart" element={<Cart />} />
           </Routes>
         </div>
       </Router>

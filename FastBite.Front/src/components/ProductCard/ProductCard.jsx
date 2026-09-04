@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 // const obterImagemPorCategoria = (categoria) => {
 //     const cat = (categoria || "").toLowerCase();
@@ -9,10 +9,31 @@ import React from 'react';
 //     return "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500";
 // };
 
+// Importar o nosso Hook
+import { useCart } from '../../context/CartContext';
+
 const ProductCard = ({ item }) => {
+    //Usamos o Hook para extrair apenas a função que precisamos
+    const {adicionarAoCarrinho} = useCart();
+
+    //Boolenao para saber se foi adicionado ao carrinho
+    const [foiAdicionado, setFoiAdicionado] = useState(false);
+
     if (!item) {
         return null; 
     }
+
+    const handleAdicionar = () => {
+        adicionarAoCarrinho(item);
+        
+        setFoiAdicionado(true);
+
+        //Após 2 segundos, voltamos a colocar a false para o botão voltar ao normal
+        setTimeout(() => {
+            setFoiAdicionado(false);
+        }, 2000);
+    };
+
     return (
         <div className="col">
             <div className="card h-100 border-0 shadow-sm rounded-4 overflow-hidden d-flex flex-column justify-content-between">
@@ -31,7 +52,7 @@ const ProductCard = ({ item }) => {
                         <div className="d-flex justify-content-between align-items-start mb-1">
                             <h6 className="card-title fw-bold m-0 fs-6">{item.nome}</h6>
                             <span className="fw-bold fs-6" style={{ color: '#ff6b00' }}>
-                                ${item.precoBase?.toFixed(2) || '0.00'}
+                                {item.precoBase?.toFixed(2) || '0.00'}€
                             </span>
                         </div>
                         <p className="card-text text-muted small mb-3" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', height: '38px' }}>
@@ -43,8 +64,13 @@ const ProductCard = ({ item }) => {
                             <span>⭐ 4.8</span>
                             <span>🕒 15 min</span>
                         </div>
-                        <button className="btn w-100 text-white fw-bold rounded-3 py-2 shadow-sm border-0" style={{ backgroundColor: '#ff6b00' }}>
-                            + Add to cart
+                        <button 
+                            className={`btn w-100 text-white fw-bold rounded-3 py-2 shadow-sm border-0 transition-all ${foiAdicionado ? 'bg-success' : ''}`} 
+                            style={{ backgroundColor: foiAdicionado ? '' : '#ff6b00' }}
+                            onClick={handleAdicionar}
+                            disabled={foiAdicionado} //Desativa o botão enquanto diz "Adicionado" para evitar cliques duplos
+                        >
+                            {foiAdicionado ? '✅ Adicionado!' : '+ Adicionar'}
                         </button>
                     </div>
                 </div>

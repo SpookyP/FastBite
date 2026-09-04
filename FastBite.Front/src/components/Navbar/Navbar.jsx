@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from 'react-oidc-context';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
     // 1. A Navbar acede diretamente ao contexto de autenticação
@@ -25,9 +26,9 @@ const Navbar = () => {
                 </a>
 
                 <div className="d-flex align-items-center ms-auto gap-4">
-                    <a href="#menu" className="text-decoration-none text-dark fw-semibold">Menu</a>
-                    <a href="#orders" className="text-decoration-none text-dark fw-semibold">Orders</a>
-                    <a href="#cart" className="text-decoration-none text-dark fw-semibold">Cart</a>
+                    <Link to="/menu" className="nav-link fw-semibold">Menu</Link>
+                    <Link to="/orders" className="nav-link fw-semibold">Orders</Link>
+                    <Link to="/cart" className="nav-link fw-semibold">Cart</Link>
 
                     {isAdmin && (
                         <a 
