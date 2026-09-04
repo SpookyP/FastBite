@@ -15,5 +15,7 @@ namespace DeliveryOrdering.Application.DTOs
         /// Lista de combos que o cliente deseja encomendar
         /// </summary>
         public List<CreateOrderItemDto> Items { get; set; } = new List<CreateOrderItemDto>();
+        public EntregaDto Entrega { get; set; } = new EntregaDto();
+        public PagamentoDto Pagamento { get; set; } = new PagamentoDto();
     }
 }
