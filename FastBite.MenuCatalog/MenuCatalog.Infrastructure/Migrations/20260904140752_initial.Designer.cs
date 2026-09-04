@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MenuCatalog.Infrastructure.Migrations
 {
     [DbContext(typeof(MenuCatalogDbContext))]
-    [Migration("20260806191059_initial")]
+    [Migration("20260904140752_initial")]
     partial class initial
     {
         /// <inheritdoc />
