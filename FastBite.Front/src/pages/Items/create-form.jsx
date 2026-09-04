@@ -98,14 +98,17 @@ const CreateItem = () => {
 
                                 <div className="mb-3">
                                     <label className="form-label fw-bold">Categoria</label>
-                                    <input 
-                                        type="text" 
-                                        className="form-control" 
-                                        name="categoria" 
-                                        value={formData.categoria} 
-                                        onChange={handleChange} 
-                                        required 
-                                    />
+                                    <select
+                                        className="form-select"
+                                        name="categoria"
+                                        value={formData.categoria}
+                                        onChange={handleChange}
+                                        required>
+                                        <option value="">Select one</option>
+                                        <option value="Prato">Prato</option>
+                                        <option value="Bebida">Bebida</option>
+                                        <option value="Acompanhamento">Acompanhamento</option>
+                                    </select>
                                 </div>
 
                                 <div className="mb-3">
@@ -116,7 +119,7 @@ const CreateItem = () => {
                                         name="alergenios" 
                                         value={formData.alergenios} 
                                         onChange={handleChange} 
-                                        placeholder="Ex: Glúten, Lactose"
+                                        placeholder="Ex: Glúten,Lactose"
                                     />
                                 </div>
 

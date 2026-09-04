@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Navbar from '../components/Navbar/Navbar';
 // Importamos o nosso "Armazém" para ler a lista e a função de remover
 import { useCart } from '../context/CartContext'; 
 
@@ -11,6 +12,8 @@ const Cart = () => {
     const subtotal = cart.reduce((soma, item) => soma + (item.precoBase * item.quantidade), 0);
 
     return (
+        <div className="min-vh-100 bg-light">
+            <Navbar />
         <div className="container py-5">
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2 className="fw-bold m-0">O teu Carrinho 🛒</h2>
@@ -126,6 +129,7 @@ const Cart = () => {
                 </div>
             )}
         </div>
+                </div>
     );
 };
 

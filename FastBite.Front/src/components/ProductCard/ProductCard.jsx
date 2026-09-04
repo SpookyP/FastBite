@@ -38,11 +38,20 @@ const ProductCard = ({ item }) => {
                         {item.alergenios && item.alergenios.length > 0 && (
                             <p className="card-text text-muted mb-3" style={{ fontSize: '0.75rem' }}>
                                 <strong>Alergénios: </strong> 
-                                {
-                                    Array.isArray(item.alergenios) 
-                                        ? item.alergenios.join(', ') 
-                                        : item.alergenios
-                                }
+                                {item.alergenios || item.Alergenios ? (
+                                    <div className="d-flex flex-wrap gap-1">
+                                        {(item.alergenios || item.Alergenios)
+                                            .split(/[\s,]+/) // Separa por vírgulas ou espaços
+                                            .filter(Boolean) // Remove vazios
+                                            .map((tag, index) => (
+                                                <span key={index} className="badge bg-warning text-dark px-2 py-1">
+                                                    {tag}
+                                                </span>
+                                            ))}
+                                    </div>
+                                ) : (
+                                    <span className="text-muted">Nenhum alergénio registado</span>
+                                )}
                             </p>
                         )}
                     </div>

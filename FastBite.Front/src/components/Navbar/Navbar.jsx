@@ -21,9 +21,9 @@ const Navbar = () => {
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 mb-4">
             <div className="container">
-                <a className="navbar-brand d-flex align-items-center fw-bold text-danger fs-3" href="/">
+                <Link className="navbar-brand d-flex align-items-center fw-bold text-danger fs-3" to="/">
                     <span className="me-2">🍴</span> FastBite
-                </a>
+                </Link>
 
                 <div className="d-flex align-items-center ms-auto gap-4">
                     <Link to="/cart" className="nav-link fw-semibold">🛒 Cart</Link>
