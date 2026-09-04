@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import ListItems from './pages/Items/list-items';
 import CreateItem from './pages/Items/create-form';
 import EditItem from './pages/Items/edit-form';
+import Checkout from './pages/Checkout/Checkout';
 // import ShowItem from './pages/Items/details-form';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -18,6 +19,7 @@ function App() {
           <Route path="/items/edit" element={<EditItem />} />
           {/* <Route path="/items/show" element={<ShowItem />} />
           <Route path="/items/destroy" element={<DeleteItem />} /> */}
+          <Route path="/checkout" element={<Checkout />} />
         </Routes>
       </div>
     </Router>
