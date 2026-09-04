@@ -18,6 +18,8 @@ namespace DeliveryOrdering.Domain.Entities
 
         public OrderStatus Status { get; set; } // Status atual do pedido (Pendente, APreparar, ACaminho, Entregue)
 
+        public OrderType OrderType { get; set; } = OrderType.Avulso;
+
         public ICollection<OrderItem> Items { get; set; } = new List<OrderItem>(); // Lista de itens do pedido
     }
 }

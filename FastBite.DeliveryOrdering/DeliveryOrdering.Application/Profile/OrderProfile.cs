@@ -13,6 +13,11 @@ namespace DeliveryOrdering.Application.Profile
     {
         public OrderProfile()
         {
+            // Mapear Order para OrderHistoryResponseDto
+            CreateMap<Order, OrderHistoryResponseDto>()
+                .ForMember(dest => dest.OrderType, opt => opt.MapFrom(src => (int)src.OrderType))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (int)src.Status));
+
             // Mapear a Linha do Pedido (Entidade -> DTO de Resposta)
             CreateMap<OrderItem, OrderItemResponseDto>();
 

@@ -40,6 +40,7 @@ namespace DeliveryOrdering.Application.Services
                 OrderDate = DateTime.UtcNow,
                 Status = OrderStatus.Pendente,
                 TotalAmount = 0,
+                OrderType = OrderType.Avulso,
                 Items = new List<OrderItem>()
             };
 
@@ -97,6 +98,7 @@ namespace DeliveryOrdering.Application.Services
                 OrderDate = DateTime.UtcNow,
                 Status = OrderStatus.Pendente,
                 TotalAmount = 0,
+                OrderType = OrderType.Combo,
                 Items = new List<OrderItem>()
             };
 
@@ -105,38 +107,53 @@ namespace DeliveryOrdering.Application.Services
             // Validação de cada combo do pedido
             foreach (var comboDto in dto.Items)
             {
-                // Validar que tem todos os IDs necessários para um combo
                 if (comboDto.Quantity <= 0 || !comboDto.AcompanhamentoId.HasValue || !comboDto.BebidaId.HasValue)
                     return null;
 
-                // Validar disponibilidade de todos os itens do combo
-                bool pratoDiponivel = await _catalogService.VerificarDisponibilidadeAsync(comboDto.ProductId, comboDto.Quantity);
-                if (!pratoDiponivel)
-                    return null;
-
-                bool acompanhamentoDiponivel = await _catalogService.VerificarDisponibilidadeAsync(comboDto.AcompanhamentoId.Value, comboDto.Quantity);
-                if (!acompanhamentoDiponivel)
-                    return null;
-
-                bool bebidaDisponivel = await _catalogService.VerificarDisponibilidadeAsync(comboDto.BebidaId.Value, comboDto.Quantity);
-                if (!bebidaDisponivel)
-                    return null;
-
-                // Obter preço do prato, acompanhamento e bebida
+                // Obter prato
                 var prato = await _catalogService.ObterMenuPorIdAsync(comboDto.ProductId);
                 if (prato == null)
                     return null;
 
+                // Validar que é Prato
+                if (string.IsNullOrEmpty(prato.Categoria) || !prato.Categoria.Equals("Prato", StringComparison.OrdinalIgnoreCase))
+                    return null;  // Erro: ProductId não é um Prato
+
+                // Validar disponibilidade do prato
+                bool pratoDiponivel = await _catalogService.VerificarDisponibilidadeAsync(comboDto.ProductId, comboDto.Quantity);
+                if (!pratoDiponivel)
+                    return null;
+
+                // Obter acompanhamento
                 var acompanhamento = await _catalogService.ObterMenuPorIdAsync(comboDto.AcompanhamentoId.Value);
                 if (acompanhamento == null)
                     return null;
 
+                // Validar que é Acompanhamento
+                if (string.IsNullOrEmpty(acompanhamento.Categoria) || !acompanhamento.Categoria.Equals("Acompanhamento", StringComparison.OrdinalIgnoreCase))
+                    return null;  // Erro: AcompanhamentoId não é um Acompanhamento
+
+                // Validar disponibilidade do acompanhamento
+                bool acompanhamentoDiponivel = await _catalogService.VerificarDisponibilidadeAsync(comboDto.AcompanhamentoId.Value, comboDto.Quantity);
+                if (!acompanhamentoDiponivel)
+                    return null;
+
+                // Obter bebida
                 var bebida = await _catalogService.ObterMenuPorIdAsync(comboDto.BebidaId.Value);
                 if (bebida == null)
                     return null;
 
+                // Validar que é Bebida
+                if (string.IsNullOrEmpty(bebida.Categoria) || !bebida.Categoria.Equals("Bebida", StringComparison.OrdinalIgnoreCase))
+                    return null;  // Erro: BebidaId não é uma Bebida
+
+                // Validar disponibilidade da bebida
+                bool bebidaDisponivel = await _catalogService.VerificarDisponibilidadeAsync(comboDto.BebidaId.Value, comboDto.Quantity);
+                if (!bebidaDisponivel)
+                    return null;
+
                 // Calcular preço total do combo (soma dos três itens)
-                decimal precoCombo = (prato.PrecoBase + acompanhamento.PrecoBase + bebida.PrecoBase) * comboDto.Quantity;
+                decimal precoCombo = (prato.PrecoBase + acompanhamento.PrecoBase + bebida.PrecoBase) * comboDto.Quantity * 0.90m;
                 totalAcumulado += precoCombo;
 
                 // Criar item de pedido para o combo
