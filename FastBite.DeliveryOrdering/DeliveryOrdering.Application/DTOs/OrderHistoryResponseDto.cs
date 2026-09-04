@@ -15,6 +15,8 @@ namespace DeliveryOrdering.Application.DTOs
         // O estado vai ser devolvido como texto limpo (ex: "ACaminho")
         public string Status { get; set; }
 
+        public int OrderType { get; set; }
+
         public List<OrderItemResponseDto> Items { get; set; } = new List<OrderItemResponseDto>();
     }
 }

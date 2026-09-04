@@ -20,17 +20,14 @@ namespace DeliveryOrdering.Controllers
         }
 
         /// <summary>
-        /// Endpoint para criar um novo pedido.
+        /// Endpoint para criar um pedido com itens avulsos
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]    // Em caso de sucesso
-        [ProducesResponseType(StatusCodes.Status400BadRequest)] // Em caso de erro de validação
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)] // Se o usuário não estiver autenticado
+        [HttpPost("items")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Authorize(Roles = "Admin,Client")]
-        public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequestDto request)
+        public async Task<IActionResult> CreateItemOrder([FromBody] CreateOrderRequestDto request)
         {
             if (!ModelState.IsValid)
             {
@@ -38,14 +35,14 @@ namespace DeliveryOrdering.Controllers
             }
 
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                         ?? User.FindFirst("sub")?.Value;   // Diferentes tipos de tokens podem ter diferentes claims para o ID do usuário
+                         ?? User.FindFirst("sub")?.Value;
 
             if (string.IsNullOrEmpty(userId))
             {
                 return Unauthorized("Utilizador não identificado ou Token JWT inválido.");
             }
 
-            var pedidoCriado = await _pedidoService.CriarPedidoAsync(request, userId);
+            var pedidoCriado = await _pedidoService.CriarPedidoComItensAsync(request, userId);
 
             if (pedidoCriado == null)
             {
@@ -55,19 +52,49 @@ namespace DeliveryOrdering.Controllers
             return StatusCode(StatusCodes.Status201Created, pedidoCriado);
         }
 
+        /// <summary>
+        /// Endpoint para criar um pedido com combos
+        /// </summary>
+        [HttpPost("combos")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Authorize(Roles = "Admin,Client")]
+        public async Task<IActionResult> CreateComboOrder([FromBody] CreateComboOrderRequestDto request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                         ?? User.FindFirst("sub")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("Utilizador não identificado ou Token JWT inválido.");
+            }
+
+            var pedidoCriado = await _pedidoService.CriarPedidoComCombosAsync(request, userId);
+
+            if (pedidoCriado == null)
+            {
+                return BadRequest("Não foi possível processar o pedido com combos. Verifique se todos os itens estão disponíveis.");
+            }
+
+            return StatusCode(StatusCodes.Status201Created, pedidoCriado);
+        }
 
         /// <summary>
         /// Obtém o histórico de pedidos do usuário autenticado.
         /// </summary>
-        /// <returns></returns>
-
         [HttpGet("my-orders")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Authorize(Roles = "Admin,Client")]
         public async Task<IActionResult> GetMyOrders()
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value   // Obtém o ID do usuário a partir do token JWT ou pelo claim "sub" (abreviação de subject)
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
                          ?? User.FindFirst("sub")?.Value;
 
             if (string.IsNullOrEmpty(userId))
@@ -77,7 +104,6 @@ namespace DeliveryOrdering.Controllers
 
             try
             {
-                // Chama o serviço que preparaste
                 var history = await _pedidoService.GetUserOrderHistoryAsync(userId);
 
                 return Ok(history);

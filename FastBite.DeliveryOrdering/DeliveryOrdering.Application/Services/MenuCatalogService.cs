@@ -59,5 +59,28 @@ namespace DeliveryOrdering.Application.Services
                 return null;
             }
         }
+
+        public async Task<decimal> VerificarDisponibilidadeComboAsync(int pratoId, int acompanhamentoId, int bebidaId, int quantity)
+        {
+            try
+            {
+                AdicionarTokenAoHeader();
+
+                // Chamar o endpoint do MenuCatalog que valida e retorna o preço do combo
+                // Você pode usar um DTO simples para isto
+                var response = await _httpClient.GetAsync($"api/Menus/combo?pratoId={pratoId}&acompanhamentoId={acompanhamentoId}&bebidaId={bebidaId}");
+
+                if (!response.IsSuccessStatusCode) return 0;
+
+                var comboResponse = await response.Content.ReadFromJsonAsync<dynamic>();
+
+                // Retornar o preço final do combo
+                return comboResponse?.PrecoFinal ?? 0;
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
     }
 }

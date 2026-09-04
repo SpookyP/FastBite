@@ -18,6 +18,13 @@ namespace MenuCatalog.Application.Services
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Este método monta um combo de menu a partir dos IDs dos itens fornecidos no DTO de criação. Ele verifica se os itens existem e se estão disponíveis (não esgotados) antes de calcular o preço original e o preço final com desconto. 
+        /// </summary>
+        /// <param name="request">O DTO contendo os IDs do prato, acompanhamento e bebida para montar o combo.</param>
+        /// <returns>Retorna um DTO de resposta contendo os detalhes do combo montado.</returns>
+        /// <exception cref="KeyNotFoundException">Lançada quando um ou mais itens não existem no catálogo.</exception>
+        /// <exception cref="ArgumentException">Lançada quando um ou mais itens estão esgotados.</exception>
         public async Task<MenuComboResponseDto> MontarComboAsync(MenuComboCreateDto request)
         {
             var prato = await _itemRepository.GetByIdAsync(request.PratoId);
@@ -43,8 +50,7 @@ namespace MenuCatalog.Application.Services
                 throw new ArgumentException($"A bebida '{bebida.Nome}' encontra-se esgotada.");
             }
 
-            // Mapear o DTO recebido para a entidade de domínio Menu
-            var menuCriado = new MenuCombo(request.Nome, prato, acompanhamento, bebida);
+            var menuCriado = new MenuCombo(request.Nome, prato, acompanhamento, bebida); // Mapear o DTO recebido para a entidade de domínio Menu
 
             var precoOriginal = prato.PrecoBase + acompanhamento.PrecoBase + bebida.PrecoBase;
             var precoComDesconto = precoOriginal * (1 - DescontoMenu);

@@ -19,7 +19,7 @@ namespace MenuCatalog.Application.Services
         public async Task<ItemResponseDto> ObterPorIdAsync(int id)
         {
             var menuId = await _itemRepository.GetByIdAsync(id);
-            
+
             return _mapper.Map<ItemResponseDto>(menuId);
         }
 
@@ -32,8 +32,8 @@ namespace MenuCatalog.Application.Services
 
         public async Task<ItemResponseDto> AdicionarMenuAsync(ItemCreateEditDto request)
         {
-            // Mapear o DTO recebido para a entidade de domínio Menu
-            var menuInserido = _mapper.Map<Item>(request);
+
+            var menuInserido = _mapper.Map<Item>(request); // Mapear o DTO recebido para a entidade de domínio Menu
 
             var menuGuardado = await _itemRepository.AddItemAsync(menuInserido);
 
@@ -70,12 +70,12 @@ namespace MenuCatalog.Application.Services
         {
             var menuExistente = await _itemRepository.GetByIdAsync(id);
 
-            if(menuExistente == null)
+            if (menuExistente == null)
             {
                 return false;
             }
 
-            if(menuExistente.LimiteDiario >= quantidade)
+            if (menuExistente.LimiteDiario >= quantidade)
             {
                 return true;
             }
