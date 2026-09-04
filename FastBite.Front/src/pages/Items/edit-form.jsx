@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import Navbar from '../../components/Navbar/Navbar';
 import { menuService } from '../../services/menuService';
 
 const EditItem = () => {
@@ -92,6 +93,8 @@ const EditItem = () => {
   }
 
   return (
+    <div className="min-vh-100 bg-light">
+            <Navbar />
     <div className="container mt-4" style={{ maxWidth: '600px' }}>
       <h2>Editar Item</h2>
 
@@ -190,6 +193,7 @@ const EditItem = () => {
           </button>
         </div>
       </form>
+    </div>
     </div>
   );
 };
