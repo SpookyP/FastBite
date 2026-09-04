@@ -7,6 +7,10 @@ namespace FastBite.Identity.Api.Data
 {
     public static class SeedData
     {
+        /// <summary>
+        /// Aplica a seed na base de dados, criando roles e users iniciais.
+        /// </summary>
+        /// <param name="app">Aplicação Web instanciada usada para aceder aos serviços</param>
         public static async Task EnsureSeedData(WebApplication app)
         {
             using var scope = app.Services.CreateScope();
