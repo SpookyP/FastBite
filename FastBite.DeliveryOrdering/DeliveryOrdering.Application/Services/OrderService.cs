@@ -33,6 +33,17 @@ namespace DeliveryOrdering.Application.Services
             if (dto?.Items == null || dto.Items.Count == 0)
                 return null;
 
+
+            if (dto.Entrega == null || string.IsNullOrEmpty(dto.Entrega.NomeCompleto) ||
+                string.IsNullOrEmpty(dto.Entrega.ContactoTelefonico) ||
+                string.IsNullOrEmpty(dto.Entrega.Morada) ||
+                string.IsNullOrEmpty(dto.Entrega.CodigoPostal) ||
+                string.IsNullOrEmpty(dto.Entrega.Cidade))
+                return null;
+
+            if (dto.Pagamento == null || string.IsNullOrEmpty(dto.Pagamento.MetodoPagamento) || dto.Pagamento.TaxaEntrega < 0)
+                return null;
+
             var novoPedido = new Order
             {
                 Id = Guid.NewGuid(),
@@ -41,7 +52,14 @@ namespace DeliveryOrdering.Application.Services
                 Status = OrderStatus.Pendente,
                 TotalAmount = 0,
                 OrderType = OrderType.Avulso,
-                Items = new List<OrderItem>()
+                Items = new List<OrderItem>(),
+                NomeCompleto = dto.Entrega.NomeCompleto,
+                ContactoTelefonico = dto.Entrega.ContactoTelefonico,
+                Morada = dto.Entrega.Morada,
+                CodigoPostal = dto.Entrega.CodigoPostal,
+                Cidade = dto.Entrega.Cidade,
+                MetodoPagamento = dto.Pagamento.MetodoPagamento,
+                TaxaEntrega = dto.Pagamento.TaxaEntrega
             };
 
             decimal totalAcumulado = 0;
@@ -75,7 +93,8 @@ namespace DeliveryOrdering.Application.Services
                 novoPedido.Items.Add(orderItem);
             }
 
-            novoPedido.TotalAmount = totalAcumulado;
+            novoPedido.Subtotal = totalAcumulado;
+            novoPedido.TotalAmount = totalAcumulado + dto.Pagamento.TaxaEntrega;
 
             await _orderRepository.AdicionarAsync(novoPedido);
             await _orderRepository.SaveChangesAsync();
@@ -91,6 +110,17 @@ namespace DeliveryOrdering.Application.Services
             if (dto?.Items == null || dto.Items.Count == 0)
                 return null;
 
+            if (dto.Entrega == null || string.IsNullOrEmpty(dto.Entrega.NomeCompleto) ||
+                string.IsNullOrEmpty(dto.Entrega.ContactoTelefonico) ||
+                string.IsNullOrEmpty(dto.Entrega.Morada) ||
+                string.IsNullOrEmpty(dto.Entrega.CodigoPostal) ||
+                string.IsNullOrEmpty(dto.Entrega.Cidade))
+                return null;
+
+            if (dto.Pagamento == null || string.IsNullOrEmpty(dto.Pagamento.MetodoPagamento) || dto.Pagamento.TaxaEntrega < 0)
+                return null;
+
+
             var novoPedido = new Order
             {
                 Id = Guid.NewGuid(),
@@ -99,7 +129,14 @@ namespace DeliveryOrdering.Application.Services
                 Status = OrderStatus.Pendente,
                 TotalAmount = 0,
                 OrderType = OrderType.Combo,
-                Items = new List<OrderItem>()
+                Items = new List<OrderItem>(),
+                NomeCompleto = dto.Entrega.NomeCompleto,
+                ContactoTelefonico = dto.Entrega.ContactoTelefonico,
+                Morada = dto.Entrega.Morada,
+                CodigoPostal = dto.Entrega.CodigoPostal,
+                Cidade = dto.Entrega.Cidade,
+                MetodoPagamento = dto.Pagamento.MetodoPagamento,
+                TaxaEntrega = dto.Pagamento.TaxaEntrega
             };
 
             decimal totalAcumulado = 0;
@@ -169,7 +206,8 @@ namespace DeliveryOrdering.Application.Services
                 novoPedido.Items.Add(orderItem);
             }
 
-            novoPedido.TotalAmount = totalAcumulado;
+            novoPedido.Subtotal = totalAcumulado;
+            novoPedido.TotalAmount = totalAcumulado + dto.Pagamento.TaxaEntrega;
 
             await _orderRepository.AdicionarAsync(novoPedido);
             await _orderRepository.SaveChangesAsync();
