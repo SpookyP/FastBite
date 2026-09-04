@@ -27,6 +27,19 @@ const ListItems = () => {
         }
     };
 
+    const handleDelete = async (id) => {
+        if (window.confirm("Tens a certeza que pretendes apagar este item?")) {
+            try {
+                await menuService.delete(id);
+                // Correção: Atualiza o estado visual filtrando o item apagado em vez de chamar uma função inexistente
+                setMenus(prevMenus => prevMenus.filter(item => (item.id) !== id)); 
+            } catch (err) {
+                console.error(err);
+                alert('Erro ao apagar o item.');
+            }
+        }
+    };
+
     return (
         <div className="min-vh-100 bg-light">
             <Navbar />
@@ -38,7 +51,7 @@ const ListItems = () => {
                         {/* 3. Adicionar o onClick com o navigate */}
                         <button 
                             className="btn btn-success" 
-                            onClick={() => navigate('/admin/menus/create')}
+                            onClick={() => navigate('/items/create')}
                         >
                             + Criar Novo Item
                         </button>
@@ -84,11 +97,13 @@ const ListItems = () => {
                                                 <td>{item.limiteDiario || item.LimiteDiario}</td>
                                                 <td>
                                                     <div className="d-flex justify-content-center gap-2">
-                                                        <button type="button" className="btn btn-sm btn-success">Detalhes</button>
-                                                            <Link to="/items/edit" state={{ id: item.id }} className="btn btn-primary">
-                                                                Editar
+                                                        <Link to="/items/show" state={{ id: item.id }} className="btn btn-primary">
+                                                                Detalhes
                                                             </Link>
-                                                        <button type="button" className="btn btn-sm btn-danger">Apagar</button>
+                                                        <Link to="/items/edit" state={{ id: item.id }} className="btn btn-secondary">
+                                                            Editar
+                                                        </Link>
+                                                        <button type="button" className="btn btn-sm btn-danger" onClick={() => handleDelete(item.id)}>Apagar</button>
                                                     </div>
                                                 </td>
                                             </tr>

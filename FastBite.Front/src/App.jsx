@@ -4,13 +4,15 @@ import Home from './pages/Home';
 import ListItems from './pages/Items/list-items';
 import CreateItem from './pages/Items/create-form';
 import EditItem from './pages/Items/edit-form';
-// import ShowItem from './pages/Items/details-form';
+import ShowItem from './pages/Items/details-form';
+import Checkout from './pages/Checkout/Checkout';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {CartProvider} from './context/CartContext';
 import Cart from './pages/Cart';
 
 function App() {
   return (
+View-Cart
     <CartProvider>
       <Router>
         <div className="app-container">
@@ -26,6 +28,7 @@ function App() {
         </div>
       </Router>
     </CartProvider>
+main
   );
 }
 

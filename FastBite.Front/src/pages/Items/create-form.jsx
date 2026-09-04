@@ -50,7 +50,7 @@ const CreateItem = () => {
             await menuService.create(payload);
             
             // Redireciona de volta para o dashboard de admin após sucesso
-            navigate('/admin');
+            navigate('/items');
         } catch (err) {
             console.error(err);
             setErro('Erro ao criar o item do menu. Verifica os dados ou permissões.');
@@ -150,7 +150,7 @@ const CreateItem = () => {
                                     <button 
                                         type="button" 
                                         className="btn btn-secondary px-4" 
-                                        onClick={() => navigate('/admin')}
+                                        onClick={() => navigate('/items')}
                                     >
                                         Cancelar
                                     </button>
