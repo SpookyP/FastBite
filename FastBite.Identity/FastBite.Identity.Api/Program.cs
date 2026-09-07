@@ -36,18 +36,11 @@ namespace IdentityServer.Host
                 .AddInMemoryClients(Config.GetClients(builder.Configuration))
                 .AddAspNetIdentity<IdentityUser>()
                 .AddDeveloperSigningCredential();
-            
-            //builder.Services.AddAuthentication()
-            //    .AddGoogle(options =>
-            //    {
-            //    options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-            //    options.ClientId = builder.Configuration["Authentication:Google:ClientId"];)
 
             var app = builder.Build();
 
             await SeedData.EnsureSeedData(app);
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

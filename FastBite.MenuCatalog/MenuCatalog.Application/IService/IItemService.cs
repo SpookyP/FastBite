@@ -12,5 +12,6 @@ namespace MenuCatalog.Application.IService
         Task RemoverMenuAsync(int id);
         Task<bool> VerDisponibilidadeAsync(int id, int quantidade);
         Task<IEnumerable<ItemResponseDto>> ObterPratosDisponiveisAsync();
+        Task RegistarVendasAsync(List<ItemRequestDto> itensVendidos);
     }
 }

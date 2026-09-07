@@ -152,5 +152,18 @@ namespace MenuCatalog.Api.Controllers
             var resultado = await _menuComboService.MontarComboAsync(request);
             return Ok(resultado);
         }
+
+        /// <summary>
+        /// Este endpoint permite descontar a quantidade de itens vendidos do stock com base na lista de itens vendidos fornecida.
+        /// </summary>
+        /// <param name="itensVendidos">A lista de itens vendidos.</param>
+        /// <returns>Retorna Ok se a operação for bem-sucedida.</returns>
+        [HttpPost("DescontarItemsVendidos")]
+        [AllowAnonymous]
+        public async Task<IActionResult> DescontarItemsVendidos([FromBody] List<ItemRequestDto> itensVendidos)
+        {
+            await _menuService.RegistarVendasAsync(itensVendidos);
+            return Ok();
+        }
     }
 }

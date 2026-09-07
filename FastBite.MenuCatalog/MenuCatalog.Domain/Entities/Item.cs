@@ -11,5 +11,6 @@ namespace MenuCatalog.Domain.Entities
         public string Alergenios { get; set; } = string.Empty;
         public decimal PrecoBase { get; set; }
         public int LimiteDiario { get; set; }
+        public int QuantidadeVendidaHoje { get; set; } = 0;
     }
 }

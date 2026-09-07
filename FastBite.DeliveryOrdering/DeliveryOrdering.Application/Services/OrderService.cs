@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using DeliveryOrdering.Application.DTOs;
 using DeliveryOrdering.Application.Interfaces;
 using DeliveryOrdering.Domain.Entities;
@@ -67,6 +67,20 @@ namespace DeliveryOrdering.Application.Services
                                            .OrderByDescending(u => u.Menu.PrecoBase).ToList();
             var bebidas = unidades.Where(u => u.Menu.Categoria.Equals("Bebida", StringComparison.OrdinalIgnoreCase))
                                    .OrderByDescending(u => u.Menu.PrecoBase).ToList();
+
+            await _orderRepository.AdicionarAsync(novoPedido);
+            await _orderRepository.SaveChangesAsync();
+
+            return _mapper.Map<OrderHistoryResponseDto>(novoPedido);
+        }
+
+        /// <summary>
+        /// Método para criar um pedido com combos
+        /// </summary>
+        public async Task<OrderHistoryResponseDto?> CriarPedidoComCombosAsync(CreateComboOrderRequestDto dto, string userId)
+        {
+            if (dto?.Items == null || dto.Items.Count == 0)
+                return null;
 
             var novoPedido = new Order
             {

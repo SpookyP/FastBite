@@ -41,8 +41,8 @@ const ProductCard = ({ item }) => {
                                 {item.alergenios || item.Alergenios ? (
                                     <div className="d-flex flex-wrap gap-1">
                                         {(item.alergenios || item.Alergenios)
-                                            .split(/[\s,]+/) // Separa por vírgulas ou espaços
-                                            .filter(Boolean) // Remove vazios
+                                            .split(/[\s,]+/)
+                                            .filter(Boolean)
                                             .map((tag, index) => (
                                                 <span key={index} className="badge bg-warning text-dark px-2 py-1">
                                                     {tag}
