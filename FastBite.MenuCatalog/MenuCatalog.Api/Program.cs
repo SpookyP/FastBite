@@ -5,6 +5,7 @@ using MenuCatalog.Application.Services;
 using MenuCatalog.Domain;
 using MenuCatalog.Infrastructure.Data;
 using MenuCatalog.Infrastructure.Repositories;
+using MenuCatalog.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -35,6 +36,8 @@ public class Program
         builder.Services.AddScoped<IItemService, ItemService>();
 
         builder.Services.AddScoped<IMenuComboService, MenuComboService>();
+
+        builder.Services.AddHostedService<DailyStockResetService>();
 
 
         builder.Services.AddAuthentication("Bearer")
