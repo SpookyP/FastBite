@@ -94,7 +94,7 @@ namespace MenuCatalog.Application.Services
         {
             foreach (var item in itensVendidos)
             {
-                var produto = await _itemRepository.GetByIdAsync(item.ProdutoId);
+                var produto = await _itemRepository.GetByIdAsync(item.ItemId);
                 if (produto != null)
                 {
                     produto.QuantidadeVendidaHoje += item.Quantidade;

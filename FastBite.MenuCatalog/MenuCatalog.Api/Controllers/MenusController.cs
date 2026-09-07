@@ -153,7 +153,12 @@ namespace MenuCatalog.Api.Controllers
             return Ok(resultado);
         }
 
-        [HttpPost("descontar-stock")]
+        /// <summary>
+        /// Este endpoint permite descontar a quantidade de itens vendidos do stock com base na lista de itens vendidos fornecida.
+        /// </summary>
+        /// <param name="itensVendidos">A lista de itens vendidos.</param>
+        /// <returns>Retorna Ok se a operação for bem-sucedida.</returns>
+        [HttpPost("DescontarItemsVendidos")]
         [AllowAnonymous]
         public async Task<IActionResult> DescontarItemsVendidos([FromBody] List<ItemRequestDto> itensVendidos)
         {

@@ -35,7 +35,7 @@ namespace MenuCatalog.Infrastructure.Services
 
                     foreach (var item in todosItens)
                     {
-                        //item.QuantidadeVendidaHoje = 0;
+                        item.QuantidadeVendidaHoje = 0;
                         await repo.UpdateItemAsync(item);
                     }
                 }
