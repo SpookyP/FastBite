@@ -152,5 +152,13 @@ namespace MenuCatalog.Api.Controllers
             var resultado = await _menuComboService.MontarComboAsync(request);
             return Ok(resultado);
         }
+
+        [HttpPost("descontar-stock")]
+        [AllowAnonymous]
+        public async Task<IActionResult> DescontarItemsVendidos([FromBody] List<ItemRequestDto> itensVendidos)
+        {
+            await _menuService.RegistarVendasAsync(itensVendidos);
+            return Ok();
+        }
     }
 }
