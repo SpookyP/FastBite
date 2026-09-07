@@ -4,8 +4,14 @@ using Secret = Duende.IdentityServer.Models.Secret;
 
 namespace FastBite.Identity.Api.Data
 {
+    /// <summary>
+    /// Configurações do IdentityServer, como API scopes, recursos de API e clientes.
+    /// </summary>
     public static class Config
     {
+        /// <summary>
+        /// Recursos de identidade disponíveis para o IdentityServer.
+        /// </summary>
         public static IEnumerable<IdentityResource> IdentityResources =>
             new IdentityResource[]
             {
@@ -15,6 +21,9 @@ namespace FastBite.Identity.Api.Data
 
                 new IdentityResource("roles","Perfis de Utilizador", new[]{"role"})
             };
+        /// <summary>
+        /// Scopes de API com autorização disponíveis para o IdentityServer.
+        /// </summary>
         public static IEnumerable<ApiScope> ApiScopes =>
             new ApiScope[]
             {
@@ -22,6 +31,9 @@ namespace FastBite.Identity.Api.Data
                 new ApiScope("DeliveryOrdering.api.full", "FastBite Food Ordering", new[]{"role"}),
             };
 
+        /// <summary>
+        /// Recursos de API disponíveis para o IdentityServer e mapeamento das respetivas scopes e claims.
+        /// </summary>
         public static IEnumerable<ApiResource> ApiResources =>
             new ApiResource[]
             {
@@ -37,6 +49,11 @@ namespace FastBite.Identity.Api.Data
                 },
             };
 
+        /// <summary>
+        /// Clientes disponíveis para o IdentityServer, com respetivas configurações de autenticação e autorização.
+        /// </summary>
+        /// <param name="configuration"></param>Configuração usada para obter os valores de ClientOrigin e ClientSecret e token lifetimes.
+        /// <returns>Collection of configured <see cref="Client"/> instances.</returns>
         public static IEnumerable<Client> GetClients(IConfiguration configuration)
         {
             var clientSecret = configuration["JwtSettings:Secret"] ?? throw new InvalidOperationException("Client secret is missing from configuration!");

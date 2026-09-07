@@ -8,7 +8,11 @@ namespace DeliveryOrdering.Application.DTOs
 {
     public class PagamentoDto
     {
+    public class PagamentoDto
+    {
         public string MetodoPagamento { get; set; } = string.Empty;
+        public decimal TaxaEntrega { get; set; }
+    }
         public decimal TaxaEntrega { get; set; }
     }
 }

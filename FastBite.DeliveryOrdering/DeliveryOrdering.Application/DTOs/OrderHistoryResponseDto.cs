@@ -13,6 +13,7 @@ namespace DeliveryOrdering.Application.DTOs
         public decimal TotalAmount { get; set; }
         public decimal Subtotal { get; set; }
         public string Status { get; set; } = string.Empty;
+        public int OrderType { get; set; }
         public string NomeCompleto { get; set; } = string.Empty;
         public string ContactoTelefonico { get; set; } = string.Empty;
         public string Morada { get; set; } = string.Empty;

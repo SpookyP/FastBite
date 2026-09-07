@@ -36,6 +36,33 @@ namespace DeliveryOrdering.Application.Services
                 string.IsNullOrEmpty(dto.Entrega.CodigoPostal) ||
                 string.IsNullOrEmpty(dto.Entrega.Cidade))
                 return null;
+            if (dto.Entrega == null || string.IsNullOrEmpty(dto.Entrega.NomeCompleto) ||
+                string.IsNullOrEmpty(dto.Entrega.ContactoTelefonico) ||
+                string.IsNullOrEmpty(dto.Entrega.Morada) ||
+                string.IsNullOrEmpty(dto.Entrega.CodigoPostal) ||
+                string.IsNullOrEmpty(dto.Entrega.Cidade))
+                return null;
+            if (dto.Pagamento == null || string.IsNullOrEmpty(dto.Pagamento.MetodoPagamento) || dto.Pagamento.TaxaEntrega < 0)
+                return null;
+
+            var novoPedido = new Order
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                OrderDate = DateTime.UtcNow,
+                Status = OrderStatus.Pendente,
+                TotalAmount = 0,
+                Subtotal = 0,
+                OrderType = OrderType.Avulso,
+                Items = new List<OrderItem>(),
+                NomeCompleto = dto.Entrega.NomeCompleto,
+                ContactoTelefonico = dto.Entrega.ContactoTelefonico,
+                Morada = dto.Entrega.Morada,
+                CodigoPostal = dto.Entrega.CodigoPostal,
+                Cidade = dto.Entrega.Cidade,
+                MetodoPagamento = dto.Pagamento.MetodoPagamento,
+                TaxaEntrega = dto.Pagamento.TaxaEntrega
+            };
 
             if (dto.Pagamento == null || string.IsNullOrEmpty(dto.Pagamento.MetodoPagamento) || dto.Pagamento.TaxaEntrega < 0)
                 return null;
@@ -68,6 +95,34 @@ namespace DeliveryOrdering.Application.Services
             var bebidas = unidades.Where(u => u.Menu.Categoria.Equals("Bebida", StringComparison.OrdinalIgnoreCase))
                                    .OrderByDescending(u => u.Menu.PrecoBase).ToList();
 
+            novoPedido.Subtotal = totalAcumulado;
+            novoPedido.TotalAmount = totalAcumulado + dto.Pagamento.TaxaEntrega;
+
+            await _orderRepository.AdicionarAsync(novoPedido);
+            await _orderRepository.SaveChangesAsync();
+
+            return _mapper.Map<OrderHistoryResponseDto>(novoPedido);
+        }
+
+        /// <summary>
+        /// Método para criar um pedido com combos
+        /// </summary>
+        public async Task<OrderHistoryResponseDto?> CriarPedidoComCombosAsync(CreateComboOrderRequestDto dto, string userId)
+        {
+            if (dto?.Items == null || dto.Items.Count == 0)
+                return null;
+
+            if (dto.Entrega == null || string.IsNullOrEmpty(dto.Entrega.NomeCompleto) ||
+                string.IsNullOrEmpty(dto.Entrega.ContactoTelefonico) ||
+                string.IsNullOrEmpty(dto.Entrega.Morada) ||
+                string.IsNullOrEmpty(dto.Entrega.CodigoPostal) ||
+                string.IsNullOrEmpty(dto.Entrega.Cidade))
+                return null;
+
+            if (dto.Pagamento == null || string.IsNullOrEmpty(dto.Pagamento.MetodoPagamento) || dto.Pagamento.TaxaEntrega < 0)
+                return null;
+
+
             var novoPedido = new Order
             {
                 Id = Guid.NewGuid(),
@@ -75,6 +130,7 @@ namespace DeliveryOrdering.Application.Services
                 OrderDate = DateTime.UtcNow,
                 Status = OrderStatus.Pendente,
                 TotalAmount = 0,
+                OrderType = OrderType.Combo,
                 Items = new List<OrderItem>(),
                 NomeCompleto = dto.Entrega.NomeCompleto,
                 ContactoTelefonico = dto.Entrega.ContactoTelefonico,
@@ -136,6 +192,8 @@ namespace DeliveryOrdering.Application.Services
                 });
             }
 
+            novoPedido.Subtotal = totalAcumulado;
+            novoPedido.TotalAmount = totalAcumulado + dto.Pagamento.TaxaEntrega;
             novoPedido.Subtotal = totalAcumulado;
             novoPedido.TotalAmount = totalAcumulado + dto.Pagamento.TaxaEntrega;
 
