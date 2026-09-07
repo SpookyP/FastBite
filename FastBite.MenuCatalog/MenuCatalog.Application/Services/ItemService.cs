@@ -89,6 +89,19 @@ namespace MenuCatalog.Application.Services
 
             return _mapper.Map<IEnumerable<ItemResponseDto>>(pratosDisponiveis);
         }
+
+        public async Task RegistarVendasAsync(List<ItemRequestDto> itensVendidos)
+        {
+            foreach (var item in itensVendidos)
+            {
+                var produto = await _itemRepository.GetByIdAsync(item.ProdutoId);
+                if (produto != null)
+                {
+                    produto.QuantidadeVendidaHoje += item.Quantidade;
+                    await _itemRepository.UpdateItemAsync(produto);
+                }
+            }
+        }
     }
 }
 
