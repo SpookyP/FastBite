@@ -11,4 +11,6 @@ namespace DeliveryOrdering.Application.DTOs
         public string MetodoPagamento { get; set; } = string.Empty;
         public decimal TaxaEntrega { get; set; }
     }
+        public decimal TaxaEntrega { get; set; }
+    }
 }

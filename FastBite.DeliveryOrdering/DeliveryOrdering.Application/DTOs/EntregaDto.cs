@@ -14,4 +14,5 @@ namespace DeliveryOrdering.Application.DTOs
         public string CodigoPostal { get; set; } = string.Empty;
         public string Cidade { get; set; } = string.Empty;
     }
+    }
 }

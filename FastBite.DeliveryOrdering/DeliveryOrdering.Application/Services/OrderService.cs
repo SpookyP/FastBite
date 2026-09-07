@@ -152,6 +152,8 @@ namespace DeliveryOrdering.Application.Services
 
             novoPedido.Subtotal = totalAcumulado;
             novoPedido.TotalAmount = totalAcumulado + dto.Pagamento.TaxaEntrega;
+            novoPedido.Subtotal = totalAcumulado;
+            novoPedido.TotalAmount = totalAcumulado + dto.Pagamento.TaxaEntrega;
 
             await _orderRepository.AdicionarAsync(novoPedido);
             await _orderRepository.SaveChangesAsync();
