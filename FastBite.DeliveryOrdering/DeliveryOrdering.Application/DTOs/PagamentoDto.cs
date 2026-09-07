@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace DeliveryOrdering.Application.DTOs
 {
-    public class CreateOrderItemDto
+    public class PagamentoDto
     {
-        public int ProductId { get; set; }
-        public int Quantity { get; set; }
+        public string MetodoPagamento { get; set; } = string.Empty;
+        public decimal TaxaEntrega { get; set; }
     }
 }

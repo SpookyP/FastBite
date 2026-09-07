@@ -6,7 +6,6 @@ using DeliveryOrdering.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DeliveryOrdering.Application.Services
@@ -17,7 +16,8 @@ namespace DeliveryOrdering.Application.Services
         private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
 
-        // Construtor da classe OrderService, que recebe as dependências necessárias
+        private const decimal DescontoCombo = 0.10m;
+
         public OrderService(IMenuCatalogService catalogService, IOrderRepository orderRepository, IMapper mapper)
         {
             _catalogService = catalogService;
@@ -25,71 +25,48 @@ namespace DeliveryOrdering.Application.Services
             _mapper = mapper;
         }
 
-        /// <summary>
-        /// Método para criar um pedido com itens avulsos
-        /// </summary>
-        public async Task<OrderHistoryResponseDto?> CriarPedidoComItensAsync(CreateOrderRequestDto dto, string userId)
+        public async Task<OrderHistoryResponseDto?> CriarPedidoAsync(CreateOrderRequestDto dto, string userId)
         {
             if (dto?.Items == null || dto.Items.Count == 0)
                 return null;
 
-            var novoPedido = new Order
-            {
-                Id = Guid.NewGuid(),
-                UserId = userId,
-                OrderDate = DateTime.UtcNow,
-                Status = OrderStatus.Pendente,
-                TotalAmount = 0,
-                OrderType = OrderType.Avulso,
-                Items = new List<OrderItem>()
-            };
+            if (dto.Entrega == null || string.IsNullOrEmpty(dto.Entrega.NomeCompleto) ||
+                string.IsNullOrEmpty(dto.Entrega.ContactoTelefonico) ||
+                string.IsNullOrEmpty(dto.Entrega.Morada) ||
+                string.IsNullOrEmpty(dto.Entrega.CodigoPostal) ||
+                string.IsNullOrEmpty(dto.Entrega.Cidade))
+                return null;
 
-            decimal totalAcumulado = 0;
+            if (dto.Pagamento == null || string.IsNullOrEmpty(dto.Pagamento.MetodoPagamento) || dto.Pagamento.TaxaEntrega < 0)
+                return null;
 
-            // Validação de cada item do pedido
+            // Passo 1: expandir cada linha em unidades individuais, com dados reais da Catalog
+            var unidades = new List<(int ProductId, MenuResponseDto Menu)>();
+
             foreach (var itemDto in dto.Items)
             {
                 if (itemDto.Quantity <= 0)
-                    return null;
-
-                bool disponivel = await _catalogService.VerificarDisponibilidadeAsync(itemDto.ProductId, itemDto.Quantity);
-                if (!disponivel)
                     return null;
 
                 var menu = await _catalogService.ObterMenuPorIdAsync(itemDto.ProductId);
                 if (menu == null)
                     return null;
 
-                decimal custoDoItem = menu.PrecoBase * itemDto.Quantity;
-                totalAcumulado += custoDoItem;
+                bool disponivel = await _catalogService.VerificarDisponibilidadeAsync(itemDto.ProductId, itemDto.Quantity);
+                if (!disponivel)
+                    return null;
 
-                var orderItem = new OrderItem
-                {
-                    Id = Guid.NewGuid(),
-                    OrderId = novoPedido.Id,
-                    ProductId = itemDto.ProductId,
-                    Quantity = itemDto.Quantity,
-                    UnitPrice = menu.PrecoBase
-                };
-
-                novoPedido.Items.Add(orderItem);
+                for (int i = 0; i < itemDto.Quantity; i++)
+                    unidades.Add((itemDto.ProductId, menu));
             }
 
-            novoPedido.TotalAmount = totalAcumulado;
-
-            await _orderRepository.AdicionarAsync(novoPedido);
-            await _orderRepository.SaveChangesAsync();
-
-            return _mapper.Map<OrderHistoryResponseDto>(novoPedido);
-        }
-
-        /// <summary>
-        /// Método para criar um pedido com combos
-        /// </summary>
-        public async Task<OrderHistoryResponseDto?> CriarPedidoComCombosAsync(CreateComboOrderRequestDto dto, string userId)
-        {
-            if (dto?.Items == null || dto.Items.Count == 0)
-                return null;
+            // Passo 2: separar por categoria, mais caro primeiro
+            var pratos = unidades.Where(u => u.Menu.Categoria.Equals("Prato", StringComparison.OrdinalIgnoreCase))
+                                  .OrderByDescending(u => u.Menu.PrecoBase).ToList();
+            var acompanhamentos = unidades.Where(u => u.Menu.Categoria.Equals("Acompanhamento", StringComparison.OrdinalIgnoreCase))
+                                           .OrderByDescending(u => u.Menu.PrecoBase).ToList();
+            var bebidas = unidades.Where(u => u.Menu.Categoria.Equals("Bebida", StringComparison.OrdinalIgnoreCase))
+                                   .OrderByDescending(u => u.Menu.PrecoBase).ToList();
 
             var novoPedido = new Order
             {
@@ -98,78 +75,69 @@ namespace DeliveryOrdering.Application.Services
                 OrderDate = DateTime.UtcNow,
                 Status = OrderStatus.Pendente,
                 TotalAmount = 0,
-                OrderType = OrderType.Combo,
-                Items = new List<OrderItem>()
+                Items = new List<OrderItem>(),
+                NomeCompleto = dto.Entrega.NomeCompleto,
+                ContactoTelefonico = dto.Entrega.ContactoTelefonico,
+                Morada = dto.Entrega.Morada,
+                CodigoPostal = dto.Entrega.CodigoPostal,
+                Cidade = dto.Entrega.Cidade,
+                MetodoPagamento = dto.Pagamento.MetodoPagamento,
+                TaxaEntrega = dto.Pagamento.TaxaEntrega
             };
 
             decimal totalAcumulado = 0;
 
-            // Validação de cada combo do pedido
-            foreach (var comboDto in dto.Items)
+            // Passo 3: formar combos, greedy — mais caro de cada balde
+            while (pratos.Count > 0 && acompanhamentos.Count > 0 && bebidas.Count > 0)
             {
-                if (comboDto.Quantity <= 0 || !comboDto.AcompanhamentoId.HasValue || !comboDto.BebidaId.HasValue)
-                    return null;
+                var prato = pratos[0]; pratos.RemoveAt(0);
+                var acomp = acompanhamentos[0]; acompanhamentos.RemoveAt(0);
+                var bebida = bebidas[0]; bebidas.RemoveAt(0);
 
-                // Obter prato
-                var prato = await _catalogService.ObterMenuPorIdAsync(comboDto.ProductId);
-                if (prato == null)
-                    return null;
+                decimal precoOriginal = prato.Menu.PrecoBase + acomp.Menu.PrecoBase + bebida.Menu.PrecoBase;
+                decimal precoComDesconto = Math.Round(precoOriginal * (1 - DescontoCombo), 2);
+                totalAcumulado += precoComDesconto;
 
-                // Validar que é Prato
-                if (string.IsNullOrEmpty(prato.Categoria) || !prato.Categoria.Equals("Prato", StringComparison.OrdinalIgnoreCase))
-                    return null;  // Erro: ProductId não é um Prato
-
-                // Validar disponibilidade do prato
-                bool pratoDiponivel = await _catalogService.VerificarDisponibilidadeAsync(comboDto.ProductId, comboDto.Quantity);
-                if (!pratoDiponivel)
-                    return null;
-
-                // Obter acompanhamento
-                var acompanhamento = await _catalogService.ObterMenuPorIdAsync(comboDto.AcompanhamentoId.Value);
-                if (acompanhamento == null)
-                    return null;
-
-                // Validar que é Acompanhamento
-                if (string.IsNullOrEmpty(acompanhamento.Categoria) || !acompanhamento.Categoria.Equals("Acompanhamento", StringComparison.OrdinalIgnoreCase))
-                    return null;  // Erro: AcompanhamentoId não é um Acompanhamento
-
-                // Validar disponibilidade do acompanhamento
-                bool acompanhamentoDiponivel = await _catalogService.VerificarDisponibilidadeAsync(comboDto.AcompanhamentoId.Value, comboDto.Quantity);
-                if (!acompanhamentoDiponivel)
-                    return null;
-
-                // Obter bebida
-                var bebida = await _catalogService.ObterMenuPorIdAsync(comboDto.BebidaId.Value);
-                if (bebida == null)
-                    return null;
-
-                // Validar que é Bebida
-                if (string.IsNullOrEmpty(bebida.Categoria) || !bebida.Categoria.Equals("Bebida", StringComparison.OrdinalIgnoreCase))
-                    return null;  // Erro: BebidaId não é uma Bebida
-
-                // Validar disponibilidade da bebida
-                bool bebidaDisponivel = await _catalogService.VerificarDisponibilidadeAsync(comboDto.BebidaId.Value, comboDto.Quantity);
-                if (!bebidaDisponivel)
-                    return null;
-
-                // Calcular preço total do combo (soma dos três itens)
-                decimal precoCombo = (prato.PrecoBase + acompanhamento.PrecoBase + bebida.PrecoBase) * comboDto.Quantity * 0.90m;
-                totalAcumulado += precoCombo;
-
-                // Criar item de pedido para o combo
-                var orderItem = new OrderItem
+                novoPedido.Items.Add(new OrderItem
                 {
                     Id = Guid.NewGuid(),
                     OrderId = novoPedido.Id,
-                    ProductId = comboDto.ProductId, // Usar o ID do prato como referência do combo
-                    Quantity = comboDto.Quantity,
-                    UnitPrice = (prato.PrecoBase + acompanhamento.PrecoBase + bebida.PrecoBase)
-                };
-
-                novoPedido.Items.Add(orderItem);
+                    Type = OrderItemType.Combo,
+                    ProductId = prato.ProductId,
+                    DescricaoItem = $"Menu ({prato.Menu.Nome} + {acomp.Menu.Nome} + {bebida.Menu.Nome})",
+                    AcompanhamentoId = acomp.ProductId,
+                    AcompanhamentoNome = acomp.Menu.Nome,
+                    BebidaId = bebida.ProductId,
+                    BebidaNome = bebida.Menu.Nome,
+                    Quantity = 1,
+                    UnitPrice = precoComDesconto
+                });
             }
 
-            novoPedido.TotalAmount = totalAcumulado;
+            // Passo 4: sobras vão avulso, agrupadas por ProductId
+            var restantes = pratos.Concat(acompanhamentos).Concat(bebidas).GroupBy(u => u.ProductId);
+
+            foreach (var grupo in restantes)
+            {
+                var menu = grupo.First().Menu;
+                int qtd = grupo.Count();
+
+                totalAcumulado += menu.PrecoBase * qtd;
+
+                novoPedido.Items.Add(new OrderItem
+                {
+                    Id = Guid.NewGuid(),
+                    OrderId = novoPedido.Id,
+                    Type = OrderItemType.Avulso,
+                    ProductId = grupo.Key,
+                    DescricaoItem = menu.Nome,
+                    Quantity = qtd,
+                    UnitPrice = menu.PrecoBase
+                });
+            }
+
+            novoPedido.Subtotal = totalAcumulado;
+            novoPedido.TotalAmount = totalAcumulado + dto.Pagamento.TaxaEntrega;
 
             await _orderRepository.AdicionarAsync(novoPedido);
             await _orderRepository.SaveChangesAsync();
@@ -179,13 +147,8 @@ namespace DeliveryOrdering.Application.Services
 
         public async Task<IEnumerable<OrderHistoryResponseDto>> GetUserOrderHistoryAsync(string userId)
         {
-            // Recupera o histórico de pedidos do usuario
             var orders = await _orderRepository.GetOrdersByUserIdAsync(userId);
-
-            // Mapeia os pedidos para DTOs de resposta
-            var response = _mapper.Map<IEnumerable<OrderHistoryResponseDto>>(orders);
-
-            return response;
+            return _mapper.Map<IEnumerable<OrderHistoryResponseDto>>(orders);
         }
     }
 }
