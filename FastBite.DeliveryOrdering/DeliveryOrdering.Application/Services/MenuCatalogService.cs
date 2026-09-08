@@ -82,5 +82,25 @@ namespace DeliveryOrdering.Application.Services
                 return 0;
             }
         }
+
+        public async Task DescontarStockAsync(List<ItemVendidoDto> itensVendidos)
+        {
+            try
+            {
+                AdicionarTokenAoHeader();
+                var response = await _httpClient.PostAsJsonAsync("api/Menus/DescontarItemsVendidos", itensVendidos);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("Aviso: Falha ao contactar o Catálogo para descontar stock.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao descontar stock: {ex.Message}");
+            }
+        }
+
+
     }
 }

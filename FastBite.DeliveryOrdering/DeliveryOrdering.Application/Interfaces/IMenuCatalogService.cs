@@ -12,5 +12,6 @@ namespace DeliveryOrdering.Application.Interfaces
     {
         Task<bool> VerificarDisponibilidadeAsync(int id, int quantity);
         Task<MenuResponseDto?> ObterMenuPorIdAsync(int id);
+        Task DescontarStockAsync(List<ItemVendidoDto> itensVendidos);
     }
 }

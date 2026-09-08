@@ -68,20 +68,6 @@ namespace DeliveryOrdering.Application.Services
             var bebidas = unidades.Where(u => u.Menu.Categoria.Equals("Bebida", StringComparison.OrdinalIgnoreCase))
                                    .OrderByDescending(u => u.Menu.PrecoBase).ToList();
 
-            await _orderRepository.AdicionarAsync(novoPedido);
-            await _orderRepository.SaveChangesAsync();
-
-            return _mapper.Map<OrderHistoryResponseDto>(novoPedido);
-        }
-
-        /// <summary>
-        /// Método para criar um pedido com combos
-        /// </summary>
-        public async Task<OrderHistoryResponseDto?> CriarPedidoComCombosAsync(CreateComboOrderRequestDto dto, string userId)
-        {
-            if (dto?.Items == null || dto.Items.Count == 0)
-                return null;
-
             var novoPedido = new Order
             {
                 Id = Guid.NewGuid(),
@@ -100,8 +86,6 @@ namespace DeliveryOrdering.Application.Services
             };
 
             decimal totalAcumulado = 0;
-
-            // Passo 3: formar combos, greedy — mais caro de cada balde
             while (pratos.Count > 0 && acompanhamentos.Count > 0 && bebidas.Count > 0)
             {
                 var prato = pratos[0]; pratos.RemoveAt(0);
@@ -128,7 +112,6 @@ namespace DeliveryOrdering.Application.Services
                 });
             }
 
-            // Passo 4: sobras vão avulso, agrupadas por ProductId
             var restantes = pratos.Concat(acompanhamentos).Concat(bebidas).GroupBy(u => u.ProductId);
 
             foreach (var grupo in restantes)
@@ -152,11 +135,47 @@ namespace DeliveryOrdering.Application.Services
 
             novoPedido.Subtotal = totalAcumulado;
             novoPedido.TotalAmount = totalAcumulado + dto.Pagamento.TaxaEntrega;
-            novoPedido.Subtotal = totalAcumulado;
-            novoPedido.TotalAmount = totalAcumulado + dto.Pagamento.TaxaEntrega;
 
             await _orderRepository.AdicionarAsync(novoPedido);
             await _orderRepository.SaveChangesAsync();
+
+            var idsParaDescontar = new List<(int ProductId, int Quantity)>();
+
+            foreach (var item in novoPedido.Items)
+            {
+                // Adiciona sempre o produto principal (avulso ou prato do combo)
+                idsParaDescontar.Add((item.ProductId, item.Quantity));
+
+                // Se for um combo, temos de ir buscar o acompanhamento e a bebida
+                if (item.Type == OrderItemType.Combo)
+                {
+                    if (item.AcompanhamentoId.HasValue)
+                        idsParaDescontar.Add((item.AcompanhamentoId.Value, item.Quantity));
+
+                    if (item.BebidaId.HasValue)
+                        idsParaDescontar.Add((item.BebidaId.Value, item.Quantity));
+                }
+            }
+
+            // Agrupa caso o cliente tenha pedido duas coisas iguais (ex: 2 combos com a mesma bebida)
+            // Agrupa caso o cliente tenha pedido duas coisas iguais (ex: 2 combos com a mesma bebida)
+            var payload = idsParaDescontar
+                .GroupBy(x => x.ProductId)
+                .Select(g => new ItemVendidoDto
+                {
+                    ItemId = g.Key,
+                    Quantidade = g.Sum(x => x.Quantity)
+                })
+                .ToList();
+
+            try
+            {
+                await _catalogService.DescontarStockAsync(payload);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao descontar stock: {ex.Message}");
+            }
 
             return _mapper.Map<OrderHistoryResponseDto>(novoPedido);
         }
