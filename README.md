@@ -1,58 +1,54 @@
 # 🍕 FastBite
 
-Introdução
+> Plataforma web para gestão de catálogos, combos automáticos e ponto de venda multiutilizador.  
+> *Projeto académico desenvolvido na **ATEC - Academia de Formação**.*
 
-> *Projeto académico produzido na ATEC - Academia de Formação*
+---
 
+## ℹ️ Sobre o Projeto
 
-## 🌟 Highlights
+O **FastBite** é uma solução digital criada para otimizar a gestão de produtos e o processo de vendas em estabelecimentos de restauração. A plataforma permite gerir diferentes perfis de utilizador, centralizar a criação de menus e automatizar a aplicação de descontos em tempo real.
 
-- Some feature made easy!
-- This problem handled
-- etc.
+## 🌟 Destaques (Highlights)
 
+- **Combos Automáticos**: Agrupamento inteligente de produtos com aplicação direta de 10% de desconto no valor final.
+- **Painel Administrativo Completo**: Acesso restrito a administradores com funcionalidades completas de criação, leitura, atualização e eliminação (CRUD).
+- **Integração Robusta de API**: Comunicação fluida entre o Frontend e o Backend, totalmente documentada e testada via Postman.
 
-## ℹ️ Resumo
+---
 
-Explain the project.
+## 🛠️ Requisitos Mínimos
 
+Antes de iniciar, garante que tens as seguintes ferramentas instaladas:
 
-### ✍️ Autores
+- **.NET SDK**: `8.0.0`
+- **Node.js**: `16.16.0`
 
-Este Projeto foi realizado por:
-- Madalena Ferreira
-- Leonor Soares
-- João Ribeiro
-- Gonçalo Brito
-- Rafael Praça
+---
 
+## 🚀 Como Iniciar
 
-## 🚀 Usage
-
-*brief show case of the project*
-
-```py
->>> import mypackage
->>> mypackage.do_stuff()
-'Oh yeah!'
-```
-
-
-## ⬇️ Instalação
-
-Simple installation instructions
+Escreve os seguintes comandos no teu terminal para colocar a aplicação a correr localmente:
 
 ```bash
-pip install my-package
-```
+# Entrar na pasta do Projeto
+cd FastBite
 
-minimum requirements and software versions.
+# Entrar na pasta do Frontend
+cd FastBite.Front
+# Certificar que o .env se encontra na pasta
 
+# Instalar as dependências do projeto
+npm install
 
-## 💭 Feedback - Conclusão
+# Voltar à pasta do Projeto
+cd ..
 
-*Conclusão*
+# Instalar as dependências do projeto
+npm install
 
-### Consultar Melhor
+# Configurar o certificado SSL do .NET (apenas na primeira execução)
+dotnet dev-certs https --trust
 
-https://github.com/banesullivan/README
+# Iniciar o servidor de desenvolvimento
+npm run dev
