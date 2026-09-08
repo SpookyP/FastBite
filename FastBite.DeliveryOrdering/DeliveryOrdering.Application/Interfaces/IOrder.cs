@@ -11,18 +11,12 @@ namespace DeliveryOrdering.Application.Interfaces
     public interface IOrder
     {
         /// <summary>
-        /// Criar pedido com itens avulsos
+        /// Cria um pedido a partir de uma lista única de itens. Forma combos
+        /// automaticamente (prato+acompanhamento+bebida mais caros disponíveis,
+        /// com 10% de desconto) e trata o restante como itens avulsos.
         /// </summary>
-        Task<OrderHistoryResponseDto?> CriarPedidoComItensAsync(CreateOrderRequestDto dto, string userId);
+        Task<OrderHistoryResponseDto?> CriarPedidoAsync(CreateOrderRequestDto dto, string userId);
 
-        /// <summary>
-        /// Criar pedido com combos
-        /// </summary>
-        Task<OrderHistoryResponseDto?> CriarPedidoComCombosAsync(CreateComboOrderRequestDto dto, string userId);
-
-        /// <summary>
-        /// Obter histórico de pedidos por UserId
-        /// </summary>
         Task<IEnumerable<OrderHistoryResponseDto>> GetUserOrderHistoryAsync(string userId);
     }
 }

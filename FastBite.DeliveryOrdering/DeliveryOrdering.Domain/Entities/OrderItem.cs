@@ -9,18 +9,23 @@ namespace DeliveryOrdering.Domain.Entities
     public class OrderItem
     {
         public Guid Id { get; set; }
-
-        // Chave forasteira para o Pedido
         public Guid OrderId { get; set; }
+        public Order Order { get; set; }
 
-        // ID do prato (Para o Desenvolvedor A validar na Catalog.API)
+        public OrderItemType Type { get; set; }
         public int ProductId { get; set; }
-
-        public int Quantity { get; set; }
-
+        public string DescricaoItem { get; set; } = string.Empty;
+        public int Quantity { get; set; } = 1;
         public decimal UnitPrice { get; set; }
 
-        // Propriedade de navegação
-        public Order Order { get; set; }
+        public int? AcompanhamentoId { get; set; }
+        public string? AcompanhamentoNome { get; set; }
+        public int? BebidaId { get; set; }
+        public string? BebidaNome { get; set; }
+    }
+    public enum OrderItemType
+    {
+        Avulso,
+        Combo
     }
 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace DeliveryOrdering.Application.DTOs
 {
-    public class PagamentoDto
+    public class ItemVendidoDto
     {
-        public string MetodoPagamento { get; set; } = string.Empty;
-        public decimal TaxaEntrega { get; set; }
+        public int ItemId { get; set; }
+        public int Quantidade { get; set; }
     }
 }
