@@ -55,9 +55,6 @@ namespace DeliveryOrdering.Infrastructure.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("OrderType")
-                        .HasColumnType("int");
-
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -85,6 +82,22 @@ namespace DeliveryOrdering.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int?>("AcompanhamentoId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("AcompanhamentoNome")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("BebidaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BebidaNome")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescricaoItem")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
@@ -92,6 +105,9 @@ namespace DeliveryOrdering.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
                         .HasColumnType("int");
 
                     b.Property<decimal>("UnitPrice")

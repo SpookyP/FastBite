@@ -14,5 +14,7 @@
         public decimal PrecoBase { get; set; }
 
         public int LimiteDiario { get; set; }
+
+        public int QuantidadeVendidaHoje { get; set; } = 0;
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,15 +6,13 @@ using System.Threading.Tasks;
 
 namespace DeliveryOrdering.Application.DTOs
 {
-    /// <summary>
-    /// DTO para dados de entrega
-    /// </summary>
     public class EntregaDto
     {
-        public string NomeCompleto { get; set; }
-        public string ContactoTelefonico { get; set; }
-        public string Morada { get; set; }
-        public string CodigoPostal { get; set; }
-        public string Cidade { get; set; }
+        public string NomeCompleto { get; set; } = string.Empty;
+        public string ContactoTelefonico { get; set; } = string.Empty;
+        public string Morada { get; set; } = string.Empty;
+        public string CodigoPostal { get; set; } = string.Empty;
+        public string Cidade { get; set; } = string.Empty;
     }
+    
 }
