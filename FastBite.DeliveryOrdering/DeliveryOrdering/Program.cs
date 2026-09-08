@@ -6,6 +6,7 @@ using DeliveryOrdering.Infrastructure.Data;
 using DeliveryOrdering.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace DeliveryOrdering
 {
@@ -15,23 +16,25 @@ namespace DeliveryOrdering
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.Authority = builder.Configuration["JwtSettings:Issuer"];
-                options.RequireHttpsMetadata = false;
-
-                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+            builder.Services.AddAuthentication("Bearer")
+                .AddJwtBearer("Bearer", options =>
                 {
-                    ValidateAudience = true,
-                    ValidateIssuer = true,
-                    ValidAudience = builder.Configuration["JwtSettings:Audience"],
-                };
-            });
+                    options.Authority = builder.Configuration["JwtSettings:Issuer"];
+                    options.RequireHttpsMetadata = false;
+
+                    // Igual ao MenuCatalog: não mapear as claims curtas (sub, role, etc.)
+                    // para os tipos longos do .NET, senão o GetUserId e o [Authorize(Roles=...)]
+                    // deixam de bater com o que vem no token.
+                    options.MapInboundClaims = false;
+
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateAudience = true,
+                        ValidateIssuer = true,
+                        ValidAudience = builder.Configuration["JwtSettings:Audience"],
+                        RoleClaimType = "role"   // ← necessário para [Authorize(Roles = "Admin,Client")]
+                    };
+                });
 
             builder.Services.AddAuthorization(options =>
             {
@@ -43,7 +46,6 @@ namespace DeliveryOrdering
             });
 
             builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddHttpContextAccessor();
@@ -51,39 +53,47 @@ namespace DeliveryOrdering
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            // Registo dos Repositórios e Serviços da Aplicação
-
             builder.Services.AddHttpClient<IMenuCatalogService, MenuCatalogService>(client =>
             {
                 client.BaseAddress = new Uri(builder.Configuration["ApiUrls:MenuCatalogApi"]);
             });
 
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-
             builder.Services.AddScoped<IOrder, OrderService>();
-
 
             builder.Services.AddAutoMapper(config =>
             {
-                config.AddMaps(typeof(OrderProfile).Assembly); // Regista todos os Profiles de AutoMapper no assembly atual
+                config.AddMaps(typeof(OrderProfile).Assembly);
+            });
+
+            // CORS igual ao MenuCatalog (funciona com Bearer no header, sem cookies)
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("PermitirFrontendBlazor", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
             });
 
             var app = builder.Build();
 
             app.UseMiddleware<API.Middlewares.GlobalExceptionHandlerMiddleware>();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
+            // Ordem correta: CORS antes do HttpsRedirection/Auth
+            app.UseCors("PermitirFrontendBlazor");
+
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapControllers();
 
