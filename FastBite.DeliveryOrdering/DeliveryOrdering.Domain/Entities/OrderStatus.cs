@@ -11,6 +11,7 @@ namespace DeliveryOrdering.Domain.Entities
         Pendente,   // Estado inicial do pedido
         APreparar,
         ACaminho,
-        Entregue
+        Entregue,
+        Cancelado
     }
 }

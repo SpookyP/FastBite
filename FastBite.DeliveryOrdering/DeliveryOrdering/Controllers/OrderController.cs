@@ -7,7 +7,6 @@ using System.Security.Claims;
 
 namespace DeliveryOrdering.Controllers
 {
-
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = "Admin,Client")]
@@ -23,6 +22,16 @@ namespace DeliveryOrdering.Controllers
         private string? GetUserId() =>
             User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? User.FindFirst("sub")?.Value;
 
+        // Preview do carrinho: agrupa em combos + avulsos, calcula totais.
+        // Não grava nem desconta stock. Mantém-se sob [Authorize] da classe.
+        [HttpPost("agrupar")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<AgrupamentoCarrinhoResponseDto>> Agrupar([FromBody] AgruparItemsRequestDto dto)
+            => Ok(await _pedidoService.AgruparItemsAsync(dto));
+
+        // Cria o pedido. O serviço lança exceções tipadas (mapeadas no middleware).
+        // Já NÃO devolve null — removido o "if (pedidoCriado == null) return BadRequest".
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -37,10 +46,6 @@ namespace DeliveryOrdering.Controllers
                 return Unauthorized("Utilizador não identificado ou Token JWT inválido.");
 
             var pedidoCriado = await _pedidoService.CriarPedidoAsync(request, userId);
-
-            if (pedidoCriado == null)
-                return BadRequest("Não foi possível processar o pedido. Verifique se os itens estão disponíveis.");
-
             return StatusCode(StatusCodes.Status201Created, pedidoCriado);
         }
 

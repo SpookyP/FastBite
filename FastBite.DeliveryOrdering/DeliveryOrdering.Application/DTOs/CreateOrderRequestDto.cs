@@ -11,5 +11,7 @@ namespace DeliveryOrdering.Application.DTOs
         public List<CreateOrderItemDto> Items { get; set; } = new();
         public EntregaDto Entrega { get; set; } = new();
         public PagamentoDto Pagamento { get; set; } = new();
+        /// <summary>Opcional: subtotal devolvido pelo /agrupar. Se diferir do recalculado → 409.</summary>
+        public decimal? SubtotalEsperado { get; set; }
     }
 }
