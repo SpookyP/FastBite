@@ -1,4 +1,4 @@
-import { fetchComToken } from './apiClient';
+import { fetchComToken, API_BASES } from './apiClient';
 
 export const menuService = {
     obterTodos: () => fetchComToken('/Menus/ObterTodos'),
@@ -6,6 +6,7 @@ export const menuService = {
     obterPorId: async (id) => fetchComToken(`/Menus/ObterPorId?id=${id}`),
 
     edit: async (id, data) => fetchComToken(`/Menus/Atualizar?id=${id}`, {
+        baseUrl: API_BASES.menu,
         method: 'PUT',
         headers:{
             'Content-Type': 'application/json',
@@ -14,6 +15,7 @@ export const menuService = {
     }),
 
     create: (novoItem) => fetchComToken('/Menus', {
+        baseUrl: API_BASES.menu,
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

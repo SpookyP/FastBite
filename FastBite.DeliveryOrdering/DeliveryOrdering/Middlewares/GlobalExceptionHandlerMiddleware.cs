@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DeliveryOrdering.Application.Exceptions;
+using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text.Json;
 
@@ -19,39 +20,62 @@ namespace DeliveryOrdering.API.Middlewares
         {
             try
             {
-                // Deixa o pedido seguir normalmente para os Controllers e Services
                 await _next(context);
             }
             catch (Exception ex)
             {
-                // Se algum erro acontecer (seja de base de dados, regras de negócio ou de comunicação) cai aqui
                 _logger.LogError(ex, "Ocorreu um erro na aplicação.");
                 await HandleExceptionAsync(context, ex);
             }
         }
 
-        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            // O tipo de conteúdo padrão para o formato ProblemDetails
+            var (status, title) = exception switch
+            {
+                PedidoInvalidoException => (HttpStatusCode.BadRequest, "Pedido inválido."),
+                ProdutoNaoEncontradoException => (HttpStatusCode.NotFound, "Produto não encontrado."),
+                StockInsuficienteException => (HttpStatusCode.Conflict, "Stock insuficiente."),
+                PrecoAlteradoException => (HttpStatusCode.Conflict, "Preços alterados."),
+                DescontoStockFalhouException => (HttpStatusCode.BadGateway, "Falha ao descontar stock."),
+                _ => (HttpStatusCode.InternalServerError, "Ocorreu um problema ao processar o pedido.")
+            };
+
             context.Response.ContentType = "application/problem+json";
+            context.Response.StatusCode = (int)status;
 
-            // Define o status code como 500 Internal Server Error por defeito
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-            // Cria o objeto ProblemDetails exigido pelo enunciado
             var problemDetails = new ProblemDetails
             {
-                Status = context.Response.StatusCode,
-                Title = "Ocorreu um problema ao processar o pedido.",
+                Status = (int)status,
+                Title = title,
                 Detail = exception.Message,
                 Instance = context.Request.Path
             };
 
-            // Converte o objeto para JSON
-            var result = JsonSerializer.Serialize(problemDetails);
+            // Extra fields so the frontend can act (e.g. list of unavailable items, order id).
+            switch (exception)
+            {
+                case StockInsuficienteException e:
+                    problemDetails.Extensions["itens"] = e.Itens;
+                    break;
+                case PrecoAlteradoException e:
+                    problemDetails.Extensions["subtotalEsperado"] = e.SubtotalEsperado;
+                    problemDetails.Extensions["subtotalActual"] = e.SubtotalActual;
+                    break;
+                case ProdutoNaoEncontradoException e:
+                    problemDetails.Extensions["productId"] = e.ProductId;
+                    break;
+                case DescontoStockFalhouException e:
+                    problemDetails.Extensions["orderId"] = e.OrderId;
+                    break;
+            }
 
-            // Escreve a resposta para o cliente
-            return context.Response.WriteAsync(result);
+            var result = JsonSerializer.Serialize(problemDetails, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+
+            await context.Response.WriteAsync(result);
         }
     }
 }

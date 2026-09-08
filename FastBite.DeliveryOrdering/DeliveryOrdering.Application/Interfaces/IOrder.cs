@@ -17,6 +17,8 @@ namespace DeliveryOrdering.Application.Interfaces
         /// </summary>
         Task<OrderHistoryResponseDto?> CriarPedidoAsync(CreateOrderRequestDto dto, string userId);
 
+        Task<AgrupamentoCarrinhoResponseDto> AgruparItemsAsync(AgruparItemsRequestDto dto);
+
         Task<IEnumerable<OrderHistoryResponseDto>> GetUserOrderHistoryAsync(string userId);
     }
 }
