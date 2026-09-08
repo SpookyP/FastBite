@@ -15,9 +15,6 @@ const ProtectedRoute = ({ allowedRoles }) => {
         return <Navigate to="/" replace />;
     }
 
-    // 3. Extrair as roles do token OIDC. 
-    // Com o Duende IdentityServer ou configurações nativas de .NET, a claim pode vir como 'role' (string ou array) 
-    // ou por vezes com um namespace longo (ex: 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role').
     const profile = auth.user?.profile;
     const userRole = profile?.role || profile?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
 
