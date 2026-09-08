@@ -5,10 +5,8 @@ import { menuService } from '../../services/menuService';
 
 const EditItem = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-
-  // Recebe o id de forma oculta a partir do location.state
   const id = location.state?.id;
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     nome: '',
@@ -16,13 +14,14 @@ const EditItem = () => {
     categoria: '',
     alergenios: '',
     precoBase: '',
-    limiteDiario: ''
+    limiteDiario: '',
+    quantidadeVendidaHoje: 0
   });
 
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [erro, setErro] = useState(null); // Erros de API
-  const [erros, setErros] = useState({}); // Erros de validação dos campos
+  const [erro, setErro] = useState(null);
+  const [erros, setErros] = useState({});
 
   useEffect(() => {
     if (!id) {
@@ -33,7 +32,6 @@ const EditItem = () => {
     const fetchItem = async () => {
       try {
         setLoading(true);
-        // Garante que o método do service está correto
         const data = await menuService.obterPorId(id);
         
         setFormData({
@@ -41,8 +39,9 @@ const EditItem = () => {
           descricao: data.descricao || '',
           categoria: data.categoria || '',
           alergenios: data.alergenios || '',
-          precoBase: data.precoBase || '',
-          limiteDiario: data.limiteDiario || ''
+          precoBase: data.precoBase ?? '',
+          limiteDiario: data.limiteDiario ?? '',
+          quantidadeVendidaHoje: data.quantidadeVendidaHoje ?? 0
         });
       } catch (err) {
         console.error(err);
@@ -55,46 +54,45 @@ const EditItem = () => {
     fetchItem();
   }, [id, navigate]);
 
-  // Handler para atualizar os campos do formulário ao digitar
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    // Limpa o erro do campo assim que o utilizador começa a escrever
     setErros((prev) => ({ ...prev, [name]: null }));
   };
 
-  // Handler para submeter as alterações
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 1. Validação Manual
     const novosErros = {};
+    const preco = parseFloat(formData.precoBase);
+    const limite = parseInt(formData.limiteDiario, 10);
+    const qtdVendida = parseInt(formData.quantidadeVendidaHoje, 10);
     
-    // Usamos ?.trim() para prevenir erros caso o valor venha undefined da API inicialmente
     if (!formData.nome?.toString().trim()) novosErros.nome = 'Por favor, preenche este campo.';
     if (!formData.descricao?.toString().trim()) novosErros.descricao = 'Por favor, preenche este campo.';
     if (!formData.categoria) novosErros.categoria = 'Por favor, seleciona uma categoria.';
-    if (!formData.precoBase || formData.precoBase <= 0 || formData.precoBase > 1000) novosErros.precoBase = 'Insere um preço válido.';
-    if (!formData.limiteDiario || formData.limiteDiario <= 0 || formData.limiteDiario > 100) novosErros.limiteDiario = 'Insere um limite válido.';
+    if (isNaN(preco) || preco <= 0 || preco > 1000) novosErros.precoBase = 'Insere um preço válido (0.01 - 1000).';
+    if (isNaN(limite) || limite <= 0 || limite > 100) novosErros.limiteDiario = 'Insere um limite válido (1 - 100).';
+    if (isNaN(qtdVendida) || qtdVendida < 0) novosErros.quantidadeVendidaHoje = 'Insere uma quantidade válida (>= 0).';
 
-    // Se houver erros, guardamos no estado e paramos a execução
     if (Object.keys(novosErros).length > 0) {
-        setErros(novosErros);
-        return;
+      setErros(novosErros);
+      return;
     }
 
-    // 2. Se passar a validação, avança para a API
     setSubmitting(true);
     setErro(null);
 
     try {
       const payload = {
-        nome: formData.nome,
-        descricao: formData.descricao,
+        id: parseInt(id, 10),
+        nome: formData.nome.trim(),
+        descricao: formData.descricao.trim(),
         categoria: formData.categoria,
-        alergenios: formData.alergenios || '',
-        precoBase: parseFloat(formData.precoBase) || 0,
-        limiteDiario: parseInt(formData.limiteDiario, 10) || 0
+        alergenios: formData.alergenios?.trim() || '',
+        precoBase: preco,
+        limiteDiario: limite,
+        quantidadeVendidaHoje: qtdVendida
       };
 
       await menuService.edit(id, payload);
@@ -106,8 +104,6 @@ const EditItem = () => {
       setSubmitting(false);
     }
   };
-
-  if (!id) return null;
 
   if (loading) {
     return <div className="container mt-5 text-center">A carregar item...</div>;
@@ -147,18 +143,18 @@ const EditItem = () => {
           </div>
 
           <div className="row">
-            <div className="mb-3">
+            <div className="col-md-6 mb-3">
               <label className="form-label fw-bold">Categoria</label>
               <select
-                  className={`form-select ${erros.categoria ? 'is-invalid' : ''}`}
-                  name="categoria"
-                  value={formData.categoria}
-                  onChange={handleChange}
+                className={`form-select ${erros.categoria ? 'is-invalid' : ''}`}
+                name="categoria"
+                value={formData.categoria}
+                onChange={handleChange}
               >
-                  <option value="">Select one</option>
-                  <option value="Prato">Prato</option>
-                  <option value="Bebida">Bebida</option>
-                  <option value="Acompanhamento">Acompanhamento</option>
+                <option value="">Seleciona uma opção</option>
+                <option value="Prato">Prato</option>
+                <option value="Bebida">Bebida</option>
+                <option value="Acompanhamento">Acompanhamento</option>
               </select>
               {erros.categoria && <small className="text-danger">{erros.categoria}</small>}
             </div>
@@ -171,13 +167,13 @@ const EditItem = () => {
                 name="alergenios"
                 value={formData.alergenios}
                 onChange={handleChange}
-                placeholder="Ex: Glúten,Lactose"
+                placeholder="Ex: Glúten, Lactose"
               />
             </div>
           </div>
 
           <div className="row">
-            <div className="col-md-6 mb-3">
+            <div className="col-md-4 mb-3">
               <label className="form-label fw-bold">Preço Base (€)</label>
               <input
                 type="number"
@@ -192,7 +188,7 @@ const EditItem = () => {
               {erros.precoBase && <small className="text-danger">{erros.precoBase}</small>}
             </div>
 
-            <div className="col-md-6 mb-3">
+            <div className="col-md-4 mb-3">
               <label className="form-label fw-bold">Limite Diário</label>
               <input
                 type="number"
@@ -204,6 +200,21 @@ const EditItem = () => {
                 onChange={handleChange}
               />
               {erros.limiteDiario && <small className="text-danger">{erros.limiteDiario}</small>}
+            </div>
+
+            <div className="col-md-4 mb-3">
+              <label className="form-label fw-bold">Vendidos Hoje</label>
+              <input
+                type="number"
+                min="0"
+                className={`form-control ${erros.quantidadeVendidaHoje ? 'is-invalid' : ''}`}
+                name="quantidadeVendidaHoje"
+                value={formData.quantidadeVendidaHoje}
+                onChange={handleChange}
+              />
+              {erros.quantidadeVendidaHoje && (
+                <small className="text-danger">{erros.quantidadeVendidaHoje}</small>
+              )}
             </div>
           </div>
 
