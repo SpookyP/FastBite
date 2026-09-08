@@ -4,7 +4,7 @@ import Navbar from '../../components/Navbar/Navbar';
 import { useCart } from '../../context/CartContext';
 import { orderService } from '../../services/orderService';
 
-const Checkout = () => {
+export const Checkout = () => {
     const { limparCarrinho } = useCart();
     const navigate = useNavigate();
     const { state } = useLocation();

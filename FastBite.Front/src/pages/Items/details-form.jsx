@@ -108,9 +108,16 @@ const ShowItem = () => {
                                         <div className="col-sm-8">{Number(item.precoBase || item.PrecoBase).toFixed(2)} €</div>
                                     </div>
 
-                                    <div className="row mb-4">
+                                    <div className="row mb-3 border-bottom pb-2">
                                         <div className="col-sm-4 fw-bold text-muted">Limite Diário</div>
                                         <div className="col-sm-8">{item.limiteDiario || item.LimiteDiario} unidades</div>
+                                    </div>
+
+                                    <div className="row mb-4">
+                                        <div className="col-sm-4 fw-bold text-muted">Vendidos Hoje</div>
+                                        <div className="col-sm-8">
+                                            {item.quantidadeVendidaHoje ?? item.QuantidadeVendidaHoje ?? 0} unidades
+                                        </div>
                                     </div>
 
                                     <div className="d-flex mt-4">
