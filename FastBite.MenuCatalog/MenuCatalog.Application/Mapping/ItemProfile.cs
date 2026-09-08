@@ -22,8 +22,10 @@ namespace MenuCatalog.Application.Mapping
                     opt => opt.MapFrom(src => src.Alergenios))
                 .ForMember(dest => dest.PrecoBase,
                     opt => opt.MapFrom(src => src.PrecoBase))
-                .ForMember(dest => dest.LimiteDiario, 
-                    opt => opt.MapFrom(src => src.LimiteDiario - src.QuantidadeVendidaHoje));
+                .ForMember(dest => dest.LimiteDiario,
+                    opt => opt.MapFrom(src => src.LimiteDiario))
+                .ForMember(dest => dest.QuantidadeVendidaHoje,
+                    opt => opt.MapFrom(src => src.QuantidadeVendidaHoje));
         }
     }
 }

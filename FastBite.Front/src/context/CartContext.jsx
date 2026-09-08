@@ -11,11 +11,22 @@ export const CartProvider = ({ children }) => {
 
     // Adicionar um item ao carrinho
     const adicionarAoCarrinho = (produto) => {
+        const stockDisponivel = produto.limiteDiario - (produto.quantidadeVendidaHoje || 0);
+
+        if (stockDisponivel <= 0) {
+            alert(`O item ${produto.nome} encontra-se esgotado!`);
+            return;
+        }
         setCart((carrinhoAtual) => {
             // Verificar se o produto já existe no carrinho
             const itemExiste = carrinhoAtual.find(item => item.id === produto.id);
 
             if (itemExiste) {
+                // 3. Valida contra o stock calculado em vez do limiteDiario puro
+                if (itemExiste.quantidade >= stockDisponivel) {
+                    alert(`Atenção: Só existem ${stockDisponivel} unidades disponíveis de ${produto.nome}!`);
+                    return carrinhoAtual;
+                }
                 // Se já existir, aumenta a quantidade
                 return carrinhoAtual.map(item =>
                     item.id === produto.id 
