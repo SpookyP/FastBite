@@ -5,8 +5,8 @@
     <partial name="_ValidationSummary" />
 
     <div class="brand-header" style="margin-top: 40px;">
-        <h1 class="brand-title">Create Account</h1>
-        <p class="brand-subtitle">Join FastBite and order your favorites.</p>
+        <h1 class="brand-title">Criar Conta</h1>
+        <p class="brand-subtitle">Junte-se ao FastBite e peça os seus favoritos.</p>
     </div>
 
     <div class="login-card">
@@ -15,23 +15,23 @@
 
             <!-- Nome -->
             <div class="form-group">
-                <label asp-for="Input.Name">Full Name</label>
+                <label asp-for="Input.Name">Nome Completo</label>
                 <div class="custom-input-group">
                     <div class="custom-input-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                     </div>
-                    <input type="text" class="custom-input" placeholder="John Doe" asp-for="Input.Name">
+                    <input type="text" class="custom-input" placeholder="João Silva" asp-for="Input.Name">
                 </div>
             </div>
 
             <!-- Username -->
             <div class="form-group">
-                <label asp-for="Input.Username">Username</label>
+                <label asp-for="Input.Username">Nome de Utilizador</label>
                 <div class="custom-input-group">
                     <div class="custom-input-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"></path></svg>
                     </div>
-                    <input class="custom-input" placeholder="johndoe123" asp-for="Input.Username">
+                    <input class="custom-input" placeholder="joaosilva123" asp-for="Input.Username">
                 </div>
             </div>
 
@@ -42,27 +42,27 @@
                     <div class="custom-input-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
                     </div>
-                    <input type="email" class="custom-input" placeholder="john@example.com" asp-for="Input.Email">
+                    <input type="email" class="custom-input" placeholder="joao@exemplo.com" asp-for="Input.Email">
                 </div>
-                <label asp-for="Input.ConfirmEmail">Confirm Email</label>
+                <label asp-for="Input.ConfirmEmail">Confirmar Email</label>
                 <div class="custom-input-group">
                     <div class="custom-input-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
                     </div>
-                    <input type="email" class="custom-input" placeholder="john@example.com" asp-for="Input.ConfirmEmail">
+                    <input type="email" class="custom-input" placeholder="joao@exemplo.com" asp-for="Input.ConfirmEmail">
                 </div>
             </div>
 
             <!-- Password -->
             <div class="form-group">
-                <label asp-for="Input.Password">Password</label>
+                <label asp-for="Input.Password">Palavra-passe</label>
                 <div class="custom-input-group">
                     <div class="custom-input-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                     </div>
                     <input type="password" class="custom-input" placeholder="••••••••" asp-for="Input.Password" autocomplete="off">
                 </div>
-                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+                <label asp-for="Input.ConfirmPassword">Confirmar Palavra-passe</label>
                 <div class="custom-input-group">
                     <div class="custom-input-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
@@ -71,10 +71,10 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn-fastbite" name="Input.Button" value="create">Create Account</button>
+            <button type="submit" class="btn-fastbite" name="Input.Button" value="create">Criar Conta</button>
 
             <div class="register-link-container">
-                <a href="/" class="register-link" style="background:none; border:none; padding:0; margin-top: 15px; display:inline-block; text-decoration:none;">Cancel</a>
+                <a href="/" class="register-link" style="background:none; border:none; padding:0; margin-top: 15px; display:inline-block; text-decoration:none;">Cancelar</a>
             </div>
         </form>
     </div>

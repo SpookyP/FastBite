@@ -14,6 +14,7 @@ public class Index : PageModel
     private readonly IIdentityServerInteractionService _interaction;
     private readonly UserManager<IdentityUser> _userManager;
     private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
 
     [BindProperty]
     public InputModel Input { get; set; } = default!;
@@ -21,11 +22,13 @@ public class Index : PageModel
     public Index(
         IIdentityServerInteractionService interaction,
         UserManager<IdentityUser> userManager,
+        RoleManager<IdentityRole> roleManager,
         SignInManager<IdentityUser> signInManager)
     {
         _interaction = interaction;
         _userManager = userManager;
         _signInManager = signInManager;
+        _roleManager = roleManager;
     }
 
     public IActionResult OnGet(string? returnUrl)
@@ -74,6 +77,10 @@ public class Index : PageModel
             };
 
             var result = await _userManager.CreateAsync(user, Input.Password);
+
+            var clienteRole = await _roleManager.FindByNameAsync("Client");
+
+            await _userManager.AddToRoleAsync(user, clienteRole.Name);
 
             if (result.Succeeded)
             {

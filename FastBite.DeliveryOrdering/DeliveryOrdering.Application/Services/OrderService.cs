@@ -67,13 +67,10 @@ namespace DeliveryOrdering.Application.Services
             var taxaEntrega = ObterTaxaEntrega(dto.Pagamento!.TaxaEntrega);
             var pedido = ConstruirOrder(agrupamento, dto, userId, taxaEntrega);
 
-            // --- 1. commit do pedido -------------------------------------------------
             await _orderRepository.AdicionarAsync(pedido);
             await _orderRepository.SaveChangesAsync();
 
-            // --- 2. descontar stock só DEPOIS do commit ----------------------------
-            // O payload é simplesmente o carrinho normalizado: cada unidade (em combo ou avulsa)
-            // consome exactamente 1 de stock do seu ProductId.
+            // payload = carrinho normalizado
             var payload = itens
                 .Select(i => new ItemVendidoDto { ItemId = i.ProductId, Quantidade = i.Quantity })
                 .ToList();
