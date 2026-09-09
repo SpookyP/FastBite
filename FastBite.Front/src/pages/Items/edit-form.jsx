@@ -14,8 +14,7 @@ const EditItem = () => {
     categoria: '',
     alergenios: '',
     precoBase: '',
-    limiteDiario: '',
-    quantidadeVendidaHoje: 0
+    limiteDiario: ''
   });
 
   const [loading, setLoading] = useState(true);
@@ -40,8 +39,7 @@ const EditItem = () => {
           categoria: data.categoria || '',
           alergenios: data.alergenios || '',
           precoBase: data.precoBase ?? '',
-          limiteDiario: data.limiteDiario ?? '',
-          quantidadeVendidaHoje: data.quantidadeVendidaHoje ?? 0
+          limiteDiario: data.limiteDiario ?? ''
         });
       } catch (err) {
         console.error(err);
@@ -66,14 +64,12 @@ const EditItem = () => {
     const novosErros = {};
     const preco = parseFloat(formData.precoBase);
     const limite = parseInt(formData.limiteDiario, 10);
-    const qtdVendida = parseInt(formData.quantidadeVendidaHoje, 10);
     
     if (!formData.nome?.toString().trim()) novosErros.nome = 'Por favor, preenche este campo.';
     if (!formData.descricao?.toString().trim()) novosErros.descricao = 'Por favor, preenche este campo.';
     if (!formData.categoria) novosErros.categoria = 'Por favor, seleciona uma categoria.';
     if (isNaN(preco) || preco <= 0 || preco > 1000) novosErros.precoBase = 'Insere um preço válido (0.01 - 1000).';
     if (isNaN(limite) || limite <= 0 || limite > 100) novosErros.limiteDiario = 'Insere um limite válido (1 - 100).';
-    if (isNaN(qtdVendida) || qtdVendida < 0) novosErros.quantidadeVendidaHoje = 'Insere uma quantidade válida (>= 0).';
 
     if (Object.keys(novosErros).length > 0) {
       setErros(novosErros);
@@ -91,8 +87,7 @@ const EditItem = () => {
         categoria: formData.categoria,
         alergenios: formData.alergenios?.trim() || '',
         precoBase: preco,
-        limiteDiario: limite,
-        quantidadeVendidaHoje: qtdVendida
+        limiteDiario: limite
       };
 
       await menuService.edit(id, payload);
@@ -200,21 +195,6 @@ const EditItem = () => {
                 onChange={handleChange}
               />
               {erros.limiteDiario && <small className="text-danger">{erros.limiteDiario}</small>}
-            </div>
-
-            <div className="col-md-4 mb-3">
-              <label className="form-label fw-bold">Vendidos Hoje</label>
-              <input
-                type="number"
-                min="0"
-                className={`form-control ${erros.quantidadeVendidaHoje ? 'is-invalid' : ''}`}
-                name="quantidadeVendidaHoje"
-                value={formData.quantidadeVendidaHoje}
-                onChange={handleChange}
-              />
-              {erros.quantidadeVendidaHoje && (
-                <small className="text-danger">{erros.quantidadeVendidaHoje}</small>
-              )}
             </div>
           </div>
 
