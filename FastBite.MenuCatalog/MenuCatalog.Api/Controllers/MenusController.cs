@@ -7,11 +7,10 @@ namespace MenuCatalog.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MenusController(IItemService menuService, IMenuComboService menuComboService) : ControllerBase
+    public class MenusController(IItemService menuService) : ControllerBase
     {
 
         private readonly IItemService _menuService = menuService;
-        private readonly IMenuComboService _menuComboService = menuComboService;
 
         /// <summary>
         /// Este endpoint permite obter um item do menu pelo seu ID.
@@ -138,19 +137,6 @@ namespace MenuCatalog.Api.Controllers
             var menusDisponiveis = await _menuService.ObterPratosDisponiveisAsync();
 
             return Ok(menusDisponiveis);
-        }
-
-        /// <summary>
-        /// Este endpoint permite montar um combo de menu com base nos IDs do prato, acompanhamento e bebida fornecidos.
-        /// </summary>
-        /// <param name="request">O DTO contendo os IDs do prato, acompanhamento e bebida para montar o combo.</param>
-        /// <returns>Retorna Ok com o combo montado.</returns>
-        [HttpPost("combo")]
-        [Authorize(Roles = "Admin,Client")]
-        public async Task<ActionResult<MenuComboResponseDto>> MontarCombo([FromBody] MenuComboCreateDto request)
-        {
-            var resultado = await _menuComboService.MontarComboAsync(request);
-            return Ok(resultado);
         }
 
         /// <summary>

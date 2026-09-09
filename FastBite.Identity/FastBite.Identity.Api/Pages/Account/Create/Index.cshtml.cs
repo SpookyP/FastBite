@@ -78,12 +78,14 @@ public class Index : PageModel
 
             var result = await _userManager.CreateAsync(user, Input.Password);
 
-            var clienteRole = await _roleManager.FindByNameAsync("Client");
-
-            await _userManager.AddToRoleAsync(user, clienteRole.Name);
+            
 
             if (result.Succeeded)
             {
+                var clienteRole = await _roleManager.FindByNameAsync("Client");
+
+                await _userManager.AddToRoleAsync(user, clienteRole.Name);
+
                 await _signInManager.SignInAsync(user, isPersistent: false);
 
                 if (context != null)
@@ -103,6 +105,11 @@ public class Index : PageModel
 
                 return Redirect(Input.ReturnUrl ?? "~/");
             }
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("Input.Password", error.Description);
+            }
+            return Page();
         }
         return Page();
     }
