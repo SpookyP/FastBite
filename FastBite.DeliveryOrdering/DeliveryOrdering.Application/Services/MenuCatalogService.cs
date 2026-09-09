@@ -83,24 +83,14 @@ namespace DeliveryOrdering.Application.Services
             }
         }
 
-        public async Task DescontarStockAsync(List<ItemVendidoDto> itensVendidos)
+        public async Task DescontarStockAsync(List<CreateOrderItemDto> itensVendidos)
         {
-            try
-            {
-                AdicionarTokenAoHeader();
-                var response = await _httpClient.PostAsJsonAsync("api/Menus/DescontarItemsVendidos", itensVendidos);
+            AdicionarTokenAoHeader();
+            var response = await _httpClient.PostAsJsonAsync("api/Menus/DescontarItemsVendidos", itensVendidos);
 
-                if (!response.IsSuccessStatusCode)
-                {
-                    Console.WriteLine("Aviso: Falha ao contactar o Catálogo para descontar stock.");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erro ao descontar stock: {ex.Message}");
-            }
+            if (!response.IsSuccessStatusCode)
+                throw new HttpRequestException($"Catalog recusou o desconto de stock: {(int)response.StatusCode}");
         }
-
 
     }
 }

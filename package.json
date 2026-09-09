@@ -2,7 +2,14 @@
   "name": "fastbite",
   "private": true,
   "scripts": {
+    "predev": "npm run db:update",
     "dev": "concurrently -n identity,menu,order,front -c blue,green,magenta,yellow \"npm:dev:identity\" \"npm:dev:menu\" \"npm:dev:order\" \"npm:dev:front\"",
+
+    "db:update": "npm run db:update:identity && npm run db:update:menu && npm run db:update:order",
+    "db:update:identity": "dotnet ef database update --project FastBite.Identity/FastBite.Identity.Api/FastBite.Identity.Api.csproj",
+    "db:update:menu": "dotnet ef database update --project FastBite.MenuCatalog/MenuCatalog.Api/MenuCatalog.Api.csproj",
+    "db:update:order": "dotnet ef database update --project FastBite.DeliveryOrdering/DeliveryOrdering/DeliveryOrdering.API.csproj",
+
     "dev:identity": "dotnet watch --project FastBite.Identity/FastBite.Identity.Api/FastBite.Identity.Api.csproj --urls \"https://localhost:7281;\"",
     "dev:menu": "dotnet watch --project FastBite.MenuCatalog/MenuCatalog.Api/MenuCatalog.Api.csproj --urls \"https://localhost:7255;\"",
     "dev:order": "dotnet watch --project FastBite.DeliveryOrdering/DeliveryOrdering/DeliveryOrdering.API.csproj --urls \"https://localhost:7252;\"",
