@@ -162,7 +162,7 @@ namespace DeliveryOrdering.Application.Services
                 var menu = await _catalogService.ObterMenuPorIdAsync(item.ProductId)
                            ?? throw new ProdutoNaoEncontradoException(item.ProductId);
 
-                // Validação de campos do catálogo no boundary (merge GPT-5.6 Sol)
+                // Validação de campos do catálogo no boundary
                 ValidarProdutoCatalogo(item.ProductId, menu);
 
                 bool disponivel = await _catalogService.VerificarDisponibilidadeAsync(item.ProductId, item.Quantity);
@@ -182,7 +182,7 @@ namespace DeliveryOrdering.Application.Services
             }
 
             // Ordenação descendente por preço: os combos são formados com os itens mais caros,
-            // o que maximiza o desconto para o cliente. (Regra de negócio — ver relatório.)
+            // o que maximiza o desconto para o cliente.
             var pratos = Fila(unidades, CategoriaCombo.Prato);
             var acomps = Fila(unidades, CategoriaCombo.Acompanhamento);
             var bebidas = Fila(unidades, CategoriaCombo.Bebida);
