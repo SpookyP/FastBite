@@ -74,8 +74,9 @@ namespace MenuCatalog.Application.Services
             {
                 return false;
             }
+            var quantidadeDisponivel = menuExistente.LimiteDiario - menuExistente.QuantidadeVendidaHoje;
 
-            if (menuExistente.LimiteDiario >= quantidade)
+            if (quantidadeDisponivel >= quantidade)
             {
                 return true;
             }
