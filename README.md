@@ -34,6 +34,9 @@ Escreve os seguintes comandos no teu terminal para colocar a aplicação a corre
 # Entrar na pasta do Projeto
 cd FastBite
 
+# Instalar dotnet ef
+dotnet tool install --global dotnet-ef
+
 # Entrar na pasta do Frontend
 cd FastBite.Front
 # Certificar que o .env se encontra na pasta
@@ -49,6 +52,9 @@ npm install
 
 # Configurar o certificado SSL do .NET (apenas na primeira execução)
 dotnet dev-certs https --trust
+
+# Criar Base de Dados locais
+npm run predev
 
 # Iniciar o servidor de desenvolvimento
 npm run dev
