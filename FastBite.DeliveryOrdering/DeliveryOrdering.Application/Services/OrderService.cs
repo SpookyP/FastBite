@@ -72,7 +72,7 @@ namespace DeliveryOrdering.Application.Services
 
             // payload = carrinho normalizado
             var payload = itens
-                .Select(i => new ItemVendidoDto { ItemId = i.ProductId, Quantidade = i.Quantity })
+                .Select(i => new CreateOrderItemDto { ProductId = i.ProductId, Quantity = i.Quantity })
                 .ToList();
 
             try
@@ -105,6 +105,7 @@ namespace DeliveryOrdering.Application.Services
 
         private sealed record AvulsoAgrupado(int ProductId, MenuResponseDto Menu, int Quantity);
 
+        
         private sealed class Agrupamento
         {
             public List<ComboAgrupado> Combos { get; } = new();
