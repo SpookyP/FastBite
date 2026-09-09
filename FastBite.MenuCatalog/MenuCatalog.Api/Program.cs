@@ -35,8 +35,6 @@ public class Program
         builder.Services.AddScoped<IItemRepository, ItemRepository>();
         builder.Services.AddScoped<IItemService, ItemService>();
 
-        builder.Services.AddScoped<IMenuComboService, MenuComboService>();
-
         builder.Services.AddHostedService<DailyStockResetService>();
 
 
